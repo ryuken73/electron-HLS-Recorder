@@ -3,9 +3,8 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import FullHeightContainer from './template/FullHeightContainer';
 import FirstChildSection from './template/FirstChildSection';
 import VideoPlayer from './VideoPlayer';
+import Html5Player from './Html5Player';
 import WebView from './WebView';
-
-
 
 const theme = createMuiTheme({
   typography: {
@@ -21,7 +20,7 @@ const theme = createMuiTheme({
     },
   },
 });
-const players = [1,2,3,4,5,6,7,8,9];
+const players = [1]
 
 function App() {
   const videoPlayers = []
@@ -35,8 +34,9 @@ function App() {
   })
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>    
       {videoPlayers}
+      {/* <Html5Player></Html5Player> */}
     </ThemeProvider>
   );
 }
