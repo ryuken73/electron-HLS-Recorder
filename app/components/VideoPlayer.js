@@ -6,11 +6,12 @@ class VideoApp extends Component {
     state = {
         video: {
             // src: "https://cctvsec.ktict.co.kr/9965/e9kLhEFmUD4LN5nutFjuZHnD9JrGKrFt75U6ttodXKVg8OTT6ti+Mhl7lQnZZywM2h56Ksu/xP9wUIQeftwdEA==",
-            src: "https://cctvsec.ktict.co.kr:8082/livekbs/9965/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9MTAvMjgvMjAyMCAzOjA0OjU0IFBNJmhhc2hfdmFsdWU9RXZnMGxLbk83QStabmt3aTF3TzRQUT09JnZhbGlkbWludXRlcz0xMjA="
+            // src: "https://cctvsec.ktict.co.kr:8082/livekbs/9965/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9MTAvMjgvMjAyMCAzOjA0OjU0IFBNJmhhc2hfdmFsdWU9RXZnMGxLbk83QStabmt3aTF3TzRQUT09JnZhbGlkbWludXRlcz0xMjA="
             // src: "https://cctvsec.ktict.co.kr:8082/livekbs/9965/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9MTAvMjgvMjAyMCAyOjAyOjQ1IFBNJmhhc2hfdmFsdWU9d3JXck1UWkQzc3N2bUI0YlAxWUp6UT09JnZhbGlkbWludXRlcz0xMjA=",
             // src : "https://cctvsec.ktict.co.kr:8082/livekbs/9965/chunks.m3u8?nimblesessionid=60380933&wmsAuthSign=c2VydmVyX3RpbWU9MTAvMjgvMjAyMCAxOjQ2OjM2IFBNJmhhc2hfdmFsdWU9bDg2cEw4Q3Q1SlVoQU9uR3RkTlJxUT09JnZhbGlkbWludXRlcz0xMjA=",
             // handleManifestRedirects: true,
             // poster: "http://www.example.com/path/to/video_poster.jpg"
+            src: 'd:/temp/cctv/stream.m3u8'
         }
     }
 
