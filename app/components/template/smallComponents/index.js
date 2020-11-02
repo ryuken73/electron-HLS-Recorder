@@ -13,18 +13,27 @@ const SmallPaddingIconButton = styled(IconButton)`
     padding: 5px;
 `
 const SmallButton  = styled(Button)`
-    margin: 5px;
+    margin-top: ${props => props.mt || "2px"};
+    margin-bottom: ${props => props.mb || "2px"};
+    margin-left: 5px;
     font-size: 11px;
+    padding-top: ${props => props.pt || "2px"};
+    padding-bottom: ${props => props.pb || "2px"};
+    padding-left: ${props => props.pl || "10px"};
+    padding-right: ${props => props.pr || "10px"};
 `
 
 const SmallMarginTextField = styled(TextField)`
     margin-top: ${props => props.mt || "2px"};
-    margin-bottom: ${props => props.mb || "2px"};
+    margin-bottom: ${props => props.mt || "2px"};
     background: ${props => props.bgcolor || defaultBgColor};
     .MuiInputBase-input {
         padding-top: ${props => props.pt || "5px"};
         padding-bottom: ${props => props.pb || "5px"};
         color: ${props => props.textColor || defaultFontColor};
+        font-size: ${props => props.fontSize || ""};
+        text-align: ${props => props.textAlign || "center"};
+        width: ${props => props.width || "100%"};
     }
     .MuiOutlinedInput-root {
         border-radius: 0px;

@@ -8,7 +8,7 @@ import {SmallPaddingSelect}  from './smallComponents';
 
 
 export default function OptionSelectList(props) {
-    const {subtitle, minWidth, fileTypes, menuItems, onChangeSelect, titlewidth="20%"} = props;
+    const {subtitle, minWidth, currentItem, menuItems, onChangeSelect, multiple=true, titlewidth="20%"} = props;
     const {smallComponent} = props;
     const SelectComponent = smallComponent ? SmallPaddingSelect : Select;
     const optionSelect = {
@@ -20,8 +20,8 @@ export default function OptionSelectList(props) {
                         labelId="select-label" 
                         variant="outlined"
                         margin="dense"
-                        value={fileTypes}
-                        multiple
+                        value={currentItem}
+                        multiple={multiple}
                         onChange={onChangeSelect}
                     >
                         {menuItems.map((menuItem, index) => {
@@ -39,6 +39,7 @@ export default function OptionSelectList(props) {
             titlewidth={titlewidth}
             content={optionSelect.content} 
             mb={0}
+            mt={0}
         ></BorderedList>
     )
 }

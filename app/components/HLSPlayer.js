@@ -3,7 +3,15 @@ import VideoPlayer from 'react-video-js-player';
 
 const HLSPlayer = (props) => {
     const [player, setPlayer] = React.useState({});
-    const {width=320, height=210, controls=false, autoplay=true, bigPlayButton=false, bigPlayButtonCentered=false, src} = props;
+    const {
+        width=360, 
+        height=205, 
+        controls=false, 
+        autoplay=true, 
+        bigPlayButton=false, 
+        bigPlayButtonCentered=false, 
+        src
+    } = props;
 
     // React.useEffect((() => {
     //     player.src({
