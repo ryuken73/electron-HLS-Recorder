@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import VideoPlayer from 'react-video-js-player';
+// import VideoPlayer from './VideoPlayer';
 
 const HLSPlayer = (props) => {
     const [player, setPlayer] = React.useState({});
     const {
         width=360, 
         height=205, 
-        controls=false, 
-        autoplay=true, 
+        controls=true, 
+        autoplay=false, 
         bigPlayButton=false, 
         bigPlayButtonCentered=false, 
         src
@@ -23,17 +24,27 @@ const HLSPlayer = (props) => {
 
     const onPlayerReady = player => {
         console.log("Player is ready: ", player);
-        setPlayer(player);
+        // setPlayer(player);
         player.muted(true);
         player.src({
             src: src,
             type: 'application/x-mpegURL',
-            handleManifestRedirects: true
+            handleManifestRedirects: true,
         })
-        const vhs = player.tech()
-        console.log(vhs)
-        // console.log('playlist',vhs.playlists.media)
+        console.log("Player is ready: ", player);
+
     }
+    
+    // const onPlayerReady = player => {
+    //     console.log("videojs is ready: ", player);
+    //     // setPlayer(player);
+    //     player.muted(true);
+    //     player.src([{
+    //         src: src,
+    //         type: 'application/x-mpegURL',
+    //         handleManifestRedirects: true
+    //     }])
+    // }
 
     const onVideoPlay = duration => {
         console.log("Video played at: ", duration);
@@ -62,7 +73,7 @@ const HLSPlayer = (props) => {
         <div>
             <VideoPlayer
                 controls={controls}
-                src={src}
+                // src={""}
                 // poster={this.state.video.poster}
                 autoplay={autoplay}
                 bigPlayButton={bigPlayButton}
@@ -76,7 +87,6 @@ const HLSPlayer = (props) => {
                 onSeeking={onVideoSeeking}
                 onSeeked={onVideoSeeked}
                 onEnd={onVideoEnd}
-                handleManifestRedirects={true}
             />
         </div>
     );
