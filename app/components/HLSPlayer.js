@@ -30,6 +30,9 @@ const HLSPlayer = (props) => {
             type: 'application/x-mpegURL',
             handleManifestRedirects: true
         })
+        const vhs = player.tech()
+        console.log(vhs)
+        // console.log('playlist',vhs.playlists.media)
     }
 
     const onVideoPlay = duration => {
@@ -64,7 +67,6 @@ const HLSPlayer = (props) => {
                 autoplay={autoplay}
                 bigPlayButton={bigPlayButton}
                 bigPlayButtonCentered={bigPlayButtonCentered}
-                handleManifestRedirects={true}
                 width={width}
                 height={height}
                 onReady={onPlayerReady}
@@ -74,6 +76,7 @@ const HLSPlayer = (props) => {
                 onSeeking={onVideoSeeking}
                 onSeeked={onVideoSeeked}
                 onEnd={onVideoEnd}
+                handleManifestRedirects={true}
             />
         </div>
     );
