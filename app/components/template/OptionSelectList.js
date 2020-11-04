@@ -8,14 +8,14 @@ import {SmallPaddingSelect}  from './smallComponents';
 
 
 export default function OptionSelectList(props) {
-    const {subtitle, minWidth, currentItem, menuItems, onChangeSelect, multiple=true, titlewidth="20%"} = props;
+    const {subtitle, minWidth, currentItem, menuItems, onChangeSelect, multiple=true, titlewidth="20%", bgcolor, selectColor} = props;
     const {smallComponent} = props;
     const SelectComponent = smallComponent ? SmallPaddingSelect : Select;
     const optionSelect = {
         title: <Typography component={'span'} variant="body1">{subtitle}</Typography>,
         content: (
             <React.Fragment>
-                <FormControl style={{minWidth:minWidth}}>
+                <FormControl style={{minWidth:minWidth, width:"100%"}}>
                     <SelectComponent
                         labelId="select-label" 
                         variant="outlined"
@@ -23,6 +23,7 @@ export default function OptionSelectList(props) {
                         value={currentItem}
                         multiple={multiple}
                         onChange={onChangeSelect}
+                        bgcolor={selectColor}
                     >
                         {menuItems.map((menuItem, index) => {
                             const {value, label} = menuItem;
@@ -40,6 +41,7 @@ export default function OptionSelectList(props) {
             content={optionSelect.content} 
             mb={0}
             mt={0}
+            bgcolor={bgcolor}
         ></BorderedList>
     )
 }

@@ -14,14 +14,6 @@ const HLSPlayer = (props) => {
         src
     } = props;
 
-    // React.useEffect((() => {
-    //     player.src({
-    //         src: src,
-    //         type: 'application/x-mpegURL',
-    //         handleManifestRedirects: true
-    //     })
-    // }),[src]);
-
     const onPlayerReady = player => {
         console.log("Player is ready: ", player);
         setPlayer(player);
@@ -29,11 +21,9 @@ const HLSPlayer = (props) => {
         player.src({
             src: src,
             type: 'application/x-mpegURL',
+            // type: 'vnd.apple.mpegurl',
             handleManifestRedirects: true
         })
-        // const vhs = player.tech()
-        // console.log(vhs)
-        // console.log('playlist',vhs.playlists.media)
     }
 
     const onVideoPlay = duration => {

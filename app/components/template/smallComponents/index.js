@@ -21,12 +21,14 @@ const SmallButton  = styled(Button)`
     padding-bottom: ${props => props.pb || "2px"};
     padding-left: ${props => props.pl || "10px"};
     padding-right: ${props => props.pr || "10px"};
+    background: ${props => props.bgcolor || defaultBgColor};
 `
 
 const SmallMarginTextField = styled(TextField)`
     margin-top: ${props => props.mt || "2px"};
     margin-bottom: ${props => props.mt || "2px"};
     background: ${props => props.bgcolor || defaultBgColor};
+    width: ${props => props.width || "100%"};
     .MuiInputBase-input {
         padding-top: ${props => props.pt || "5px"};
         padding-bottom: ${props => props.pb || "5px"};
@@ -53,9 +55,8 @@ const SmallPaddingSelect = styled(Select)`
     .MuiSelect-root {
         padding-top: ${props => props.pt || "5px"};
         padding-bottom: ${props => props.pb || "5px"};
-        background: ${defaultBgColor};
+        background: ${props => props.bgcolor || defaultBgColor};
         color: ${defaultFontColor};
-
     }
 `
 export {

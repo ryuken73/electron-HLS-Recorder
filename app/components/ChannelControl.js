@@ -9,12 +9,19 @@ export default function ChannleControl(props) {
     const {currentUrl="d:/temp/cctv/stream.m3u8"} = props;
     const {duration='00:00:00.00'} = props;
     const {directory="d:/temp/cctv"} = props;
-    const {filePatterns} = props;
+    const {setUrl} = props;
+    const [urlTyped, setManualUrl] = React.useState('');
     const onChange = type => {
         return (event) => {
+            if(type === 'manualUrl'){
+                setManualUrl(event.target.value)
+            }
             console.log(event.target.value)
         }
     }    
+    const onClickSetManualUrl = url => {
+        setUrl(urlTyped)
+    };
     const onClickSelectSaveDirectory = directory => {};
 
     const channel = {
@@ -22,6 +29,7 @@ export default function ChannleControl(props) {
         content: (
             <Box width="100%"> 
                 <SmallMarginTextField 
+                    width="100%"
                     variant="outlined"
                     margin="dense"
                     bgcolor={"black"}
@@ -33,11 +41,42 @@ export default function ChannleControl(props) {
         ) 
     }
     
+    const manualUrl = {
+        title: <Typography variant="body1">Manual URL</Typography>,
+        content: (
+            <React.Fragment>
+                <Box width="100%">
+                    <SmallMarginTextField
+                        variant="outlined"
+                        margin="dense"
+                        value={urlTyped}                        
+                        onChange={onChange('manualUrl')}
+                        mt={"0px"}
+                        mb={"0px"}
+                        bgcolor={"#2d2f3b"}
+                        textAlign={"left"}
+                    ></SmallMarginTextField>
+                </Box>
+                <Box textAlign="center">
+                    <SmallButton 
+                        size="small" 
+                        color="secondary" 
+                        variant={"contained"} 
+                        mt={"0px"}
+                        mb={"0px"}
+                        bgcolor={"#191d2e"}
+                        onClick={onClickSetManualUrl}
+                    >Go</SmallButton>
+                </Box>
+            </React.Fragment>
+        )
+    }
+
     const location = {
         title: <Typography variant="body1">Save Directory</Typography>,
         content: (
             <React.Fragment>
-                <Box width="120px">
+                <Box width="100%">
                     <SmallMarginTextField
                         variant="outlined"
                         margin="dense"
@@ -45,15 +84,18 @@ export default function ChannleControl(props) {
                         onChange={onChange('directory')}
                         mt={"0px"}
                         mb={"0px"}
+                        bgcolor={"#2d2f3b"}
+                        textAlign={"left"}
                     ></SmallMarginTextField>
                 </Box>
-                <Box width="50px" textAlign="center">
+                <Box textAlign="center">
                     <SmallButton 
                         size="small" 
-                        color="primary" 
+                        color="secondary" 
                         variant={"contained"} 
                         mt={"0px"}
                         mb={"0px"}
+                        bgcolor={"#191d2e"}
                         onClick={onClickSelectSaveDirectory}
                     >Change</SmallButton>
                 </Box>
@@ -84,15 +126,19 @@ export default function ChannleControl(props) {
                 ]}
                 onChangeSelect={onChange('url')} 
                 smallComponent={true}
+                bgcolor={'#232738'}
+                selectColor={"#2d2f3b"}
             ></OptionSelectList>
             <BorderedList 
-                title={location.title} 
-                content={location.content}
+                title={manualUrl.title} 
+                content={manualUrl.content}
                 mb={"0px"} 
+                bgcolor={"#232738"}
             ></BorderedList>
             <BorderedList 
                 title={location.title} 
                 content={location.content} 
+                bgcolor={"#232738"}
             ></BorderedList>
         </Box>
     )
