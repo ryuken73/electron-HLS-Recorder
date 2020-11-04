@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Controls from './Controls.json';
 import videojs from 'video.js';
-import 'video.js/dist/video-js.css';
 
 class VideoPlayer extends Component {
     playerId = `video-player-${(new Date) * 1}`
@@ -13,6 +12,7 @@ class VideoPlayer extends Component {
     }
 
     componentWillReceiveProps(nextProps){
+        console.log('receiveProps:',nextProps)
         this.set_controls_visibility(this.player, nextProps.hideControls);
         if(this.props.src !== nextProps.src){
             this.init_player(nextProps);
@@ -26,7 +26,6 @@ class VideoPlayer extends Component {
     init_player(props) {
         const playerOptions = this.generate_player_options(props);
         this.player = videojs(document.querySelector(`#${this.playerId}`), playerOptions);
-        console.log(props.src)
         this.player.src(props.src)
         this.player.poster(props.poster)
         this.set_controls_visibility(this.player, props.hideControls);

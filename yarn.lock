@@ -2042,19 +2042,19 @@
     mux.js "5.6.7"
     video.js "^6 || ^7"
 
-"@videojs/vhs-utils@^1.0.0", "@videojs/vhs-utils@^1.1.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@videojs/vhs-utils/-/vhs-utils-1.3.0.tgz#04fe402f603af9a5df4b88881fabba0cf13814c2"
-  integrity sha512-oiqXDtHQqDPun7JseWkirUHGrgdYdeF12goUut5z7vwAj4DmUufEPFJ4xK5hYGXGFDyDhk2rSFOR122Ze6qXyQ==
+"@videojs/vhs-utils@2.2.1", "@videojs/vhs-utils@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@videojs/vhs-utils/-/vhs-utils-2.2.1.tgz#78ecea26652268646d5003b1b1a705c9b544f8a2"
+  integrity sha512-9Qbwx3LAdkG1jh2HKfninjXDxVZCeaoPcmct/bUcDRmLej68Z9XhLe5d2a9fy1qB+UuQwWg7YySASesWavYNjQ==
   dependencies:
     "@babel/runtime" "^7.5.5"
     global "^4.3.2"
     url-toolkit "^2.1.6"
 
-"@videojs/vhs-utils@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@videojs/vhs-utils/-/vhs-utils-2.2.1.tgz#78ecea26652268646d5003b1b1a705c9b544f8a2"
-  integrity sha512-9Qbwx3LAdkG1jh2HKfninjXDxVZCeaoPcmct/bUcDRmLej68Z9XhLe5d2a9fy1qB+UuQwWg7YySASesWavYNjQ==
+"@videojs/vhs-utils@^1.0.0", "@videojs/vhs-utils@^1.1.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@videojs/vhs-utils/-/vhs-utils-1.3.0.tgz#04fe402f603af9a5df4b88881fabba0cf13814c2"
+  integrity sha512-oiqXDtHQqDPun7JseWkirUHGrgdYdeF12goUut5z7vwAj4DmUufEPFJ4xK5hYGXGFDyDhk2rSFOR122Ze6qXyQ==
   dependencies:
     "@babel/runtime" "^7.5.5"
     global "^4.3.2"
@@ -12888,7 +12888,7 @@ react-transition-group@^4.3.0:
 
 react-video-js-player@^1.1.1:
   version "1.1.1"
-  resolved "https://registry.yarnpkg.com/react-video-js-player/-/react-video-js-player-1.1.1.tgz#7123537b39a8cb6a0a3e3dcd3bea8187a8fcac27"
+  resolved "http://10.10.16.81:4873/react-video-js-player/-/react-video-js-player-1.1.1.tgz#7123537b39a8cb6a0a3e3dcd3bea8187a8fcac27"
   integrity sha512-IjbZkYC29DkXId+I0hP4vfaqdG8vZh7rB73vLbyYMSHKK6BmSdVtpbt1C97vRlyBXhNLuX3P/Fkxfoxx/SZJtw==
   dependencies:
     prop-types "^15.6.2"
