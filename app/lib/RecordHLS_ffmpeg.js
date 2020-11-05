@@ -146,6 +146,7 @@ class RecoderHLS extends EventEmitter {
             throw new Error('astart recording first!.')
         }
         this.command.kill(''); 
+        this.isRecording = false;
         // this.wStream.end();
     }
     destroy = () => {}
@@ -163,7 +164,7 @@ class RecoderHLS extends EventEmitter {
 //     renameDoneFile: true
 // })
 
-const createRecorder = options => {
+const createHLSRecoder = options => {
     const {
         name= 'channel1',
         src= url,

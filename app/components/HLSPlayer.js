@@ -5,6 +5,7 @@ import VideoPlayer from './VideoPlayer'
 const HLSPlayer = (props) => {
     const [player, setPlayer] = React.useState({});
     const {
+        channelName,
         width=360, 
         height=205, 
         controls=false, 
@@ -13,6 +14,7 @@ const HLSPlayer = (props) => {
         bigPlayButtonCentered=false, 
         url
     } = props;
+    console.log('rerender HLSPlayer:',channelName)
 
     const srcObject = {
         src: url,

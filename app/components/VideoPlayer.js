@@ -4,7 +4,8 @@ import Controls from './Controls.json';
 import videojs from 'video.js';
 
 class VideoPlayer extends Component {
-    playerId = `video-player-${(new Date) * 1}`
+    // playerId = `video-player-${(new Date) * 1}`
+    playerId = `video-player-${Date.now() + (Math.random()*10000).toFixed(0)}`
     player = {};
     componentDidMount() {
         this.init_player(this.props);

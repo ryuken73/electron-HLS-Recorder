@@ -5,50 +5,70 @@ import BorderedList from './template/BorderedList';
 import {SmallMarginTextField, SmallPaddingSelect, SmallButton}  from './template/smallComponents';
 import OptionSelectList from './template/OptionSelectList';
 import HLSRecorder from '../lib/RecordHLS_ffmpeg';
+import path from 'path';
 
+const initialDuration = '00:00:00.00';
 function ChannleControl(props) {
+    const {channelName, cctvs} = props;
     const {currentUrl="d:/temp/cctv/stream.m3u8"} = props;
-    const {duration='00:00:00.00'} = props;
-    const {directory="d:/temp/cctv"} = props;
-    const {setUrl} = props;
+    const {saveDirectory="d:/temp/cctv"} = props;
+    const {setCurrentUrl, setSaveDirectory} = props;
+    const [duration, setDuration] = React.useState(initialDuration);
     const [urlTyped, setManualUrl] = React.useState('');
     const [recorder, setRecorder] = React.useState({});
+    const [isBusy, setIsBusy] = React.useState(false);
 
-    const progressWriter = progress => console.log({...progress, elapsed: recorder.elapsed, ...process.memoryUsage()});
+    const playbackList = 'd:/temp/cctv/stream.m3u8'
+
+    const progressWriter = progress => {
+        console.log({...progress, elapsed: recorder.elapsed, ...process.memoryUsage()});
+        setDuration(progress.duration);
+    }
     React.useEffect(() => {
         const options = {
-            name: 'channel1',
+            name: channelName,
             src: currentUrl, 
-            target: 'd:/temp/cctv_kbs_ffmpeg.mp4', 
-            enablePlayback: true, 
-            playbackList: 'd:/temp/cctv/stream.m3u8',
+            target: path.join(saveDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`), 
+            enablePlayback: false, 
+            playbackList: path.join(saveDirectory, `${channelName}_stream.m3u8`),
             ffmpegBinary: 'd:/temp/cctv/ffmpeg.exe',
             renameDoneFile: true
         }
-        const recoder = HLSRecoder.createHLSRecoder(options);
+        const recorder = HLSRecorder.createHLSRecoder(options);
         recorder.on('progress', progressWriter)
         setRecorder(recorder);
-    }, [currentUrl, directory])
+    }, [currentUrl])
 
     const onChange = type => {
-        return (event) => {
-            if(type === 'manualUrl'){
-                setManualUrl(event.target.value)
-            }
-            console.log(event.target.value)
+        return event => {
+            const {value} = event.target;
+            type === 'manualUrl' && setManualUrl(value);
+            type === 'url' && setCurrentUrl(value);
+            type === 'directory' && setSaveDirectory(value)
+            console.log(value)
         }
     }    
     const onClickSetManualUrl = event => {
         console.log('change url manually : ',urlTyped);
-        setUrl(urlTyped)
+        setCurrentUrl(urlTyped)
     };
     const onClickSelectSaveDirectory = directory => {};
-    const onClickRecord = () => {
-        recorder.start();
+    const onClickRecord = (cmd) => {
+        return () => {
+            if(cmd === 'start'){
+                recorder.start();
+                setIsBusy(recorder.isBusy);
+                // setUrl(playbackList)
+            } else {
+                recorder.stop();
+                setIsBusy(recorder.isBusy);
+                setDuration(initialDuration);
+            }
+        }
     };
 
     const channel = {
-        title: <Typography variant="body1">Channel1</Typography>,
+        title: <Typography variant="body1">{channelName}</Typography>,
         content: (
             <Box width="100%"> 
                 <SmallMarginTextField 
@@ -103,7 +123,7 @@ function ChannleControl(props) {
                     <SmallMarginTextField
                         variant="outlined"
                         margin="dense"
-                        value={directory}                        
+                        value={saveDirectory}                        
                         onChange={onChange('directory')}
                         mt={"0px"}
                         mb={"0px"}
@@ -126,6 +146,13 @@ function ChannleControl(props) {
         )
     }
     
+    const selectItems = cctvs.map(cctv => {
+        return {
+            value: cctv.url,
+            label: cctv.title
+        }
+    })
+
     return (
         <Box display="flex" flexDirection="column" width={1}>
             <BorderedList 
@@ -138,15 +165,11 @@ function ChannleControl(props) {
                 bgcolor={"fixed"}
             ></BorderedList>
             <OptionSelectList 
-                subtitle='HLS urls'
+                subtitle='CCTV'
                 minWidth='300px'
                 currentItem={currentUrl}
                 multiple={false}
-                menuItems={[
-                    {value:'https://1/stream.m3u8', label:'1'},
-                    {value:'https://2/stream.m3u8', label:'2'},
-                    {value:'https://3/stream.m3u8', label:'3'},
-                ]}
+                menuItems={selectItems}
                 onChangeSelect={onChange('url')} 
                 smallComponent={true}
                 bgcolor={'#232738'}
@@ -171,8 +194,8 @@ function ChannleControl(props) {
                 mb={"5px"}
                 bgcolor={"#191d2e"}
                 height={"35px"}
-                onClick={onClickRecord}
-            >Record</SmallButton>
+                onClick={recorder.isBusy ? onClickRecord('stop') : onClickRecord('start')}
+            >{recorder.isBusy ? "Stop Record" : "Start Recording"}</SmallButton>
         </Box>
     )
 }
