@@ -64,11 +64,13 @@ class RecoderHLS extends EventEmitter {
     get isBusy() { return this.isRecording || this.isPreparing }  
     set src(url) { 
         if(this.isBusy) throw new Error("because recorder is busy, can't change");
-        this._src = url
+        this._src = url;
+        this.initialize();
     }
     set target(target) { 
         if(this.isBusy) throw new Error("because recorder is busy, can't change");
-        this._target = target 
+        this._target = target;
+        this.initialize();
     }   
     set isRecording(bool) { this._isRecording = bool }
     set isPreparing(bool) { this._isPreparing = bool }
@@ -163,18 +165,20 @@ class RecoderHLS extends EventEmitter {
 
 const createRecorder = options => {
     const {
-        name: 'channel1',
-        src: url, 
-        target: 'd:/temp/cctv_kbs_ffmpeg.mp4', 
-        enablePlayback: true, 
-        playbackList: 'd:/temp/cctv/stream.m3u8',
-        ffmpegBinary: 'd:/temp/cctv/ffmpeg.exe',
-        renameDoneFile: true
+        name= 'channel1',
+        src= url,
+        target='d:/temp/cctv_kbs_ffmpeg.mp4', 
+        enablePlayack= true, 
+        playbackList= 'd:/temp/cctv/stream.m3u8',
+        ffmpegBinary= 'd:/temp/cctv/ffmpeg.exe',
+        renameDoneFile= true
     } = options;
     return new RecoderHLS(options);
 }
 
-module.exports = createHLSRecoder;
+module.exports = {
+    createHLSRecoder
+};
 
 // const headerMessage = "enter command(start/stop/restart/debug/destroy):"
 // const cmdInput = process.stdin

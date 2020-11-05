@@ -4,13 +4,32 @@ import Typography from '@material-ui/core/Typography';
 import BorderedList from './template/BorderedList';
 import {SmallMarginTextField, SmallPaddingSelect, SmallButton}  from './template/smallComponents';
 import OptionSelectList from './template/OptionSelectList';
+import HLSRecorder from '../lib/RecordHLS_ffmpeg';
 
-export default function ChannleControl(props) {
+function ChannleControl(props) {
     const {currentUrl="d:/temp/cctv/stream.m3u8"} = props;
     const {duration='00:00:00.00'} = props;
     const {directory="d:/temp/cctv"} = props;
     const {setUrl} = props;
     const [urlTyped, setManualUrl] = React.useState('');
+    const [recorder, setRecorder] = React.useState({});
+
+    const progressWriter = progress => console.log({...progress, elapsed: recorder.elapsed, ...process.memoryUsage()});
+    React.useEffect(() => {
+        const options = {
+            name: 'channel1',
+            src: currentUrl, 
+            target: 'd:/temp/cctv_kbs_ffmpeg.mp4', 
+            enablePlayback: true, 
+            playbackList: 'd:/temp/cctv/stream.m3u8',
+            ffmpegBinary: 'd:/temp/cctv/ffmpeg.exe',
+            renameDoneFile: true
+        }
+        const recoder = HLSRecoder.createHLSRecoder(options);
+        recorder.on('progress', progressWriter)
+        setRecorder(recorder);
+    }, [currentUrl, directory])
+
     const onChange = type => {
         return (event) => {
             if(type === 'manualUrl'){
@@ -24,7 +43,9 @@ export default function ChannleControl(props) {
         setUrl(urlTyped)
     };
     const onClickSelectSaveDirectory = directory => {};
-    const onClickRecord = () => {};
+    const onClickRecord = () => {
+        recorder.start();
+    };
 
     const channel = {
         title: <Typography variant="body1">Channel1</Typography>,
@@ -155,3 +176,5 @@ export default function ChannleControl(props) {
         </Box>
     )
 }
+
+export default React.memo(ChannleControl);
