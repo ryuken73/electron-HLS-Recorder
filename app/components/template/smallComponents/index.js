@@ -22,6 +22,7 @@ const SmallButton  = styled(Button)`
     padding-left: ${props => props.pl || "10px"};
     padding-right: ${props => props.pr || "10px"};
     background: ${props => props.bgcolor || defaultBgColor};
+    height: ${props => props.height};
 `
 
 const SmallMarginTextField = styled(TextField)`

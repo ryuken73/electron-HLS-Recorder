@@ -12,6 +12,12 @@ const number = {
         if(unit === 'GB') return (toByteUnit({number, unit:'MB',point})/1024).toFixed(point);
         if(unit === 'TB') return (toByteUnit({number, unit:'GB',point})/1024).toFixed(point);
         return number;
+    },
+    padZero(num){
+        if(num < 10){
+            return `0${num}`;
+        }
+        return num.toString();
     }
 }
 
@@ -22,6 +28,20 @@ const clone = {
             newElement,
             ...array.slice(index+1)
         ]
+    }
+}
+
+const date = {
+    getString(date, {dateSep='', timeSep='', sep='.'}){
+        const year = date.getFullYear();
+        const month = number.padZero(date.getMonth() + 1);
+        const day = number.padZero(date.getDate());
+        const hour = number.padZero(date.getHours());
+        const minute = number.padZero(date.getMinutes());
+        const second = number.padZero(date.getSeconds());
+        const dateString = `${year}${dateSep}${month}${dateSep}${day}`;
+        const timeString = `${hour}${timeSep}${minute}${timeSep}${second}`;
+        return `${dateString}${sep}${timeString}`;
     }
 }
 
@@ -211,6 +231,7 @@ module.exports = {
     fp,
     file,
     number,
+    date,
 }
 
 // const trottled = fp.throttle(100, console.log);

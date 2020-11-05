@@ -24,6 +24,7 @@ export default function ChannleControl(props) {
         setUrl(urlTyped)
     };
     const onClickSelectSaveDirectory = directory => {};
+    const onClickRecord = () => {};
 
     const channel = {
         title: <Typography variant="body1">Channel1</Typography>,
@@ -141,6 +142,16 @@ export default function ChannleControl(props) {
                 content={location.content} 
                 bgcolor={"#232738"}
             ></BorderedList>
+            <SmallButton 
+                size="small" 
+                color="secondary" 
+                variant={"contained"} 
+                mt={"auto"}
+                mb={"5px"}
+                bgcolor={"#191d2e"}
+                height={"35px"}
+                onClick={onClickRecord}
+            >Record</SmallButton>
         </Box>
     )
 }
