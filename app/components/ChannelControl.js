@@ -19,7 +19,8 @@ export default function ChannleControl(props) {
             console.log(event.target.value)
         }
     }    
-    const onClickSetManualUrl = url => {
+    const onClickSetManualUrl = event => {
+        console.log('change url manually : ',urlTyped);
         setUrl(urlTyped)
     };
     const onClickSelectSaveDirectory = directory => {};

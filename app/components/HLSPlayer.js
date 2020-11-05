@@ -11,19 +11,20 @@ const HLSPlayer = (props) => {
         autoplay=true, 
         bigPlayButton=false, 
         bigPlayButtonCentered=false, 
-        src
+        url
     } = props;
+
+    const srcObject = {
+        src: url,
+        type: 'application/x-mpegURL',
+        handleManifestRedirects: true
+    }
 
     const onPlayerReady = player => {
         console.log("Player is ready: ", player);
         setPlayer(player);
         player.muted(true);
-        player.src({
-            src: src,
-            type: 'application/x-mpegURL',
-            // type: 'vnd.apple.mpegurl',
-            handleManifestRedirects: true
-        })
+        player.src(srcObject)
     }
 
     const onVideoPlay = duration => {
@@ -53,7 +54,7 @@ const HLSPlayer = (props) => {
         <div>
             <VideoPlayer
                 controls={controls}
-                src={src}
+                src={srcObject}
                 // poster={this.state.video.poster}
                 autoplay={autoplay}
                 bigPlayButton={bigPlayButton}
