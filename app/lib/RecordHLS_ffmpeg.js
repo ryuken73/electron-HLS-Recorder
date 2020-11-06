@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
 
-const mp4Options = ['-f','mp4','-movflags','+frag_custom+frag_keyframe'];;
+const mp4Options = ['-acodec', 'copy', '-vcodec', 'copy'];;
 const hlsOptions = ['-f','hls','-hls_time','4','-hls_list_size','5','-hls_flags','delete_segments',];
 
 class RecoderHLS extends EventEmitter {
@@ -26,6 +26,8 @@ class RecoderHLS extends EventEmitter {
         this._playbackList = playbackList;
         this._ffmpegBinary = ffmpegBinary;
         this._renameDoneFile = renameDoneFile;
+        ffmpeg.setFfmpegPath(this._ffmpegBinary);
+
         this.initialize();
     }
 
@@ -36,10 +38,10 @@ class RecoderHLS extends EventEmitter {
         this._durationRecorded = '00:00:00.00';
         this._startTime = null;
         this._rStream = null;
-        this._wStream = fs.createWriteStream(this.target);
-        ffmpeg.setFfmpegPath(this._ffmpegBinary);
-        this._command = ffmpeg(this._src).output(this._wStream).outputOptions(mp4Options);
-        this.enablePlayback && this._command.output(this._playbackList).outputOptions(hlsOptions);
+        // this._wStream = fs.createWriteStream(this.target);
+        // ffmpeg.setFfmpegPath(this._ffmpegBinary);
+        // this._command = ffmpeg(this._src).output(this._wStream).outputOptions(mp4Options);
+        // this.enablePlayback && this._command.output(this._playbackList).outputOptions(hlsOptions);
         console.log('recoder initialized...')
     }
 
@@ -72,6 +74,7 @@ class RecoderHLS extends EventEmitter {
         this._target = target;
         this.initialize();
     }   
+    set command(cmd) { this._command = cmd }
     set isRecording(bool) { this._isRecording = bool }
     set isPreparing(bool) { this._isPreparing = bool }
     set startTime(date) { this._startTime = date }
@@ -117,7 +120,7 @@ class RecoderHLS extends EventEmitter {
         this.emit('start', cmd);
     }
     progressHandler = event => {
-        this.bytesRecorded = this.wStream.bytesWritten;
+        // this.bytesRecorded = this.wStream.bytesWritten;
         this.duration = event.timemark;
     }
 
@@ -128,41 +131,30 @@ class RecoderHLS extends EventEmitter {
         }
         this.isPreparing = true;
         console.log('start encoding..', this.src);
-        this.wStream.on('ready', () => {
-            console.log('wStream ready')
-        })
+        this.command = ffmpeg(this._src).output(this.target).outputOptions(mp4Options);
+        this.enablePlayback && this.command.output(this._playbackList).outputOptions(hlsOptions);
         this.command
         .on('start', this.startHandler)
         .on('progress', this.progressHandler)
         .on('error', error => {
             console.log('ffmpeg error: ', error) ;
+            this.onWriteStreamClosed()
+        })
+        .on('end', (stdout, stderr) => {
+            console.log('ffmpeg end!')
+            this.onWriteStreamClosed()
         })
         .run();
-        this.wStream.on('close', this.onWriteStreamClosed);
     }
     stop = () => {
         if(!this.isRecording){
             console.log('start recording first!.')
             throw new Error('astart recording first!.')
         }
-        this.command.kill(''); 
-        this.isRecording = false;
-        // this.wStream.end();
+        this.command.ffmpegProc.stdin.write('q');
     }
     destroy = () => {}
 }
-
-// const url = 'https://cctvsec.ktict.co.kr/9965/e9kLhEFmUD4LN5nutFjuZHnD9JrGKrFt75U6ttodXKVg8OTT6ti+Mhl7lQnZZywM2h56Ksu/xP9wUIQeftwdEA==';
-// // const url = ' http://live.chosun.gscdn.com/live/_definst_/tvchosun3.stream/playlist.m3u8'
-// const recorder = new RecoderHLS({
-//     name: 'channel1',
-//     src: url, 
-//     target: 'd:/temp/cctv_kbs_ffmpeg.mp4', 
-//     enablePlayback: true, 
-//     playbackList: 'd:/temp/cctv/stream.m3u8',
-//     ffmpegBinary: 'd:/temp/cctv/ffmpeg.exe',
-//     renameDoneFile: true
-// })
 
 const createHLSRecoder = options => {
     const {
@@ -180,46 +172,6 @@ const createHLSRecoder = options => {
 module.exports = {
     createHLSRecoder
 };
-
-// const headerMessage = "enter command(start/stop/restart/debug/destroy):"
-// const cmdInput = process.stdin
-// console.log(headerMessage);
-// console.log(utils.date.getString(new Date(),{}))
-// const progressWriter = progress => console.log({...progress, elapsed: recorder.elapsed, ...process.memoryUsage()});
-// cmdInput.on('data', data => {
-//     const input = data.toString().replace(/(\r\n|\r|\n)/,'');
-//     try {
-//         switch(input){
-//             case 'start':
-//                 console.log('starting....');
-//                 recorder.start();
-//                 recorder.on('progress', progressWriter)
-//                 break;
-//             case 'stop':
-//                 console.log('stopping...')
-//                 recorder.stop();
-//                 recorder.removeListener('progress', progressWriter)
-//                 break;
-//             case 'restart':
-//                 recorder.once('end', () => {
-//                     recorder.start();
-//                 })
-//                 recorder.stop();
-//                 break;
-//             case 'destroy':
-//                 delete recorder
-//                 break;
-//             case 'debug':
-//                 console.log(recorder)
-//                 break;
-//             default:
-//                 console.log(headerMessage);
-//                 break;
-//         }
-//     } catch (err) {
-//         console.error(err)
-//     }
-// })
 
 
 

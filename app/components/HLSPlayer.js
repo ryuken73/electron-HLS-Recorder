@@ -27,6 +27,16 @@ const HLSPlayer = (props) => {
         setPlayer(player);
         player.muted(true);
         player.src(srcObject)
+        setInterval(() => {
+            // console.log(player.duration());
+            console.log(player.currentTime());
+            console.log(player.ended());
+            console.log(player.error());
+            console.log(player.paused());
+            // const timeRange = player.played();
+            // const {length} = timeRange;
+            // console.log(`${channelName}: ${timeRange.start()}-${timeRange.end()} : ${length}`)
+        },1000)
     }
 
     const onVideoPlay = duration => {

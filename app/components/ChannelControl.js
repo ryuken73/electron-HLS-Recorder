@@ -17,7 +17,13 @@ function ChannleControl(props) {
     const [urlTyped, setManualUrl] = React.useState('');
     const [recorder, setRecorder] = React.useState({});
     const [isBusy, setIsBusy] = React.useState(false);
-
+    const [recorderStatus, setRecorderStatus] = React.useState('stopped');
+    const buttonString = {
+        'stopped' : 'start rendering',
+        'starting' : 'starting...',
+        'started' : 'stop rendering',
+        'stopping' : 'stopping...'
+    }
     const playbackList = 'd:/temp/cctv/stream.m3u8'
 
     const progressWriter = progress => {
@@ -29,7 +35,7 @@ function ChannleControl(props) {
             name: channelName,
             src: currentUrl, 
             target: path.join(saveDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`), 
-            enablePlayback: false, 
+            enablePlayback: true, 
             playbackList: path.join(saveDirectory, `${channelName}_stream.m3u8`),
             ffmpegBinary: 'd:/temp/cctv/ffmpeg.exe',
             renameDoneFile: true
@@ -56,13 +62,21 @@ function ChannleControl(props) {
     const onClickRecord = (cmd) => {
         return () => {
             if(cmd === 'start'){
+                setRecorderStatus('starting');
+                recorder.once('start', (cmd) => {
+                    setRecorderStatus('started')
+                    setIsBusy(recorder.isBusy);
+                })
                 recorder.start();
-                setIsBusy(recorder.isBusy);
                 // setUrl(playbackList)
             } else {
+                setRecorderStatus('stopping');
+                recorder.once('end', () => {
+                    setRecorderStatus('stopped');
+                    setIsBusy(recorder.isBusy);
+                    setDuration(initialDuration);
+                })
                 recorder.stop();
-                setIsBusy(recorder.isBusy);
-                setDuration(initialDuration);
             }
         }
     };
@@ -195,7 +209,7 @@ function ChannleControl(props) {
                 bgcolor={"#191d2e"}
                 height={"35px"}
                 onClick={recorder.isBusy ? onClickRecord('stop') : onClickRecord('start')}
-            >{recorder.isBusy ? "Stop Record" : "Start Recording"}</SmallButton>
+            >{buttonString[recorderStatus]}</SmallButton>
         </Box>
     )
 }

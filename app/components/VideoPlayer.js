@@ -87,6 +87,9 @@ class VideoPlayer extends Component {
         this.player.on('ended', () => {
             props.onEnd();
         });
+        this.player.on('error', error => {
+            console.log(error)
+        })
     }
 
     render() {
