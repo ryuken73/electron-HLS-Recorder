@@ -12,7 +12,7 @@ function ChannleControl(props) {
     const {channelName, cctvs} = props;
     const {currentUrl="d:/temp/cctv/stream.m3u8"} = props;
     const {saveDirectory="d:/temp/cctv"} = props;
-    const {setCurrentUrl, setSaveDirectory} = props;
+    const {setCurrentUrl, setSaveDirectory, clips, setClip} = props;
     const [duration, setDuration] = React.useState(initialDuration);
     const [urlTyped, setManualUrl] = React.useState('');
     const [recorder, setRecorder] = React.useState({});
@@ -71,7 +71,8 @@ function ChannleControl(props) {
                 // setUrl(playbackList)
             } else {
                 setRecorderStatus('stopping');
-                recorder.once('end', () => {
+                recorder.once('end', clipName => {
+                    setClip([...clips, clipName]);
                     setRecorderStatus('stopped');
                     setIsBusy(recorder.isBusy);
                     setDuration(initialDuration);

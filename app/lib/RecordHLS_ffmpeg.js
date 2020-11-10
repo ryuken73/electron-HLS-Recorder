@@ -101,11 +101,11 @@ class RecoderHLS extends EventEmitter {
                 if(err) throw new Error(err);
                 console.log(`change filename : ${this.target} to ${newFullPath}`)
                 this.initialize();
-                this.emit('end')
+                this.emit('end', newFullPath)
             });
         } else {
             this.initialize();
-            this.emit('end')
+            this.emit('end', this.target)
         }
 
     }

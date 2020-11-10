@@ -11,7 +11,7 @@ import path from 'path';
 
 const {baseDirectory} = defaults;
 export default function ChannelContainer(props) {
-    const {order, channelName} = props;
+    const {order, channelName, clips, setClip} = props;
     console.log('rerender:', channelName)
     const [currentUrl, setCurrentUrl] = React.useState(cctvs[order].url);
     const [saveDirectory, setSaveDirectory] = React.useState(path.join(baseDirectory, channelName));
@@ -31,7 +31,7 @@ export default function ChannelContainer(props) {
         <SectionWithFullHeight width="900px">
             <Box display="flex">
                 <BorderedBox display="flex" alignContent="center" flexGrow="1" >
-                    <HLSPlayer channelName={channelName} url={currentUrl}></HLSPlayer>
+                    <HLSPlayer channelName={channelName} url={currentUrl} controls={true} autoplay={false}></HLSPlayer>
                 </BorderedBox>
                 <BorderedBox bgcolor="#2d2f3b" display="flex" alignContent="center" flexGrow="1" width="1">
                     <ChannelControl 
@@ -41,6 +41,8 @@ export default function ChannelContainer(props) {
                         saveDirectory={saveDirectory}
                         setCurrentUrl={setCurrentUrl}
                         setSaveDirectory={setSaveDirectory}
+                        clips={clips}
+                        setClip={setClip}
                     ></ChannelControl>
                 </BorderedBox>
             </Box>

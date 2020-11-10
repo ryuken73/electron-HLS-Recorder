@@ -1,9 +1,11 @@
 import React from 'react';
+import Box from '@material-ui/core/Box';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import FullHeightContainer from './template/FullHeightContainer';
 import FirstChildSection from './template/FirstChildSection';
 import HLSPlayer from './HLSPlayer';
-import ChannelContainer from './ChannelContainer'
+import ChannelContainer from './ChannelContainer';
+import PreviewContainer from './PreviewContainer';
 
 const theme = createMuiTheme({
   typography: {
@@ -25,11 +27,25 @@ const channelNames = [
 ]
 
 function App() {
+  const [clips, setClip] = React.useState([]);
   return (
-    <ThemeProvider theme={theme}>    
-      {channelNames.map((channelName, index) => (
-        <ChannelContainer key={index} order={index} channelName={channelName}></ChannelContainer>
-      ))}      
+    <ThemeProvider theme={theme}>
+      <Box display="flex">
+        <Box>
+          {channelNames.map((channelName, index) => (
+            <ChannelContainer 
+              key={index} 
+              order={index} 
+              channelName={channelName}
+              clips={clips}
+              setClip={setClip}
+            ></ChannelContainer>
+          ))}      
+        </Box>
+        <Box>
+          <PreviewContainer clips={clips}></PreviewContainer>
+        </Box>
+      </Box>
     </ThemeProvider>
   );
 }

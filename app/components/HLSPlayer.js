@@ -12,14 +12,15 @@ const HLSPlayer = (props) => {
         autoplay=true, 
         bigPlayButton=false, 
         bigPlayButtonCentered=false, 
-        url
+        url,
+        type='application/x-mpegURL'
     } = props;
     console.log('rerender HLSPlayer:',channelName)
 
     const srcObject = {
         src: url,
-        type: 'application/x-mpegURL',
-        handleManifestRedirects: true
+        type,
+        handleManifestRedirects: true,
     }
 
     const onPlayerReady = player => {
@@ -29,10 +30,11 @@ const HLSPlayer = (props) => {
         player.src(srcObject)
         setInterval(() => {
             // console.log(player.duration());
-            console.log(player.currentTime());
-            console.log(player.ended());
-            console.log(player.error());
-            console.log(player.paused());
+            // console.log(player.currentTime());
+            // console.log(player.ended());
+            // console.log(player.error());
+            // console.log(player.paused());
+
             // const timeRange = player.played();
             // const {length} = timeRange;
             // console.log(`${channelName}: ${timeRange.start()}-${timeRange.end()} : ${length}`)
@@ -81,6 +83,7 @@ const HLSPlayer = (props) => {
                 onSeeked={onVideoSeeked}
                 onEnd={onVideoEnd}
                 handleManifestRedirects={true}
+                liveui={true}
             />
         </div>
     );
