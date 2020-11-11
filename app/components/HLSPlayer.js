@@ -25,7 +25,7 @@ const HLSPlayer = (props) => {
 
     const createLogger = channelName => {
         return msg => {
-            console.log(`[${channelName}]${msg}`)
+            console.log(`[${channelName}]`,msg)
         }
     }
 
@@ -38,14 +38,14 @@ const HLSPlayer = (props) => {
         player.src(srcObject)
         setInterval(() => {
             // console.log(player.duration());
-            // console.log(player.currentTime());
+            console.log(player.currentTime());
             // console.log(player.ended());
-            // console.log(player.error());
+            console.log(player.error());
             // console.log(player.paused());
             channelLog(`pastSeekEnd ${player.liveTracker.pastSeekEnd()}`)
             channelLog(`isTracking ${player.liveTracker.isTracking()}`)
             channelLog(`behindLiveEdge ${player.liveTracker.behindLiveEdge()}`)
-            channelLog(`pastSeekEnd ${player.liveTracker.pastSeekEnd()}`)
+            channelLog(player.liveTracker)
         },1000)
     }
 
