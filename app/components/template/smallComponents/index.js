@@ -15,7 +15,8 @@ const SmallPaddingIconButton = styled(IconButton)`
 const SmallButton  = styled(Button)`
     margin-top: ${props => props.mt || "2px"};
     margin-bottom: ${props => props.mb || "2px"};
-    margin-left: 5px;
+    margin-left: ${props => props.ml || "5px"};
+    margin-right: ${props => props.mr || "5px"};
     font-size: 11px;
     padding-top: ${props => props.pt || "2px"};
     padding-bottom: ${props => props.pb || "2px"};

@@ -208,7 +208,7 @@ function ChannleControl(props) {
                 mt={"auto"}
                 mb={"5px"}
                 bgcolor={"#191d2e"}
-                height={"35px"}
+                height={"50px"}
                 onClick={recorder.isBusy ? onClickRecord('stop') : onClickRecord('start')}
             >{buttonString[recorderStatus]}</SmallButton>
         </Box>

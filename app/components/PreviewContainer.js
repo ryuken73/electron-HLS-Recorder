@@ -26,7 +26,7 @@ export default function PreviewContainer(props) {
                 control={true}
                 autoplay={false}
             ></HLSPlayer>
-            <BorderedBox bgcolor="#2d2f3b" height="100%">
+            <BorderedBox bgcolor="#2d2f3b" height="100%" ml="0px" mr="0px">
                 {clips.map(clip => <Box>{clip}</Box>)}
             </BorderedBox>
         </SectionWithFullHeight>     

@@ -27,6 +27,7 @@ class VideoPlayer extends Component {
     init_player(props) {
         const playerOptions = this.generate_player_options(props);
         this.player = videojs(document.querySelector(`#${this.playerId}`), playerOptions);
+        console.log(playerOptions);
         this.player.src(props.src)
         this.player.poster(props.poster)
         this.set_controls_visibility(this.player, props.hideControls);
@@ -40,6 +41,7 @@ class VideoPlayer extends Component {
         playerOptions.width = props.width;
         playerOptions.height = props.height;
         playerOptions.bigPlayButton = props.bigPlayButton;
+        playerOptions.liveui = props.liveui;
         const hidePlaybackRates = props.hidePlaybackRates || props.hideControls.includes('playbackrates');
         if (!hidePlaybackRates) playerOptions.playbackRates = props.playbackRates;
         return playerOptions;
@@ -89,7 +91,14 @@ class VideoPlayer extends Component {
         });
         this.player.on('error', error => {
             console.log(error)
+        });
+        this.player.on('durationchange', () => {
+            console.log(`durationchange : ${this.player.duration()}`)
+            console.log(`durationchange :`, this.player.options())
+            console.log(`durationchange :`, this.player.liveTracker.liveWindow())
+            console.log(`durationchange :`, this.player.liveTracker.trackingThreshold)
         })
+
     }
 
     render() {

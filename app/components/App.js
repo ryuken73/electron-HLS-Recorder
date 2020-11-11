@@ -39,6 +39,7 @@ function App() {
               channelName={channelName}
               clips={clips}
               setClip={setClip}
+              useWebUrls={true}
             ></ChannelContainer>
           ))}      
         </Box>

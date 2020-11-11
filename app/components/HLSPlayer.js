@@ -23,6 +23,14 @@ const HLSPlayer = (props) => {
         handleManifestRedirects: true,
     }
 
+    const createLogger = channelName => {
+        return msg => {
+            console.log(`[${channelName}]${msg}`)
+        }
+    }
+
+    const channelLog = createLogger(channelName);
+
     const onPlayerReady = player => {
         console.log("Player is ready: ", player);
         setPlayer(player);
@@ -34,35 +42,37 @@ const HLSPlayer = (props) => {
             // console.log(player.ended());
             // console.log(player.error());
             // console.log(player.paused());
-
-            // const timeRange = player.played();
-            // const {length} = timeRange;
-            // console.log(`${channelName}: ${timeRange.start()}-${timeRange.end()} : ${length}`)
+            channelLog(`pastSeekEnd ${player.liveTracker.pastSeekEnd()}`)
+            channelLog(`isTracking ${player.liveTracker.isTracking()}`)
+            channelLog(`behindLiveEdge ${player.liveTracker.behindLiveEdge()}`)
+            channelLog(`pastSeekEnd ${player.liveTracker.pastSeekEnd()}`)
         },1000)
     }
 
+
+
     const onVideoPlay = duration => {
-        console.log("Video played at: ", duration);
+        channelLog("Video played at: ", duration);
     }
 
     const onVideoPause = duration =>{
-        console.log("Video paused at: ", duration);
+        channelLog("Video paused at: ", duration);
     }
 
     const onVideoTimeUpdate = duration => {
-        // console.log("Time updated: ", duration);
+        // channelLog("Time updated: ", duration);
     }
 
     const onVideoSeeking = duration => {
-        console.log("Video seeking: ", duration);
+        channelLog("Video seeking: ", duration);
     }
 
     const onVideoSeeked = (from, to) => {
-        console.log(`Video seeked from ${from} to ${to}`);
+        channelLog(`Video seeked from ${from} to ${to}`);
     }
 
     const onVideoEnd = () => {
-        console.log("Video ended");
+        channelLog("Video ended");
     }
     return (
         <div>
