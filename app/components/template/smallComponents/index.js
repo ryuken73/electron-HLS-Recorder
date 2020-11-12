@@ -24,6 +24,7 @@ const SmallButton  = styled(Button)`
     padding-right: ${props => props.pr || "10px"};
     background: ${props => props.bgcolor || defaultBgColor};
     height: ${props => props.height};
+    min-width: ${props => props.minWidth};
 `
 
 const SmallMarginTextField = styled(TextField)`

@@ -33,7 +33,7 @@ export default function PreviewContainer(props) {
                 autoplay={true}
             ></HLSPlayer>
             <BorderedBox bgcolor="#2d2f3b" height="100%" ml="0px" mr="0px" overflow="hidden">
-                {clips.map(clip => <ClipContainer key={clip} clipFullName={clip} clipName={path.basename(clip)} playClip={playClip}></ClipContainer>)}
+                {clips.map(clip => <ClipContainer key={clip} clipFullName={clip} currentClip={currentUrl} clipName={path.basename(clip)} playClip={playClip}></ClipContainer>)}
             </BorderedBox>
         </SectionWithFullHeight>     
     )

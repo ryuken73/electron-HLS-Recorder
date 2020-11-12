@@ -24,7 +24,7 @@ function ChannleControl(props) {
         'started' : 'stop rendering',
         'stopping' : 'stopping...'
     }
-    const playbackList = 'd:/temp/cctv/stream.m3u8'
+    const playbackList = path.join(saveDirectory, `${channelName}_stream.m3u8`);
 
     const progressWriter = progress => {
         console.log({...progress, elapsed: recorder.elapsed, ...process.memoryUsage()});
@@ -43,7 +43,7 @@ function ChannleControl(props) {
         const recorder = HLSRecorder.createHLSRecoder(options);
         recorder.on('progress', progressWriter)
         setRecorder(recorder);
-    }, [currentUrl])
+    }, [currentUrl, saveDirectory])
 
     const onChange = type => {
         return event => {
@@ -66,11 +66,15 @@ function ChannleControl(props) {
                 recorder.once('start', (cmd) => {
                     setRecorderStatus('started')
                     setIsBusy(recorder.isBusy);
+                    // setTimeout(() => {
+                    //     setCurrentUrl(playbackList)
+                    // }, 10000)
                 })
                 recorder.start();
                 // setUrl(playbackList)
             } else {
                 setRecorderStatus('stopping');
+                // setCurrentUrl('')
                 recorder.once('end', clipName => {
                     setClip( prevClips => [clipName, ...prevClips]);
                     setRecorderStatus('stopped');
@@ -90,7 +94,7 @@ function ChannleControl(props) {
                     width="100%"
                     variant="outlined"
                     margin="dense"
-                    bgcolor={isBusy ? "red" : "black"}
+                    bgcolor={isBusy ? "maroon" : "black"}
                     value={duration}
                     fontSize={"20px"}
                     onChange={onChange('duraion')}

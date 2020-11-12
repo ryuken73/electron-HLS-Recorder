@@ -42,10 +42,10 @@ const HLSPlayer = (props) => {
             // console.log(player.ended());
             console.log(player.error());
             // console.log(player.paused());
-            channelLog(`pastSeekEnd ${player.liveTracker.pastSeekEnd()}`)
-            channelLog(`isTracking ${player.liveTracker.isTracking()}`)
-            channelLog(`behindLiveEdge ${player.liveTracker.behindLiveEdge()}`)
-            channelLog(player.liveTracker)
+            // channelLog(`pastSeekEnd ${player.liveTracker.pastSeekEnd()}`)
+            // channelLog(`isTracking ${player.liveTracker.isTracking()}`)
+            // channelLog(`behindLiveEdge ${player.liveTracker.behindLiveEdge()}`)
+            // channelLog(player.liveTracker)
         },1000)
     }
 

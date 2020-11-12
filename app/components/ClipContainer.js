@@ -6,10 +6,11 @@ import {SmallButton}  from './template/smallComponents';
 
 
 export default function ClipContainer(props) {
-    const {clipFullName, clipName, playClip} = props;
+    const {clipFullName, currentClip, clipName, playClip} = props;
     const onClickClip = () => {
         playClip(clipFullName);
     }
+    const onPlaying = (clipFullName === currentClip)
     const clipPreview = {
         title: <Typography variant="body1">{clipName}</Typography>,
         content: (
@@ -22,7 +23,8 @@ export default function ClipContainer(props) {
                     mb={"0px"}
                     bgcolor={"#191d2e"}
                     onClick={onClickClip}
-                >Preview</SmallButton>
+                    minWidth={"75px"}
+                >{onPlaying ? "Playing": "Preview"}</SmallButton>
             </Box>
         )
     }
@@ -30,7 +32,7 @@ export default function ClipContainer(props) {
         <BorderedList 
             title={clipPreview.title} 
             content={clipPreview.content} 
-            bgcolor={"#232738"}
+            bgcolor={onPlaying ? "snow" :"#232738"}
         ></BorderedList>
     )
 }
