@@ -68,11 +68,11 @@ app.on('ready', async () => {
   ) {
     await installExtensions();
   }
-  const {width,height} = screen.getPrimaryDisplay().workAreaSize;
+  // const {width,height} = screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({
     show: false,
-    width: width,
-    height: height,
+    width: 1300,
+    height: 940,
     backgroundColor: '#252839',
     webPreferences: {
       nodeIntegration: true,

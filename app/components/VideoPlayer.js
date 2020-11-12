@@ -16,6 +16,7 @@ class VideoPlayer extends Component {
         console.log('receiveProps:',nextProps)
         this.set_controls_visibility(this.player, nextProps.hideControls);
         if(this.props.src !== nextProps.src){
+            // if (this.player) this.player.dispose();
             this.init_player(nextProps);
         }
     }
@@ -104,13 +105,13 @@ class VideoPlayer extends Component {
     render() {
         return (
             // <video id={this.playerId} className={`video-js ${this.props.bigPlayButtonCentered? 'vjs-big-play-centered' : ''} ${this.props.className}`}></video>
-            <video id={this.playerId} className={`video-js ${this.props.bigPlayButtonCentered? 'vjs-big-play-centered' : ''} ${this.props.className}`}></video>
+            <video id={this.playerId} className={`video-js vjs-liveui ${this.props.bigPlayButtonCentered? 'vjs-big-play-centered' : ''} ${this.props.className}`}></video>
         )
     }
 }
 
 VideoPlayer.propTypes = {
-    src: PropTypes.string,
+    src: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     poster: PropTypes.string,
     controls: PropTypes.bool,
     autoplay: PropTypes.bool,

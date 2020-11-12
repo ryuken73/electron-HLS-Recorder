@@ -72,7 +72,7 @@ function ChannleControl(props) {
             } else {
                 setRecorderStatus('stopping');
                 recorder.once('end', clipName => {
-                    setClip([...clips, clipName]);
+                    setClip( prevClips => [clipName, ...prevClips]);
                     setRecorderStatus('stopped');
                     setIsBusy(recorder.isBusy);
                     setDuration(initialDuration);
@@ -90,7 +90,7 @@ function ChannleControl(props) {
                     width="100%"
                     variant="outlined"
                     margin="dense"
-                    bgcolor={"black"}
+                    bgcolor={isBusy ? "red" : "black"}
                     value={duration}
                     fontSize={"20px"}
                     onChange={onChange('duraion')}
