@@ -1,6 +1,6 @@
 {
-  "name": "electron-react-boilerplate",
-  "productName": "ElectronReact",
+  "name": "hls-recorder",
+  "productName": "HLS-Recorder",
   "version": "0.18.0",
   "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
   "scripts": {
@@ -56,15 +56,16 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.develar.ElectronReact",
+    "productName": "HLS-Recorder",
+    "appId": "org.develar.HLSRecorder",
     "files": [
       "dist/",
       "node_modules/",
       "app.html",
       "main.prod.js",
       "main.prod.js.map",
-      "package.json"
+      "package.json",
+      "bin/"
     ],
     "dmg": {
       "contents": [

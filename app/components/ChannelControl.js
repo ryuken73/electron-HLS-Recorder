@@ -18,6 +18,9 @@ function ChannleControl(props) {
     const [recorder, setRecorder] = React.useState({});
     const [isBusy, setIsBusy] = React.useState(false);
     const [recorderStatus, setRecorderStatus] = React.useState('stopped');
+    const {remote} = require('electron');
+
+
     const buttonString = {
         'stopped' : 'start rendering',
         'starting' : 'starting...',
@@ -31,13 +34,16 @@ function ChannleControl(props) {
         setDuration(progress.duration);
     }
     React.useEffect(() => {
+        const appPath = remote.app.getAppPath();
+        console.log(appPath)
         const options = {
             name: channelName,
             src: currentUrl, 
             target: path.join(saveDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`), 
             enablePlayback: true, 
             playbackList: path.join(saveDirectory, `${channelName}_stream.m3u8`),
-            ffmpegBinary: 'd:/temp/cctv/ffmpeg.exe',
+            // ffmpegBinary: path.join(appPath, 'bin', 'ffmpeg.exe'),
+            ffmpegBinary: path.join('../bin', 'ffmpeg.exe'),
             renameDoneFile: true
         }
         const recorder = HLSRecorder.createHLSRecoder(options);
@@ -71,6 +77,7 @@ function ChannleControl(props) {
                     // }, 10000)
                 })
                 recorder.start();
+                
                 // setUrl(playbackList)
             } else {
                 setRecorderStatus('stopping');
