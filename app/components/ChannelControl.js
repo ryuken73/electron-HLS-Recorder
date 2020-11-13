@@ -6,6 +6,7 @@ import {SmallMarginTextField, SmallPaddingSelect, SmallButton}  from './template
 import OptionSelectList from './template/OptionSelectList';
 import HLSRecorder from '../lib/RecordHLS_ffmpeg';
 import path from 'path';
+import {getAbsolutePath} from '../lib/electronUtil';
 
 const initialDuration = '00:00:00.00';
 function ChannleControl(props) {
@@ -21,6 +22,7 @@ function ChannleControl(props) {
     const {remote} = require('electron');
 
 
+
     const buttonString = {
         'stopped' : 'start rendering',
         'starting' : 'starting...',
@@ -34,8 +36,9 @@ function ChannleControl(props) {
         setDuration(progress.duration);
     }
     React.useEffect(() => {
-        const appPath = remote.app.getAppPath();
-        console.log(appPath)
+        // const appPath = remote.app.getAppPath();
+        const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
+        console.log(ffmpegPath)
         const options = {
             name: channelName,
             src: currentUrl, 
@@ -43,7 +46,7 @@ function ChannleControl(props) {
             enablePlayback: true, 
             playbackList: path.join(saveDirectory, `${channelName}_stream.m3u8`),
             // ffmpegBinary: path.join(appPath, 'bin', 'ffmpeg.exe'),
-            ffmpegBinary: path.join('../bin', 'ffmpeg.exe'),
+            ffmpegBinary: ffmpegPath,
             renameDoneFile: true
         }
         const recorder = HLSRecorder.createHLSRecoder(options);

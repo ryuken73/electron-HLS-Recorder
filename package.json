@@ -67,6 +67,7 @@
       "package.json",
       "bin/"
     ],
+    "asarUnpack": ["bin/ffmpeg.exe"],
     "dmg": {
       "contents": [
         {
