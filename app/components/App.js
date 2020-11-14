@@ -21,9 +21,9 @@ const theme = createMuiTheme({
 
 const channelNames = [
   'channel1',
-  'channel2',
-  'channel3',
-  'channel4',
+  // 'channel2',
+  // 'channel3',
+  // 'channel4',
 ]
 
 function App() {
