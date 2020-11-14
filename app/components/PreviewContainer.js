@@ -12,7 +12,7 @@ import path from 'path';
 
 const {baseDirectory} = defaults;
 export default function PreviewContainer(props) {
-    const {clips} = props;
+    const {clips, removeClip} = props;
     const [currentUrl, setCurrentUrl] = React.useState('');
     const [type, setType] = React.useState('video/mp4');
 
@@ -33,7 +33,7 @@ export default function PreviewContainer(props) {
                 autoplay={true}
             ></HLSPlayer>
             <BorderedBox bgcolor="#2d2f3b" height="100%" ml="0px" mr="0px" overflow="hidden">
-                {clips.map(clip => <ClipContainer key={clip} clipFullName={clip} currentClip={currentUrl} clipName={path.basename(clip)} playClip={playClip}></ClipContainer>)}
+                {clips.map(clip => <ClipContainer key={clip} clipFullName={clip} removeClip={removeClip} currentClip={currentUrl} clipName={path.basename(clip)} playClip={playClip}></ClipContainer>)}
             </BorderedBox>
         </SectionWithFullHeight>     
     )

@@ -27,8 +27,17 @@ const channelNames = [
   'channel4',
 ]
 
+
 function App() {
   const [clips, setClip] = React.useState([]);
+
+  const removeClip = React.useCallback((clipFullName) => {
+    console.log('########', clipFullName);
+    setClip(oldClips => {
+      return oldClips.filter(clip => clip !== clipFullName)
+    })
+  }, [clips])
+
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex">
@@ -45,7 +54,7 @@ function App() {
           ))}      
         </Box>
         <Box>
-          <PreviewContainer clips={clips}></PreviewContainer>
+          <PreviewContainer clips={clips} removeClip={removeClip}></PreviewContainer>
         </Box>
       </Box>
     </ThemeProvider>

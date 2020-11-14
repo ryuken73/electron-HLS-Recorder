@@ -10,14 +10,14 @@ const defaultBgColor = deepPurple[800];
 const defaultFontColor = 'white';
 
 const SmallPaddingIconButton = styled(IconButton)`
-    padding: 5px;
+    padding: ${props => props.padding || "5px"};
 `
 const SmallButton  = styled(Button)`
     margin-top: ${props => props.mt || "2px"};
     margin-bottom: ${props => props.mb || "2px"};
     margin-left: ${props => props.ml || "5px"};
     margin-right: ${props => props.mr || "5px"};
-    font-size: 11px;
+    font-size: ${props => props.fontSize || "11px"};
     padding-top: ${props => props.pt || "2px"};
     padding-bottom: ${props => props.pb || "2px"};
     padding-left: ${props => props.pl || "10px"};
@@ -67,5 +67,5 @@ export {
     SmallMarginTextField,
     SmallPaddingFormControlLabel,
     SmallPaddingSelect,
-    SmallButton
+    SmallButton,    
 }
