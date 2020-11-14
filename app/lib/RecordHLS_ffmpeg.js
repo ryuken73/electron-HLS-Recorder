@@ -19,6 +19,7 @@ class RecoderHLS extends EventEmitter {
             ffmpegBinary='./ffmpeg.exe',
             renameDoneFile=false
         } = options;
+        console.log(ffmpegBinary)
         this._name = name;
         this._src = src;
         this._target = target;
@@ -138,7 +139,7 @@ class RecoderHLS extends EventEmitter {
         .on('progress', this.progressHandler)
         .on('error', error => {
             console.log('ffmpeg error: ', error) ;
-            this.onWriteStreamClosed()
+            this.onWriteStreamClosed();
         })
         .on('end', (stdout, stderr) => {
             console.log('ffmpeg end!')
