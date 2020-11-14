@@ -1598,7 +1598,7 @@
 
 "@material-ui/icons@^4.9.1":
   version "4.9.1"
-  resolved "http://10.10.16.81:4873/@material-ui%2ficons/-/icons-4.9.1.tgz#fdeadf8cb3d89208945b33dbc50c7c616d0bd665"
+  resolved "https://registry.yarnpkg.com/@material-ui%2ficons/-/icons-4.9.1.tgz#fdeadf8cb3d89208945b33dbc50c7c616d0bd665"
   integrity sha512-GBitL3oBWO0hzBhvA9KxqcowRUsA0qzwKkURyC8nppnC3fw54KPKZ+d4V1Eeg/UnDRSzDaI9nGCdel/eh9AQMg==
   dependencies:
     "@babel/runtime" "^7.4.4"

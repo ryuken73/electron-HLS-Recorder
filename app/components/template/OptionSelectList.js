@@ -8,7 +8,7 @@ import {SmallPaddingSelect}  from './smallComponents';
 
 
 export default function OptionSelectList(props) {
-    const {subtitle, minWidth, currentItem, menuItems, onChangeSelect, multiple=true, titlewidth="20%", bgcolor, selectColor} = props;
+    const {subtitle, minWidth, currentItem, menuItems, onChangeSelect, multiple=true, titlewidth="20%", bgcolor, selectColor, disabled=false} = props;
     const {smallComponent} = props;
     const SelectComponent = smallComponent ? SmallPaddingSelect : Select;
     const optionSelect = {
@@ -24,6 +24,7 @@ export default function OptionSelectList(props) {
                         multiple={multiple}
                         onChange={onChangeSelect}
                         bgcolor={selectColor}
+                        disabled={disabled}
                     >
                         {menuItems.map((menuItem, index) => {
                             const {value, label} = menuItem;

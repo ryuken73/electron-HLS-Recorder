@@ -25,6 +25,9 @@ const SmallButton  = styled(Button)`
     background: ${props => props.bgcolor || defaultBgColor};
     height: ${props => props.height};
     min-width: ${props => props.minWidth};
+    &:disabled {
+        color: darkgreen;
+    }
 `
 
 const SmallMarginTextField = styled(TextField)`

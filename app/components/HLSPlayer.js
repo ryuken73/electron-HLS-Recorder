@@ -37,7 +37,7 @@ const HLSPlayer = (props) => {
         player.muted(true);
         // player.src(srcObject)
         setInterval(() => {
-            // console.log(player.duration());
+            console.log(player.duration());
             console.log(player.currentTime());
             // console.log(player.ended());
             console.log(player.error());
@@ -46,10 +46,8 @@ const HLSPlayer = (props) => {
             // channelLog(`isTracking ${player.liveTracker.isTracking()}`)
             // channelLog(`behindLiveEdge ${player.liveTracker.behindLiveEdge()}`)
             // channelLog(player.liveTracker)
-        },1000)
+        },10000)
     }
-
-
 
     const onVideoPlay = duration => {
         channelLog("Video played at: ", duration);

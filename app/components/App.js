@@ -53,9 +53,9 @@ function App() {
             ></ChannelContainer>
           ))}      
         </Box>
-        <Box>
+        {/* <Box>
           <PreviewContainer clips={clips} removeClip={removeClip}></PreviewContainer>
-        </Box>
+        </Box> */}
       </Box>
     </ThemeProvider>
   );

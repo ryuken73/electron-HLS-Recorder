@@ -35,6 +35,7 @@ function ChannleControl(props) {
         console.log({...progress, elapsed: recorder.elapsed, ...process.memoryUsage()});
         setDuration(progress.duration);
     }
+
     React.useEffect(() => {
         // const appPath = remote.app.getAppPath();
         const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
@@ -71,10 +72,11 @@ function ChannleControl(props) {
     const onClickRecord = (cmd) => {
         return () => {
             if(cmd === 'start'){
+                setIsBusy(true);
                 setRecorderStatus('starting');
                 recorder.once('start', (cmd) => {
                     setRecorderStatus('started')
-                    setIsBusy(recorder.isBusy);
+                    // setIsBusy(recorder.isBusy);
                     // setTimeout(() => {
                     //     setCurrentUrl(playbackList)
                     // }, 10000)
@@ -88,7 +90,7 @@ function ChannleControl(props) {
                 recorder.once('end', clipName => {
                     setClip( prevClips => [clipName, ...prevClips]);
                     setRecorderStatus('stopped');
-                    setIsBusy(recorder.isBusy);
+                    setIsBusy(false);
                     setDuration(initialDuration);
                 })
                 recorder.stop();
@@ -127,6 +129,7 @@ function ChannleControl(props) {
                         mb={"0px"}
                         bgcolor={"#2d2f3b"}
                         textAlign={"left"}
+                        disabled={isBusy}
                     ></SmallMarginTextField>
                 </Box>
                 <Box textAlign="center">
@@ -138,6 +141,7 @@ function ChannleControl(props) {
                         mb={"0px"}
                         bgcolor={"#191d2e"}
                         onClick={onClickSetManualUrl}
+                        disabled={isBusy}
                     >Go</SmallButton>
                 </Box>
             </React.Fragment>
@@ -169,6 +173,7 @@ function ChannleControl(props) {
                         mb={"0px"}
                         bgcolor={"#191d2e"}
                         onClick={onClickSelectSaveDirectory}
+                        disabled={isBusy}
                     >Change</SmallButton>
                 </Box>
             </React.Fragment>
@@ -203,6 +208,7 @@ function ChannleControl(props) {
                 smallComponent={true}
                 bgcolor={'#232738'}
                 selectColor={"#2d2f3b"}
+                disabled={isBusy}
             ></OptionSelectList>
             <BorderedList 
                 title={manualUrl.title} 
@@ -223,6 +229,7 @@ function ChannleControl(props) {
                 mb={"5px"}
                 bgcolor={"#191d2e"}
                 height={"50px"}
+                disabled={isBusy && (recorderStatus==='starting'||recorderStatus==='stopping')}
                 onClick={recorder.isBusy ? onClickRecord('stop') : onClickRecord('start')}
             >{buttonString[recorderStatus]}</SmallButton>
         </Box>
