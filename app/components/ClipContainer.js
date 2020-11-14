@@ -6,13 +6,13 @@ import {SmallButton, SmallPaddingIconButton, SmallPaddingButton}  from './templa
 import CloseIcon from '@material-ui/icons/Close';
 
 export default function ClipContainer(props) {
-    const {clipFullName, currentClip, clipName, playClip, removeClip} = props;
+    const {clipFullName, currentClip, clipName, playClip, removeFromList} = props;
     const onClickClip = () => {
         playClip(clipFullName);
     }
     const onPlaying = (clipFullName === currentClip)
     const deleteClip = () => {
-        removeClip(clipFullName);
+        removeFromList(clipFullName);
     }
     const clipPreview = {
         title: (   
@@ -20,7 +20,7 @@ export default function ClipContainer(props) {
                 <SmallPaddingIconButton onClick={deleteClip} padding="1px" size="small">
                     <CloseIcon fontSize={"small"}></CloseIcon>
                 </SmallPaddingIconButton>
-                <Box fontSize="11px" fontFamily="Roboto, Helvetica, Arial, sans-serif">{clipName}</Box>
+                <Box fontSize="10px" fontFamily="Roboto, Helvetica, Arial, sans-serif">{clipName}</Box>
             </Box>         
         ),
         content: (
