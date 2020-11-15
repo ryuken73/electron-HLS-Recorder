@@ -27,6 +27,7 @@ class VideoPlayer extends Component {
 
     init_player(props) {
         const playerOptions = this.generate_player_options(props);
+        console.log(this.playerId)
         this.player = videojs(document.querySelector(`#${this.playerId}`), playerOptions);
         console.log(playerOptions);
         this.player.src(props.src)
@@ -70,12 +71,12 @@ class VideoPlayer extends Component {
         });
         this.player.on('timeupdate', (e) => {
             props.onTimeUpdate(this.player.currentTime());
-            previousTime = currentTime;
-            currentTime = this.player.currentTime();
-            if (previousTime < currentTime) {
-                position = previousTime;
-                previousTime = currentTime;
-            }
+            // previousTime = currentTime;
+            // currentTime = this.player.currentTime();
+            // if (previousTime < currentTime) {
+            //     position = previousTime;
+            //     previousTime = currentTime;
+            // }
         });
         this.player.on('seeking', () => {
             this.player.off('timeupdate', () => { });

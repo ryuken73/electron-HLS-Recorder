@@ -15,6 +15,7 @@ export default function ChannelContainer(props) {
     console.log('rerender:', channelName, useWebUrls)
     const [currentUrl, setCurrentUrl] = React.useState(cctvs[order].url);
     const [saveDirectory, setSaveDirectory] = React.useState(path.join(baseDirectory, channelName));
+    const [mountPlayer, setMountPlayer] = React.useState(true);
 
     React.useEffect(() => {
         async function mkdir(){
@@ -25,13 +26,18 @@ export default function ChannelContainer(props) {
             }
         }
         mkdir();
+        setInterval(() => {
+            setMountPlayer(false)
+            setMountPlayer(true)
+        },600000)
+
     },[])
 
     return (
         <SectionWithFullHeight width="900px">
             <Box display="flex">
                 <BorderedBox display="flex" alignContent="center" flexGrow="1" >
-                    <HLSPlayer channelName={channelName} url={currentUrl} controls={true} autoplay={true}></HLSPlayer>
+                    {mountPlayer && <HLSPlayer channelName={channelName} url={currentUrl} controls={true} autoplay={true}></HLSPlayer>}
                 </BorderedBox>
                 <BorderedBox bgcolor="#2d2f3b" display="flex" alignContent="center" flexGrow="1" width="1">
                     <ChannelControl 

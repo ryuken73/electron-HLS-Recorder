@@ -40,7 +40,8 @@ const HLSPlayer = (props) => {
             console.log(player.duration());
             console.log(player.currentTime());
             // console.log(player.ended());
-            console.log(player.error());
+            console.log(player.readyState());
+            console.log(player.networkState());
             // console.log(player.paused());
             // channelLog(`pastSeekEnd ${player.liveTracker.pastSeekEnd()}`)
             // channelLog(`isTracking ${player.liveTracker.isTracking()}`)
