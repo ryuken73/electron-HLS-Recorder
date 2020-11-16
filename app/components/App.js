@@ -19,12 +19,12 @@ const theme = createMuiTheme({
   },
 });
 
-
 const channelNames = [
   'channel1',
   'channel2',
   'channel3',
   'channel4',
+  'channel5'
 ]
 
 
@@ -49,13 +49,12 @@ function App() {
               channelName={channelName}
               clips={clips}
               setClip={setClip}
-              useWebUrls={true}
             ></ChannelContainer>
           ))}      
         </Box>
-        {/* <Box>
+        <Box>
           <PreviewContainer clips={clips} removeClip={removeClip}></PreviewContainer>
-        </Box> */}
+        </Box>
       </Box>
     </ThemeProvider>
   );

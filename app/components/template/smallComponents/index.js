@@ -24,7 +24,7 @@ const SmallButton  = styled(Button)`
     padding-right: ${props => props.pr || "10px"};
     background: ${props => props.bgcolor || defaultBgColor};
     height: ${props => props.height};
-    min-width: ${props => props.minWidth};
+    min-width: ${props => props.minwidth};
     &:disabled {
         color: darkgreen;
     }
@@ -40,7 +40,7 @@ const SmallMarginTextField = styled(TextField)`
         padding-bottom: ${props => props.pb || "5px"};
         color: ${props => props.textColor || defaultFontColor};
         font-size: ${props => props.fontSize || ""};
-        text-align: ${props => props.textAlign || "center"};
+        text-align: ${props => props.textalign || "center"};
         width: ${props => props.width || "100%"};
     }
     .MuiOutlinedInput-root {

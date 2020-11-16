@@ -6,8 +6,8 @@ const HLSPlayer = (props) => {
     // const [player, setPlayer] = React.useState({});
     const {
         channelName,
-        width=360, 
-        height=205, 
+        width=320, 
+        height=180, 
         controls=false, 
         autoplay=true, 
         bigPlayButton=false, 
@@ -16,6 +16,8 @@ const HLSPlayer = (props) => {
         type='application/x-mpegURL'
     } = props;
     console.log('rerender HLSPlayer:',channelName)
+
+
 
     const srcObject = {
         src: url,

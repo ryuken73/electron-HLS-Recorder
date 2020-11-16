@@ -5,7 +5,7 @@ const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
 
 const mp4Options = ['-acodec', 'copy', '-vcodec', 'copy'];;
-const hlsOptions = ['-f','hls','-hls_time','4','-hls_list_size','5','-hls_flags','delete_segments',];
+const hlsOptions = ['-f','hls','-hls_time','4','-hls_list_size','10','-hls_flags','delete_segments','-g',25,'-sc_threshold',0,'-preset','ultrafast'];
 
 class RecoderHLS extends EventEmitter {
     constructor(options){

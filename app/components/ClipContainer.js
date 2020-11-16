@@ -33,7 +33,7 @@ export default function ClipContainer(props) {
                     mb={"0px"}
                     bgcolor={"#191d2e"}
                     onClick={onClickClip}
-                    minWidth={"75px"}
+                    minwidth={"75px"}
                     fontSize={"10px"}
                 >{onPlaying ? "SELECTED": "Preview"}</SmallButton>
             </Box>

@@ -13,15 +13,15 @@ function ChannleControl(props) {
     const {channelName, cctvs} = props;
     const {currentUrl="d:/temp/cctv/stream.m3u8"} = props;
     const {saveDirectory="d:/temp/cctv"} = props;
+    const {setPlaybackMode} = props;
     const {setCurrentUrl, setSaveDirectory, clips, setClip} = props;
     const [duration, setDuration] = React.useState(initialDuration);
     const [urlTyped, setManualUrl] = React.useState('');
     const [recorder, setRecorder] = React.useState({});
+    const [previousUrl, setPreviousUrl] = React.useState('');
     const [isBusy, setIsBusy] = React.useState(false);
     const [recorderStatus, setRecorderStatus] = React.useState('stopped');
     const {remote} = require('electron');
-
-
 
     const buttonString = {
         'stopped' : 'start rendering',
@@ -37,7 +37,11 @@ function ChannleControl(props) {
     }
 
     React.useEffect(() => {
-        // const appPath = remote.app.getAppPath();
+        if(currentUrl === playbackList){
+            console.log('now playback. no need to create recorder');
+            return;
+        }
+        console.log('change currentUrl or saveDirectory')
         const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
         console.log(ffmpegPath)
         const options = {
@@ -46,9 +50,8 @@ function ChannleControl(props) {
             target: path.join(saveDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`), 
             enablePlayback: true, 
             playbackList: path.join(saveDirectory, `${channelName}_stream.m3u8`),
-            // ffmpegBinary: path.join(appPath, 'bin', 'ffmpeg.exe'),
             ffmpegBinary: ffmpegPath,
-            renameDoneFile: true
+            renameDoneFile: true,
         }
         const recorder = HLSRecorder.createHLSRecoder(options);
         recorder.on('progress', progressWriter)
@@ -75,11 +78,12 @@ function ChannleControl(props) {
                 setIsBusy(true);
                 setRecorderStatus('starting');
                 recorder.once('start', (cmd) => {
-                    setRecorderStatus('started')
-                    // setIsBusy(recorder.isBusy);
-                    // setTimeout(() => {
-                    //     setCurrentUrl(playbackList)
-                    // }, 10000)
+                    setRecorderStatus('started');
+                    setTimeout(() => {
+                        setPreviousUrl(currentUrl);
+                        setCurrentUrl(playbackList);
+                        setPlaybackMode(true);
+                    },3000);
                 })
                 recorder.start();
                 
@@ -88,10 +92,15 @@ function ChannleControl(props) {
                 setRecorderStatus('stopping');
                 // setCurrentUrl('')
                 recorder.once('end', clipName => {
+                    console.log('################################',previousUrl)
                     setClip( prevClips => [clipName, ...prevClips]);
                     setRecorderStatus('stopped');
                     setIsBusy(false);
                     setDuration(initialDuration);
+                    setCurrentUrl(previousUrl);
+                    setPlaybackMode(false);
+
+
                 })
                 recorder.stop();
             }
@@ -128,7 +137,7 @@ function ChannleControl(props) {
                         mt={"0px"}
                         mb={"0px"}
                         bgcolor={"#2d2f3b"}
-                        textAlign={"left"}
+                        textalign={"left"}
                         disabled={isBusy}
                     ></SmallMarginTextField>
                 </Box>
@@ -161,7 +170,7 @@ function ChannleControl(props) {
                         mt={"0px"}
                         mb={"0px"}
                         bgcolor={"#2d2f3b"}
-                        textAlign={"left"}
+                        textalign={"left"}
                     ></SmallMarginTextField>
                 </Box>
                 <Box textAlign="center">
@@ -228,7 +237,7 @@ function ChannleControl(props) {
                 mt={"auto"}
                 mb={"5px"}
                 bgcolor={"#191d2e"}
-                height={"50px"}
+                height={"30px"}
                 disabled={isBusy && (recorderStatus==='starting'||recorderStatus==='stopping')}
                 onClick={recorder.isBusy ? onClickRecord('stop') : onClickRecord('start')}
             >{buttonString[recorderStatus]}</SmallButton>
