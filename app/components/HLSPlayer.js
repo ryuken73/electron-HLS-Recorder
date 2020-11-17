@@ -38,18 +38,21 @@ const HLSPlayer = (props) => {
         // setPlayer(player);
         player.muted(true);
         // player.src(srcObject)
+        /*
         setInterval(() => {
             console.log(player.duration());
             console.log(player.currentTime());
-            // console.log(player.ended());
             console.log(player.readyState());
             console.log(player.networkState());
+
+            // console.log(player.ended());
             // console.log(player.paused());
             // channelLog(`pastSeekEnd ${player.liveTracker.pastSeekEnd()}`)
             // channelLog(`isTracking ${player.liveTracker.isTracking()}`)
             // channelLog(`behindLiveEdge ${player.liveTracker.behindLiveEdge()}`)
             // channelLog(player.liveTracker)
         },10000)
+        */
     }
 
     const onVideoPlay = duration => {

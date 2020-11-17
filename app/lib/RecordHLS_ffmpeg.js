@@ -5,7 +5,7 @@ const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
 
 const mp4Options = ['-acodec', 'copy', '-vcodec', 'copy'];;
-const hlsOptions = ['-f','hls','-hls_time','4','-hls_list_size','10','-hls_flags','delete_segments','-g',25,'-sc_threshold',0,'-preset','ultrafast'];
+const hlsOptions = ['-f','hls','-hls_time','2','-hls_list_size','10','-hls_flags','delete_segments','-g',25,'-sc_threshold',0,'-preset','ultrafast'];
 
 class RecoderHLS extends EventEmitter {
     constructor(options){
@@ -23,6 +23,7 @@ class RecoderHLS extends EventEmitter {
         this._name = name;
         this._src = src;
         this._target = target;
+        this._createTime = Date.now();
         this._enablePlayback = enablePlayback;
         this._playbackList = playbackList;
         this._ffmpegBinary = ffmpegBinary;
@@ -54,6 +55,7 @@ class RecoderHLS extends EventEmitter {
     get isRecording() { return this._isRecording }
     get isPreparing() { return this._isPreparing }
     get startTime() { return this._startTime }
+    get createTime() { return this._createTime }
     get bytesRecorded() { return this._bytesRecorded }
     get duration() { return this._durationRecorded }
     get rStream() { return this._rStream }
@@ -64,7 +66,10 @@ class RecoderHLS extends EventEmitter {
         console.log(this.startTime, elapsedMS)
         return elapsedMS > 0 ? elapsedMS : 0;
     }
-    get isBusy() { return this.isRecording || this.isPreparing }  
+    get isBusy() { 
+        console.log(this.isRecording, this.isPreparing)
+        return this.isRecording || this.isPreparing 
+    }  
     set src(url) { 
         if(this.isBusy) throw new Error("because recorder is busy, can't change");
         this._src = url;
@@ -79,6 +84,7 @@ class RecoderHLS extends EventEmitter {
     set isRecording(bool) { this._isRecording = bool }
     set isPreparing(bool) { this._isPreparing = bool }
     set startTime(date) { this._startTime = date }
+    set createTime(date) { this._createTime = date }
     set rStream(stream) { this._rStream = stream }
     set wStream(stream) { this._wStream = stream }
     set bytesRecorded(bytes) { this._bytesRecorded = bytes }
@@ -150,7 +156,7 @@ class RecoderHLS extends EventEmitter {
     stop = () => {
         if(!this.isRecording){
             console.log('start recording first!.')
-            throw new Error('astart recording first!.')
+            throw new Error('start recording first!.')
         }
         this.command.ffmpegProc.stdin.write('q');
     }

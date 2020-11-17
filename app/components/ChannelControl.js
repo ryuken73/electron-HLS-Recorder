@@ -17,18 +17,31 @@ function ChannleControl(props) {
     const {setCurrentUrl, setSaveDirectory, clips, setClip} = props;
     const [duration, setDuration] = React.useState(initialDuration);
     const [urlTyped, setManualUrl] = React.useState('');
-    const [recorder, setRecorder] = React.useState({});
+    // const [recorder, setRecorder] = React.useState({});
+    const [recorder, setRecorder] = React.useState({hlsRecorder:{}});
     const [previousUrl, setPreviousUrl] = React.useState('');
     const [isBusy, setIsBusy] = React.useState(false);
+    const [scheduledTask, setScheduledTask] = React.useState(null);
+    const [scheduleTimer, setScheduleTimer] = React.useState({remainSeconds:0});
+    const [scheduleStatus, setScheduleStatus] = React.useState('stopped');
     const [recorderStatus, setRecorderStatus] = React.useState('stopped');
+
     const {remote} = require('electron');
 
     const buttonString = {
-        'stopped' : 'start rendering',
+        'stopped' : 'start record',
         'starting' : 'starting...',
-        'started' : 'stop rendering',
+        'started' : 'stop record',
         'stopping' : 'stopping...'
     }
+
+    const scheduleButtonString = {
+        'stopped' : 'start schedule',
+        'starting' : 'starting...',
+        'started' : 'stop schedule',
+        'stopping' : 'stopping...'       
+    }
+
     const playbackList = path.join(saveDirectory, `${channelName}_stream.m3u8`);
 
     const progressWriter = progress => {
@@ -38,7 +51,7 @@ function ChannleControl(props) {
 
     React.useEffect(() => {
         if(currentUrl === playbackList){
-            console.log('now playback. no need to create recorder');
+            console.log('now playback. no need to recreate recorder');
             return;
         }
         console.log('change currentUrl or saveDirectory')
@@ -55,7 +68,7 @@ function ChannleControl(props) {
         }
         const recorder = HLSRecorder.createHLSRecoder(options);
         recorder.on('progress', progressWriter)
-        setRecorder(recorder);
+        setRecorder({hlsRecorder:recorder});
     }, [currentUrl, saveDirectory])
 
     const onChange = type => {
@@ -72,26 +85,30 @@ function ChannleControl(props) {
         setCurrentUrl(urlTyped)
     };
     const onClickSelectSaveDirectory = directory => {};
-    const onClickRecord = (cmd) => {
-        return () => {
-            if(cmd === 'start'){
-                setIsBusy(true);
-                setRecorderStatus('starting');
-                recorder.once('start', (cmd) => {
-                    setRecorderStatus('started');
-                    setTimeout(() => {
-                        setPreviousUrl(currentUrl);
-                        setCurrentUrl(playbackList);
-                        setPlaybackMode(true);
-                    },3000);
-                })
-                recorder.start();
-                
-                // setUrl(playbackList)
-            } else {
+
+    const startRecording = recorder => {
+        setIsBusy(true);
+        console.log(`${channelName} starting`)
+        setRecorderStatus('starting');
+        recorder.once('start', (cmd) => {
+            setTimeout(() => {
+                console.log(`${channelName} started:`, recorder.isBusy, recorder.createTime)
+                setRecorderStatus('started');
+                setPreviousUrl(currentUrl);
+                setCurrentUrl(playbackList);
+                setPlaybackMode(true);
+            },3000);
+        })
+        recorder.start();
+    }
+
+    const stopRecording = recorder => {
+        return new Promise((resolve, reject) => {
+            try {
+                console.log(`${channelName} stopping:`, recorder.isBusy, recorder.createTime)
                 setRecorderStatus('stopping');
-                // setCurrentUrl('')
                 recorder.once('end', clipName => {
+                    console.log(`${channelName} stopped`)
                     console.log('################################',previousUrl)
                     setClip( prevClips => [clipName, ...prevClips]);
                     setRecorderStatus('stopped');
@@ -99,13 +116,71 @@ function ChannleControl(props) {
                     setDuration(initialDuration);
                     setCurrentUrl(previousUrl);
                     setPlaybackMode(false);
-
-
+                    resolve(true);
                 })
                 recorder.stop();
+            } catch (err) {
+                console.error(err);
+                setRecorderStatus('stopped');
+                setIsBusy(false);
+                setDuration(initialDuration);
+                setCurrentUrl(previousUrl);
+                setPlaybackMode(false);
+                resolve(true)
+            }
+        })
+    }
+
+    // const onClickRecord = (cmd) => {
+    //     return () => {
+    //         if(cmd === 'start'){
+    //             startRecording(recorder);
+    //         } else {
+    //             stopRecording(recorder);
+    //         }
+    //     }
+    // };
+
+    const onClickStartRecord = (recorder) => {
+        return ()  => {
+            startRecording(recorder)
+        }
+    }
+
+    const onClickStopRecord = (recorder) => {
+        return ()  => {
+            stopRecording(recorder)
+        }
+    }
+
+    const startSchedule = recorder => {
+        return  async () => {
+            console.log('### start schedule', recorder.hlsRecorder.createTime)
+            setScheduleStatus('starting');
+            if(recorder.hlsRecorder.isBusy) await stopRecording(recorder.hlsRecorder);
+            startRecording(recorder.hlsRecorder)
+            const scheduledTask = setInterval( async () => {
+                await stopRecording(recorder.hlsRecorder);
+                startRecording(recorder.hlsRecorder)
+            }, 20000)
+            setScheduledTask(scheduledTask);
+            setScheduleStatus('started')
+        }
+    }
+    
+    const stopSchedule = recorder => {
+        return async () => {
+            console.log('### stop schedule', recorder.hlsRecorder.createTime)
+            setScheduleStatus('stopping')
+            clearInterval(scheduledTask);
+            setScheduledTask(null);
+            console.log('### recorder.isBusy:',recorder.hlsRecorder.isBusy)
+            if(recorder.hlsRecorder.isBusy) {
+                await stopRecording(recorder.hlsRecorder);
+                setScheduleStatus('stopped')
             }
         }
-    };
+    }
 
     const channel = {
         title: <Typography variant="body1">{channelName}</Typography>,
@@ -196,6 +271,8 @@ function ChannleControl(props) {
         }
     })
 
+    const inTransition = (recorderStatus==='starting'||recorderStatus==='stopping');
+
     return (
         <Box display="flex" flexDirection="column" width={1}>
             <BorderedList 
@@ -209,7 +286,7 @@ function ChannleControl(props) {
             ></BorderedList>
             <OptionSelectList 
                 subtitle='CCTV'
-                minWidth='300px'
+                minWidth='200px'
                 currentItem={currentUrl}
                 multiple={false}
                 menuItems={selectItems}
@@ -230,17 +307,33 @@ function ChannleControl(props) {
                 content={location.content} 
                 bgcolor={"#232738"}
             ></BorderedList>
-            <SmallButton 
-                size="small" 
-                color="secondary" 
-                variant={"contained"} 
-                mt={"auto"}
-                mb={"5px"}
-                bgcolor={"#191d2e"}
-                height={"30px"}
-                disabled={isBusy && (recorderStatus==='starting'||recorderStatus==='stopping')}
-                onClick={recorder.isBusy ? onClickRecord('stop') : onClickRecord('start')}
-            >{buttonString[recorderStatus]}</SmallButton>
+            <Box display="flex" justifyContent="flex-start" alignItems="baseline">
+                <SmallButton 
+                    size="small" 
+                    color="secondary" 
+                    variant={"contained"} 
+                    mt={"auto"}
+                    mb={"5px"}
+                    bgcolor={"#191d2e"}
+                    height={"30px"}
+                    minwidth={"120px"}
+                    disabled={inTransition || scheduledTask !== null }
+                    onClick={isBusy ? onClickStopRecord(recorder) : onClickStartRecord(recorder)}
+                >{buttonString[recorderStatus]}</SmallButton>
+                <SmallButton 
+                    size="small" 
+                    color="secondary" 
+                    variant={"contained"} 
+                    mt={"auto"}
+                    mb={"5px"}
+                    bgcolor={"#191d2e"}
+                    height={"30px"}
+                    minwidth={"130px"}
+                    disabled={ (scheduleStatus==='starting'||scheduleStatus==='stopping')}
+                    // onClick={ scheduledTask ===  null ? onClickScheduleButton('start') : onClickScheduleButton('stop')}
+                    onClick={ scheduledTask ===  null ? startSchedule(recorder) : stopSchedule(recorder) }
+                >{scheduleButtonString[scheduleStatus]}</SmallButton>
+            </Box>
         </Box>
     )
 }

@@ -33,8 +33,10 @@ const SmallButton  = styled(Button)`
 const SmallMarginTextField = styled(TextField)`
     margin-top: ${props => props.mt || "2px"};
     margin-bottom: ${props => props.mt || "2px"};
+    margin-left: ${props => props.ml || "0px"};
     background: ${props => props.bgcolor || defaultBgColor};
     width: ${props => props.width || "100%"};
+    height: ${props => props.height || "100%"};
     .MuiInputBase-input {
         padding-top: ${props => props.pt || "5px"};
         padding-bottom: ${props => props.pb || "5px"};
