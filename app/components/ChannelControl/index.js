@@ -32,7 +32,7 @@ function ChannleControl(props) {
     const [recorderStatus, setRecorderStatus] = React.useState('stopped');
 
     let localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);
-    console.log('rerender ChannelControl:', recorder)
+    console.log('rerender ChannelControl:', previousUrl)
 
     React.useEffect(() => {
         const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
@@ -58,7 +58,7 @@ function ChannleControl(props) {
             console.log('now playback. no need to recreate recorder');
             return;
         }
-        console.log('change currentUrl or saveDirectory')
+        console.log('change currentUrl or saveDirectory,', currentUrl, saveDirectory, channelName)
         if(recorder !== null){
             recorder.src = currentUrl;
             const target = path.join(saveDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`);

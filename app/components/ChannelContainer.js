@@ -13,7 +13,7 @@ const {baseDirectory} = defaults;
 export default function ChannelContainer(props) {
     const {order, channelName, clips, setClip} = props;
     console.log('rerender:', channelName)
-    const streamUrl = cctvs[order] ? cctvs[order].url : '';
+    const streamUrl = webUrls[order] ? webUrls[order].url : '';
     const [currentUrl, setCurrentUrl] = React.useState(streamUrl);
     const [saveDirectory, setSaveDirectory] = React.useState(path.join(baseDirectory, channelName));
     const [mountPlayer, setMountPlayer] = React.useState(true);
@@ -44,7 +44,7 @@ export default function ChannelContainer(props) {
                 </BorderedBox>
                 <BorderedBox bgcolor="#2d2f3b" display="flex" alignContent="center" flexGrow="1" width="1">
                     <ChannelControl 
-                        cctvs={cctvs}
+                        cctvs={webUrls}
                         channelName={channelName}
                         currentUrl={currentUrl} 
                         saveDirectory={saveDirectory}

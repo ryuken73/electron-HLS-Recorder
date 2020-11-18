@@ -89,8 +89,12 @@ class RecoderHLS extends EventEmitter {
         })
     };
 
-    onWriteStreamClosed = () => {
+    onWriteStreamClosed = (error) => {
         console.log(`write stream closed : ${this.target}`);
+        if(error){
+            this.initialize();
+            this.emit('error')
+        }
         if(this._renameDoneFile) {
             const baseDir = path.dirname(this.target);
             const startTime = utils.date.getString(new Date(this.startTime),{});
