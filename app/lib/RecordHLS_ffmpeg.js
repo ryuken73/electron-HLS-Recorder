@@ -15,7 +15,7 @@ class RecoderHLS extends EventEmitter {
             src='', 
             target='target.mp4', 
             enablePlayback=false, 
-            playbackList='./temp/stream.m3u8',
+            localm3u8='./temp/stream.m3u8',
             ffmpegBinary='./ffmpeg.exe',
             renameDoneFile=false
         } = options;
@@ -25,11 +25,10 @@ class RecoderHLS extends EventEmitter {
         this._target = target;
         this._createTime = Date.now();
         this._enablePlayback = enablePlayback;
-        this._playbackList = playbackList;
+        this._localm3u8 = localm3u8;
         this._ffmpegBinary = ffmpegBinary;
         this._renameDoneFile = renameDoneFile;
         ffmpeg.setFfmpegPath(this._ffmpegBinary);
-
         this.initialize();
     }
 
@@ -40,10 +39,6 @@ class RecoderHLS extends EventEmitter {
         this._durationRecorded = '00:00:00.00';
         this._startTime = null;
         this._rStream = null;
-        // this._wStream = fs.createWriteStream(this.target);
-        // ffmpeg.setFfmpegPath(this._ffmpegBinary);
-        // this._command = ffmpeg(this._src).output(this._wStream).outputOptions(mp4Options);
-        // this.enablePlayback && this._command.output(this._playbackList).outputOptions(hlsOptions);
         console.log('recoder initialized...')
     }
 
@@ -73,12 +68,10 @@ class RecoderHLS extends EventEmitter {
     set src(url) { 
         if(this.isBusy) throw new Error("because recorder is busy, can't change");
         this._src = url;
-        this.initialize();
     }
     set target(target) { 
         if(this.isBusy) throw new Error("because recorder is busy, can't change");
         this._target = target;
-        this.initialize();
     }   
     set command(cmd) { this._command = cmd }
     set isRecording(bool) { this._isRecording = bool }
@@ -139,13 +132,13 @@ class RecoderHLS extends EventEmitter {
         this.isPreparing = true;
         console.log('start encoding..', this.src);
         this.command = ffmpeg(this._src).output(this.target).outputOptions(mp4Options);
-        this.enablePlayback && this.command.output(this._playbackList).outputOptions(hlsOptions);
+        this.enablePlayback && this.command.output(this._localm3u8).outputOptions(hlsOptions);
         this.command
         .on('start', this.startHandler)
         .on('progress', this.progressHandler)
         .on('error', error => {
             console.log('ffmpeg error: ', error) ;
-            this.onWriteStreamClosed();
+            this.onWriteStreamClosed(error);
         })
         .on('end', (stdout, stderr) => {
             console.log('ffmpeg end!')
@@ -169,7 +162,7 @@ const createHLSRecoder = options => {
         src= url,
         target='d:/temp/cctv_kbs_ffmpeg.mp4', 
         enablePlayack= true, 
-        playbackList= 'd:/temp/cctv/stream.m3u8',
+        localm3u8= 'd:/temp/cctv/stream.m3u8',
         ffmpegBinary= 'd:/temp/cctv/ffmpeg.exe',
         renameDoneFile= true
     } = options;

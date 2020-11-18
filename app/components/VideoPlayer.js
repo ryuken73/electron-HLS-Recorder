@@ -95,10 +95,10 @@ class VideoPlayer extends Component {
             console.log(error)
         });
         this.player.on('durationchange', () => {
-            console.log(`durationchange : ${this.player.duration()}`)
-            console.log(`durationchange :`, this.player.options())
-            console.log(`durationchange :`, this.player.liveTracker.liveWindow())
-            console.log(`durationchange :`, this.player.liveTracker.trackingThreshold)
+            // console.log(`durationchange : ${this.player.duration()}`)
+            // console.log(`durationchange :`, this.player.options())
+            // console.log(`durationchange :`, this.player.liveTracker.liveWindow())
+            // console.log(`durationchange :`, this.player.liveTracker.trackingThreshold)
         })
 
     }
