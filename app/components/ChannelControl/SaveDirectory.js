@@ -31,6 +31,8 @@ export default function SaveDirectory(props) {
                         variant={"contained"} 
                         mt={"0px"}
                         mb={"0px"}
+                        mr={"0px"}
+                        minwidth={"70px"}
                         bgcolor={"#191d2e"}
                         onClick={onClickSelectSaveDirectory}
                         disabled={inRecording}

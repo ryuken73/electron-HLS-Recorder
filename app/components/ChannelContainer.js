@@ -37,8 +37,8 @@ export default function ChannelContainer(props) {
     },[])
 
     return (
-        <SectionWithFullHeight width="800px">
-            <Box display="flex">
+        <SectionWithFullHeight width="750px">
+            <Box display="flex" mx={"10px"} my={"3px"}>
                 <BorderedBox display="flex" alignContent="center" flexGrow="1" border={3} borderColor={playbackMode ? 'red':'black'}>
                     {mountPlayer && <HLSPlayer channelName={channelName} url={currentUrl} type={type} controls={true} autoplay={true}></HLSPlayer>}
                 </BorderedBox>

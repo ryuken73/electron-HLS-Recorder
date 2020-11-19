@@ -19,6 +19,7 @@ export default function RecordButton(props) {
             variant={"contained"} 
             mt={"auto"}
             mb={"5px"}
+            ml={"3px"}
             bgcolor={recorderStatus === 'started' ? 'maroon' : '#191d2e'}
             height={"30px"}
             minwidth={"120px"}

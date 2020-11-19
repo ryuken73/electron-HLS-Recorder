@@ -18,7 +18,10 @@ export default function ScheduleButton(props) {
             variant={"contained"} 
             mt={"auto"}
             mb={"5px"}
-            bgcolor={"#191d2e"}
+            // ml={"auto"}
+            ml={"0px"}
+            mr={"3px"}
+            bgcolor={scheduleStatus === 'started' ? 'maroon' : '#191d2e'}
             height={"30px"}
             minwidth={"130px"}
             disabled={ inTransition || (scheduleStatus==='starting'||scheduleStatus==='stopping')}
