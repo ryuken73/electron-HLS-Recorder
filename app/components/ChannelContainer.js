@@ -29,10 +29,10 @@ export default function ChannelContainer(props) {
             }
         }
         mkdir();
-        setInterval(() => {
-            setMountPlayer(false)
-            setMountPlayer(true)
-        },600000)
+        // setInterval(() => {
+        //     setMountPlayer(false)
+        //     setMountPlayer(true)
+        // },600000)
 
     },[])
 

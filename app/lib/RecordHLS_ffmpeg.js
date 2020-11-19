@@ -58,11 +58,11 @@ class RecoderHLS extends EventEmitter {
     get command() { return this._command }
     get elapsed() { 
         const elapsedMS = Date.now() - this.startTime;
-        console.log(this.startTime, elapsedMS)
+        // console.log(this.startTime, elapsedMS)
         return elapsedMS > 0 ? elapsedMS : 0;
     }
     get isBusy() { 
-        console.log(this.isRecording, this.isPreparing)
+        // console.log(this.isRecording, this.isPreparing)
         return this.isRecording || this.isPreparing 
     }  
     set src(url) { 
@@ -141,7 +141,7 @@ class RecoderHLS extends EventEmitter {
         .on('start', this.startHandler)
         .on('progress', this.progressHandler)
         .on('error', error => {
-            console.log('ffmpeg error: ', error) ;
+            console.error('ffmpeg error: ', error) ;
             this.onWriteStreamClosed(error);
         })
         .on('end', (stdout, stderr) => {

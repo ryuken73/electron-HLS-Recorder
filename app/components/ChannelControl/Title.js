@@ -5,7 +5,7 @@ import BorderedList from '../template/BorderedList';
 import {SmallMarginTextField}  from '../template/smallComponents';
 
 export default function Title(props) {
-    console.log('rerender Title:', props)
+    // console.log('rerender Title:', props)
     const {channelName, recorderStatus, duration} = props;
     const inRecording = recorderStatus !== 'stopped';
     const channel = {

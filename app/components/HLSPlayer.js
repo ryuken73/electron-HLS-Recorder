@@ -56,11 +56,11 @@ const HLSPlayer = (props) => {
     }
 
     const onVideoPlay = duration => {
-        channelLog("Video played at: ", duration);
+        // channelLog("Video played at: ", duration);
     }
 
     const onVideoPause = duration =>{
-        channelLog("Video paused at: ", duration);
+        // channelLog("Video paused at: ", duration);
     }
 
     const onVideoTimeUpdate = duration => {
@@ -68,15 +68,15 @@ const HLSPlayer = (props) => {
     }
 
     const onVideoSeeking = duration => {
-        channelLog("Video seeking: ", duration);
+        // channelLog("Video seeking: ", duration);
     }
 
     const onVideoSeeked = (from, to) => {
-        channelLog(`Video seeked from ${from} to ${to}`);
+        // channelLog(`Video seeked from ${from} to ${to}`);
     }
 
     const onVideoEnd = () => {
-        channelLog("Video ended");
+        // channelLog("Video ended");
     }
     return (
         <div>

@@ -32,7 +32,8 @@ function ChannleControl(props) {
     const [recorderStatus, setRecorderStatus] = React.useState('stopped');
 
     let localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);
-    console.log('rerender ChannelControl:', previousUrl)
+    // console.log('###rerender ChannelControl:currentUrl:', currentUrl)
+    // console.log('###rerender ChannelControl:previousUrl:', previousUrl)
 
     React.useEffect(() => {
         const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
@@ -51,15 +52,20 @@ function ChannleControl(props) {
             setDuration(progress.duration);
         })
         setRecorder(recorder);
+        return () => {
+            recorder.destroy();
+            recorder = null;
+        }
     },[])
 
     React.useEffect(() => {
         if(currentUrl === localm3u8){
-            console.log('now playback. no need to recreate recorder');
+            console.log('now playback. no need to change source of recorder');
             return;
         }
-        console.log('change currentUrl or saveDirectory,', currentUrl, saveDirectory, channelName)
+        // console.log('change currentUrl or saveDirectory,', currentUrl, saveDirectory, channelName)
         if(recorder !== null){
+            // console.log(`change recorder.src from ${recorder.src} to ${currentUrl}`)
             recorder.src = currentUrl;
             const target = path.join(saveDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`);
             localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);
@@ -88,7 +94,8 @@ function ChannleControl(props) {
         setRecorderStatus('starting');
         recorder.once('start', (cmd) => {
             setTimeout(() => {
-                console.log(`${channelName} started:`, inTransition, recorder.createTime)
+                // console.log(`${channelName} started:`, inTransition, recorder.createTime)
+                // console.log(`###start: ${currentUrl} : ${previousUrl}`)
                 setRecorderStatus('started');
                 setPreviousUrl(currentUrl);
                 setCurrentUrl(localm3u8);
@@ -107,17 +114,24 @@ function ChannleControl(props) {
                 setInTransition(true);
                 recorder.once('end', clipName => {
                     console.log(`${channelName} stopped`)
-                    console.log('################################',previousUrl)
+                    // currentUrl value fixed when executed in schedule (in setInterval)
+                    // if execute stopRecording() directly, currentUrl's value is correct (varies with setCurrentUrl)
+                    // console.log(`###stop: ${currentUrl} : ${previousUrl}`)
                     setClip(prevClips => [clipName, ...prevClips]);
                     setRecorderStatus('stopped');
                     setInTransition(false);
                     setDuration(initialDuration);
-                    setCurrentUrl(previousUrl);
+                    // setPreviousUrl('');
+                    // setCurrentUrl(previousUrl);
+                    setPreviousUrl(previousUrl => {
+                        setCurrentUrl(previousUrl);
+                        return '';
+                    })
                     setPlaybackMode(false);
                     resolve(true);
                 })
                 recorder.once('error', () => {
-                    console.log('################################',previousUrl)
+                    // console.log('##previousUrl')
                     setRecorderStatus('stopped');
                     setInTransition(false);
                     setDuration(initialDuration);
@@ -140,23 +154,27 @@ function ChannleControl(props) {
 
     const startSchedule = async () => {
             console.log('### start schedule', recorder.createTime)
+            // currentUrl, previousUrl value fixed!!
             setScheduleStatus('starting');
             if(recorder.isBusy) await stopRecording();
             startRecording()
             const scheduledFunction = setInterval( async () => {
+                // not reflect changed url values (currentUrl and previousUrl is fixed)
+                // console.log(`###in interval: ${currentUrl} : ${previousUrl}`)
                 await stopRecording();
                 startRecording()
             }, 20000)
             setScheduledFunction(scheduledFunction);
             setScheduleStatus('started')
     }
+
     
     const stopSchedule = async () => {
             console.log('### stop schedule', recorder.createTime)
             setScheduleStatus('stopping')
             clearInterval(scheduledFunction);
             setScheduledFunction(null);
-            console.log('### recorder.isBusy:',recorder.isBusy)
+            // console.log('### recorder.isBusy:',recorder.isBusy)
             if(recorder.isBusy) {
                 await stopRecording();
                 setScheduleStatus('stopped')

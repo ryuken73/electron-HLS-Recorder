@@ -13,7 +13,7 @@ exports.cctvs = [
 // ]
 
 exports.webUrls = [
-    {title:'서울 마포구 성산교', 'url':'https://cctvsec.ktict.co.kr:8082/livekbs/9965/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9MTEvMTgvMjAyMCAyOjI1OjI0IFBNJmhhc2hfdmFsdWU9YW1iM0V5blJMMTZFMVFBQ0tpQ1J1Zz09JnZhbGlkbWludXRlcz0xMjA='},
+    {title:'서울 마포구 성산교', 'url':'https://cctvsec.ktict.co.kr:8082/livekbs/9999/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9MTEvMTkvMjAyMCAyOjQ4OjE1IEFNJmhhc2hfdmFsdWU9TDVkZ2FhQUlkWDkrdGRyeTIzclZSZz09JnZhbGlkbWludXRlcz0xMjA='},
     {title:'부산 동래구 세병교(온천천)', 'url':'https://cctvsec.ktict.co.kr:8082/livekbs/9966/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9MTEvMTgvMjAyMCAyOjI4OjI1IFBNJmhhc2hfdmFsdWU9NTFxYzNWVVF0bVFFdFpkVlRhRnF0Zz09JnZhbGlkbWludXRlcz0xMjA='},
     {title:'대구 동구 신천', 'url':'https://cctvsec.ktict.co.kr:8082/livekbs/9999/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9MTEvMTgvMjAyMCAyOjI5OjM3IFBNJmhhc2hfdmFsdWU9L3EyUFRvN0ZkZzJzRGlaSGJFcmxJdz09JnZhbGlkbWludXRlcz0xMjA='},
     {title:'전북 남원시 뱀사골(지리산)', 'url':'https://cctvsec.ktict.co.kr:8082/livekbs/9996/playlist.m3u8?wmsAuthSign=c2VydmVyX3RpbWU9MTEvMTgvMjAyMCAyOjMwOjIyIFBNJmhhc2hfdmFsdWU9MW1CbjEwbVV2ZFdkOUhnUkJwTjBZZz09JnZhbGlkbWludXRlcz0xMjA='},

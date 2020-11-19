@@ -13,7 +13,7 @@ class VideoPlayer extends Component {
     }
 
     componentWillReceiveProps(nextProps){
-        console.log('receiveProps:',nextProps)
+        // console.log('receiveProps:',nextProps)
         this.set_controls_visibility(this.player, nextProps.hideControls);
         if(this.props.src !== nextProps.src){
             // if (this.player) this.player.dispose();
@@ -27,9 +27,9 @@ class VideoPlayer extends Component {
 
     init_player(props) {
         const playerOptions = this.generate_player_options(props);
-        console.log(this.playerId)
+        // console.log(this.playerId)
         this.player = videojs(document.querySelector(`#${this.playerId}`), playerOptions);
-        console.log(playerOptions);
+        // console.log(playerOptions);
         this.player.src(props.src)
         this.player.poster(props.poster)
         this.set_controls_visibility(this.player, props.hideControls);
