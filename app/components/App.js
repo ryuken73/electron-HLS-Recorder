@@ -30,9 +30,10 @@ const channelNames = [
   // 'channel5'
 ]
 
-
 function App() {
-  const [clips, setClip] = React.useState([]);
+  const defaultClips = [];
+  const initialClips = store.get(`clips`, defaultClips)
+  const [clips, setClip] = React.useState(initialClips);
 
   const removeClip = React.useCallback((clipFullName) => {
     console.log('########', clipFullName);
@@ -40,6 +41,11 @@ function App() {
       return oldClips.filter(clip => clip !== clipFullName)
     })
   }, [clips])
+
+  const setClipStore = clips => {
+    setClip(clips);
+    store.set('clips', clips);
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -52,6 +58,7 @@ function App() {
               channelName={channelName}
               clips={clips}
               setClip={setClip}
+              setClipStore={setClipStore}
               store={store}
             ></ChannelContainer>
           ))}      

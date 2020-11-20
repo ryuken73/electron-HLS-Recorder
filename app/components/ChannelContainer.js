@@ -12,6 +12,7 @@ import path from 'path';
 const {baseDirectory} = defaults;
 export default function ChannelContainer(props) {
     const {order, channelName, clips, setClip, store} = props;
+    const {setClipStore} = props;
     console.log('rerender:', channelName);
     // store.get(`src.${order}`, cctvs[order].url )
     // const streamUrl = cctvs[order] ? cctvs[order].url : '';
@@ -40,12 +41,12 @@ export default function ChannelContainer(props) {
         // },600000)
     },[])
 
-    const changeUrl = url => {
+    const setCurrentUrlStore = url => {
         setCurrentUrl(url);
         store.set(`src.${order}`, url);
     }
 
-    const changeDirectory = directory => {
+    const setSaveDirectoryStore = directory => {
         setSaveDirectory(directory);
         store.set(`directory.${order}`, directory)
     }
@@ -63,13 +64,14 @@ export default function ChannelContainer(props) {
                         channelName={channelName}
                         currentUrl={currentUrl} 
                         saveDirectory={saveDirectory}
-                        changeUrl={changeUrl}
+                        setCurrentUrlStore={setCurrentUrlStore}
                         setCurrentUrl={setCurrentUrl}
-                        changeDirectory={changeDirectory}
+                        setSaveDirectoryStore={setSaveDirectoryStore}
                         setSaveDirectory={setSaveDirectory}
                         setPlaybackMode={setPlaybackMode}
                         clips={clips}
                         setClip={setClip}
+                        setClipStore={setClipStore}
                     ></ChannelControl>
                 </BorderedBox>
             </Box>
