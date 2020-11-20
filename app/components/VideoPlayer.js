@@ -92,7 +92,8 @@ class VideoPlayer extends Component {
             props.onEnd();
         });
         this.player.on('error', error => {
-            console.log(error)
+            console.log(error);
+            props.onError(error);
         });
         this.player.on('durationchange', () => {
             // console.log(`durationchange : ${this.player.duration()}`)

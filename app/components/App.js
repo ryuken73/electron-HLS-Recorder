@@ -52,7 +52,7 @@ function App() {
             ></ChannelContainer>
           ))}      
         </Box>
-        <Box>
+        {/* <Box>
           {channelNames.map((channelName, index) => (
             <ChannelContainer 
               key={index} 
@@ -62,10 +62,10 @@ function App() {
               setClip={setClip}
             ></ChannelContainer>
           ))}      
-        </Box>
-        {/* <Box>
-          <PreviewContainer clips={clips} removeClip={removeClip}></PreviewContainer>
         </Box> */}
+        <Box>
+          <PreviewContainer clips={clips} removeClip={removeClip}></PreviewContainer>
+        </Box>
       </Box>
     </ThemeProvider>
   );
