@@ -14,6 +14,7 @@ export default function Selection(props) {
     return (
         <OptionSelectList 
             subtitle='CCTV'
+            titlewidth={"115px"}
             minWidth='200px'
             currentItem={currentUrl}
             multiple={false}

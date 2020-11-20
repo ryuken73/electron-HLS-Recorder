@@ -26,6 +26,7 @@ export default function Title(props) {
     return (
         <BorderedList 
             title={channel.title} 
+            titlewidth={"115px"}
             content={channel.content} 
             color={"white"}
             border={0}

@@ -45,6 +45,7 @@ export default function SaveDirectory(props) {
     return (
         <BorderedList 
             title={location.title} 
+            titlewidth={"115px"}
             content={location.content} 
             bgcolor={"#232738"}
         ></BorderedList>

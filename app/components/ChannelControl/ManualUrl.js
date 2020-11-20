@@ -45,6 +45,7 @@ export default function ManualUrl(props) {
     return (
         <BorderedList 
             title={manualUrl.title} 
+            titlewidth={"115px"}
             content={manualUrl.content}
             mb={"0px"} 
             bgcolor={"#232738"}
