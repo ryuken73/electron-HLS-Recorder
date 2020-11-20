@@ -20,6 +20,7 @@ function ChannleControl(props) {
     const {channelName, cctvs} = props;
     const {currentUrl="d:/temp/cctv/stream.m3u8", setCurrentUrl} = props;
     const {saveDirectory="d:/temp/cctv", setSaveDirectory} = props;
+    const {changeUrl, changeDirectory} = props;
     const {clips, setClip} = props;
     const {setPlaybackMode} = props;
 
@@ -80,7 +81,7 @@ function ChannleControl(props) {
         return event => {
             const {value} = event.target;
             type === 'manualUrl' && setManualUrl(value);
-            type === 'url' && setCurrentUrl(value);
+            type === 'url' && changeUrl(value);
         }
     }    
 
@@ -91,7 +92,7 @@ function ChannleControl(props) {
     const onClickSelectSaveDirectory = () => {
         dialog.showOpenDialog(({properties:['openDirectory']}), filePaths=> {
             if(filePaths === undefined) return;
-            setSaveDirectory(filePaths[0]);      
+            changeDirectory(filePaths[0]);      
         })
     };
 
@@ -122,14 +123,14 @@ function ChannleControl(props) {
                 recorder.once('end', clipName => {
                     console.log(`${channelName} stopped`)
                     // currentUrl value fixed when executed in schedule (in setInterval)
-                    // if execute stopRecording() directly, currentUrl's value is correct (varies with setCurrentUrl)
+                    // if execute stopRecording() directly, currentUrl's value is correct (varies with changeUrl)
                     // console.log(`###stop: ${currentUrl} : ${previousUrl}`)
                     setClip(prevClips => [clipName, ...prevClips]);
                     setRecorderStatus('stopped');
                     setInTransition(false);
                     setDuration(initialDuration);
                     // setPreviousUrl('');
-                    // setCurrentUrl(previousUrl);
+                    // changeUrl(previousUrl);
                     setPreviousUrl(previousUrl => {
                         setCurrentUrl(previousUrl);
                         return '';

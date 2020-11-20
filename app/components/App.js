@@ -7,6 +7,9 @@ import HLSPlayer from './HLSPlayer';
 import ChannelContainer from './ChannelContainer';
 import PreviewContainer from './PreviewContainer';
 
+const Store = require('electron-store');
+const store = new Store();
+
 const theme = createMuiTheme({
   typography: {
     subtitle1: {
@@ -49,6 +52,7 @@ function App() {
               channelName={channelName}
               clips={clips}
               setClip={setClip}
+              store={store}
             ></ChannelContainer>
           ))}      
         </Box>

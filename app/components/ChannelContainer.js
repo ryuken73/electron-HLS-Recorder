@@ -11,11 +11,16 @@ import path from 'path';
 
 const {baseDirectory} = defaults;
 export default function ChannelContainer(props) {
-    const {order, channelName, clips, setClip} = props;
-    console.log('rerender:', channelName)
-    const streamUrl = cctvs[order] ? cctvs[order].url : '';
+    const {order, channelName, clips, setClip, store} = props;
+    console.log('rerender:', channelName);
+    // store.get(`src.${order}`, cctvs[order].url )
+    // const streamUrl = cctvs[order] ? cctvs[order].url : '';
+    const defaultUrl =  cctvs[order].url;
+    const streamUrl = store.get(`src.${order}`, defaultUrl);
     const [currentUrl, setCurrentUrl] = React.useState(streamUrl);
-    const [saveDirectory, setSaveDirectory] = React.useState(path.join(baseDirectory, channelName));
+    const defaultDirectory = path.join(baseDirectory, channelName);
+    const initialDirectory = store.get(`directory.${order}`, defaultDirectory);
+    const [saveDirectory, setSaveDirectory] = React.useState(initialDirectory);
     const [mountPlayer, setMountPlayer] = React.useState(true);
     const [playbackMode, setPlaybackMode] = React.useState(false);
     const type = path.extname(currentUrl) === '.mp4' ? 'video/mp4':'application/x-mpegURL';
@@ -33,8 +38,17 @@ export default function ChannelContainer(props) {
         //     setMountPlayer(false)
         //     setMountPlayer(true)
         // },600000)
-
     },[])
+
+    const changeUrl = url => {
+        setCurrentUrl(url);
+        store.set(`src.${order}`, url);
+    }
+
+    const changeDirectory = directory => {
+        setSaveDirectory(directory);
+        store.set(`directory.${order}`, directory)
+    }
 
     return (
         <SectionWithFullHeight width="750px">
@@ -49,7 +63,9 @@ export default function ChannelContainer(props) {
                         channelName={channelName}
                         currentUrl={currentUrl} 
                         saveDirectory={saveDirectory}
+                        changeUrl={changeUrl}
                         setCurrentUrl={setCurrentUrl}
+                        changeDirectory={changeDirectory}
                         setSaveDirectory={setSaveDirectory}
                         setPlaybackMode={setPlaybackMode}
                         clips={clips}
