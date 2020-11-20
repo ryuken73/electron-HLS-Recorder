@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
 
+const hlsInputOptions = ['-dts_delta_threshold', 0]
 const mp4Options = ['-acodec', 'copy', '-vcodec', 'copy'];;
 const hlsOptions = ['-f','hls','-hls_time','2','-hls_list_size','10','-hls_flags','delete_segments','-g',25,'-sc_threshold',0,'-preset','ultrafast','-vsync',2];
 
@@ -135,7 +136,7 @@ class RecoderHLS extends EventEmitter {
         }
         this.isPreparing = true;
         console.log('start encoding..', this.src);
-        this.command = ffmpeg(this._src).output(this.target).outputOptions(mp4Options);
+        this.command = ffmpeg(this._src).inputOptions(hlsInputOptions).output(this.target).outputOptions(mp4Options);
         this.enablePlayback && this.command.output(this._localm3u8).outputOptions(hlsOptions);
         this.command
         .on('start', this.startHandler)

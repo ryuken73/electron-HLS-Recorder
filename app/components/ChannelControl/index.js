@@ -163,7 +163,7 @@ function ChannleControl(props) {
                 // console.log(`###in interval: ${currentUrl} : ${previousUrl}`)
                 await stopRecording();
                 startRecording()
-            }, 20000)
+            }, 1800000)
             setScheduledFunction(scheduledFunction);
             setScheduleStatus('started')
     }
