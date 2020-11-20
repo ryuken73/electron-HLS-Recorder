@@ -1,11 +1,12 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 import FullHeightContainer from './template/FullHeightContainer';
 import FirstChildSection from './template/FirstChildSection';
 import HLSPlayer from './HLSPlayer';
 import ChannelContainer from './ChannelContainer';
 import PreviewContainer from './PreviewContainer';
+import utils from '../utils';
 
 const Store = require('electron-store');
 const store = new Store();
@@ -35,11 +36,19 @@ function App() {
   const initialClips = store.get(`clips`, defaultClips)
   const [clips, setClip] = React.useState(initialClips);
 
-  const removeClip = React.useCallback((clipFullName) => {
+  const removeClip = React.useCallback( async clipFullName => {
     console.log('########', clipFullName);
-    setClip(oldClips => {
-      return oldClips.filter(clip => clip !== clipFullName)
-    })
+    try {
+      await utils.file.delete(clipFullName);
+      setClip(oldClips => {
+        const newClips = oldClips.filter(clip => clip !== clipFullName);
+        store.set('clips', newClips);
+        return newClips;
+      })
+    } catch(err) {
+      alert(err);
+    }
+
   }, [clips])
 
   const setClipStore = clips => {

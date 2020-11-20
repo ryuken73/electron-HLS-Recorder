@@ -104,7 +104,12 @@ class RecoderHLS extends EventEmitter {
             const newFname = `${this.name}_${startTime}_[${duration}].mp4`;
             const newFullPath = path.join(baseDir, newFname);
             fs.rename(this.target, newFullPath, err => {
-                if(err) throw new Error(err);
+                if(err) {
+                    this.emit('error', err);
+                    this.initialize();
+                    return;
+                    // throw new Error(err)
+                }
                 console.log(`change filename : ${this.target} to ${newFullPath}`)
                 this.initialize();
                 this.emit('end', newFullPath)

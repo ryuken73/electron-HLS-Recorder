@@ -118,13 +118,13 @@ const file = {
     },
     async makeDirectory(dirname){
         if(!file.validType.directory(dirname)){
-            return Promise.resolve(false);
+            return Promise.reject(false);
         }
         try {
             mkdirp(dirname);
         } catch (err) {
             console.log(err)
-            return Promise.resolve(false);            
+            return Promise.reject(false);            
         }
     }
 }

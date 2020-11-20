@@ -12,6 +12,15 @@ import HLSRecorder from '../../lib/RecordHLS_ffmpeg';
 import {getAbsolutePath} from '../../lib/electronUtil';
 import path from 'path';
 
+import utils from '../../utils';
+async function mkdir(directory){
+    try {
+        await utils.file.makeDirectory(directory);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 const { dialog } = require('electron').remote;
 
 const initialDuration = '00:00:00.00';
@@ -96,7 +105,8 @@ function ChannleControl(props) {
         })
     };
 
-    const startRecording = () => {
+    const startRecording = async () => {
+        mkdir(saveDirectory);
         setInTransition(true);
         console.log(`${channelName} starting`)
         setRecorderStatus('starting');
@@ -142,12 +152,16 @@ function ChannleControl(props) {
                     setPlaybackMode(false);
                     resolve(true);
                 })
-                recorder.once('error', () => {
+                recorder.once('error', (error) => {
                     // console.log('##previousUrl')
+                    alert(error)
                     setRecorderStatus('stopped');
                     setInTransition(false);
                     setDuration(initialDuration);
-                    setCurrentUrl(previousUrl);
+                    setCurrentUrl(previousUrl => {
+                        setCurrentUrl(previousUrl);
+                        return '';
+                    });
                     setPlaybackMode(false);
                     resolve(true);
                 })
