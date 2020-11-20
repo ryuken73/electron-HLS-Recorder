@@ -22,6 +22,7 @@ export default function SaveDirectory(props) {
                         mb={"0px"}
                         bgcolor={"#2d2f3b"}
                         textalign={"left"}
+                        disabled={inRecording}
                     ></SmallMarginTextField>
                 </Box>
                 <Box textAlign="center">

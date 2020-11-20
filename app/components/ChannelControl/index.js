@@ -12,6 +12,8 @@ import HLSRecorder from '../../lib/RecordHLS_ffmpeg';
 import {getAbsolutePath} from '../../lib/electronUtil';
 import path from 'path';
 
+const { dialog } = require('electron').remote;
+
 const initialDuration = '00:00:00.00';
 
 function ChannleControl(props) {
@@ -86,7 +88,12 @@ function ChannleControl(props) {
         console.log('change url manually : ',urlTyped);
         setCurrentUrl(urlTyped)
     };
-    const onClickSelectSaveDirectory = directory => {};
+    const onClickSelectSaveDirectory = () => {
+        dialog.showOpenDialog(({properties:['openDirectory']}), filePaths=> {
+            if(filePaths === undefined) return;
+            setSaveDirectory(filePaths[0]);      
+        })
+    };
 
     const startRecording = () => {
         setInTransition(true);

@@ -81,6 +81,7 @@ class RecoderHLS extends EventEmitter {
     set createTime(date) { this._createTime = date }
     set rStream(stream) { this._rStream = stream }
     set wStream(stream) { this._wStream = stream }
+    set localm3u8(m3u8) { this._localm3u8 = m3u8 }
     set bytesRecorded(bytes) { this._bytesRecorded = bytes }
     set duration(duration) { 
         this._durationRecorded = duration;
