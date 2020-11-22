@@ -7,6 +7,7 @@ import ManualUrl from './ManualUrl';
 import SaveDirectory from './SaveDirectory';
 import RecordButton from './RecordButton';
 import ScheduleButton from './ScheduleButton';
+import IntervalSelection from './IntervalSelection';
 
 import HLSRecorder from '../../lib/RecordHLS_ffmpeg';
 import {getAbsolutePath} from '../../lib/electronUtil';
@@ -26,8 +27,9 @@ const { dialog } = require('electron').remote;
 const initialDuration = '00:00:00.00';
 
 function ChannleControl(props) {
-    const {channelName, cctvs} = props;
+    const {channelName, cctvs, intervals} = props;
     const {currentUrl="d:/temp/cctv/stream.m3u8", setCurrentUrl} = props;
+    const {currentInterval=600000, setCurrentInterval} = props;
     const {saveDirectory="d:/temp/cctv", setSaveDirectory} = props;
     const {setCurrentUrlStore, setSaveDirectoryStore} = props;
     const {clips, setClip, setClipStore} = props;
@@ -91,6 +93,7 @@ function ChannleControl(props) {
             const {value} = event.target;
             type === 'manualUrl' && setManualUrl(value);
             type === 'url' && setCurrentUrlStore(value);
+            type === 'interval' && setCurrentInterval(value);
         }
     }    
 
@@ -189,7 +192,7 @@ function ChannleControl(props) {
                 // console.log(`###in interval: ${currentUrl} : ${previousUrl}`)
                 await stopRecording();
                 startRecording()
-            }, 1800000)
+            }, 180000)
             setScheduledFunction(scheduledFunction);
             setScheduleStatus('started')
     }
@@ -246,7 +249,12 @@ function ChannleControl(props) {
                     startSchedule={startSchedule}
                     stopSchedule={stopSchedule}
                 ></ScheduleButton>
-
+                <IntervalSelection
+                    currentInterval={currentInterval}
+                    recorderStatus={recorderStatus}
+                    intervals={intervals}
+                    onChange={onChange}
+                ></IntervalSelection>
             </Box>
         </Box>
     )

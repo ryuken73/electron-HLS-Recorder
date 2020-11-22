@@ -33,20 +33,25 @@ const channelNames = [
 
 function App() {
   const defaultClips = [];
-  const initialClips = store.get(`clips`, defaultClips)
+  const defaultIntervals = [];
+  const initialClips = store.get(`clips`, defaultClips);
+  const initialIntervals = store.get('intervals', defaultIntervals);
   const [clips, setClip] = React.useState(initialClips);
+  const [intervals, setIntervals] = React.useState(initialIntervals);
 
   const removeClip = React.useCallback( async clipFullName => {
     console.log('########', clipFullName);
     try {
       await utils.file.delete(clipFullName);
+    } catch(err) {
+      // alert(err);
+      console.error(err)
+    } finally {
       setClip(oldClips => {
         const newClips = oldClips.filter(clip => clip !== clipFullName);
         store.set('clips', newClips);
         return newClips;
       })
-    } catch(err) {
-      alert(err);
     }
 
   }, [clips])
@@ -54,6 +59,11 @@ function App() {
   const setClipStore = clips => {
     setClip(clips);
     store.set('clips', clips);
+  }
+
+  const setIntervalStore = intervals => {
+    setIntervals(intervals);
+    store.set('intervals', intervals);
   }
 
   return (
@@ -68,6 +78,9 @@ function App() {
               clips={clips}
               setClip={setClip}
               setClipStore={setClipStore}
+              intervals={intervals}
+              setIntervals={setIntervals}
+              setIntervalStore={setIntervalStore}
               store={store}
             ></ChannelContainer>
           ))}      
