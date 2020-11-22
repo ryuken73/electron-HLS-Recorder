@@ -25,7 +25,7 @@ export default function PreviewContainer(props) {
     }
 
     return (
-        <SectionWithFullHeight height="1" maxWidth="368px" maxHeight="852px">
+        <SectionWithFullHeight height="1" maxWidth="368px" maxHeight="770px">
             <Box m="3px" border={3} borderColor={"black"}>
                 <HLSPlayer 
                     url={currentUrl} 
@@ -34,7 +34,7 @@ export default function PreviewContainer(props) {
                     autoplay={true}
                 ></HLSPlayer>
             </Box>
-            <BorderedBox bgcolor="#2d2f3b" height="100%" ml="0px" mr="0px" overflow="hidden">
+            <BorderedBox bgcolor="#2d2f3b" height="100%" ml="0px" mr="0px" overflow="auto">
                 {clips.map(clip => <ClipContainer key={clip} clipFullName={clip} removeFromList={removeClip} currentClip={currentUrl} clipName={path.basename(clip)} playClip={playClip}></ClipContainer>)}
             </BorderedBox>
         </SectionWithFullHeight>     
