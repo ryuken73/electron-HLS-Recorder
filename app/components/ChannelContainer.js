@@ -36,10 +36,6 @@ function ChannelContainer(props) {
             }
         }
         mkdir();
-        // setInterval(() => {
-        //     setMountPlayer(false)
-        //     setMountPlayer(true)
-        // },600000)
     },[])
 
     const reMountPlayer = React.useCallback(() => {

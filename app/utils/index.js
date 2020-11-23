@@ -55,6 +55,21 @@ const file = {
     async delete(fname){
         return fs.promises.unlink(fname);
     },
+    async deleteFiles(baseDirectory, regexp){
+        try {
+            const files = await fs.promises.readdir(baseDirectory);
+            const deleteJob = files.map(file => {
+                const fullName = path.join(baseDirectory, file);
+                if(regexp.test(fullName)){
+                    return fs.promises.unlink(fullName);
+                }
+                return Promise.resolve(true);
+            })
+            return Promise.all(deleteJob)
+        } catch(err) {
+            Promise.reject(err);
+        }
+    },
     async move(srcFile, dstFile){
         const dstDirectory = path.dirname(dstFile);
         await file.makeDirectory(dstDirectory);

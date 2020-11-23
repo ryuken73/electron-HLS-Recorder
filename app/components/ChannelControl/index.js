@@ -12,8 +12,11 @@ import IntervalSelection from './IntervalSelection';
 import HLSRecorder from '../../lib/RecordHLS_ffmpeg';
 import {getAbsolutePath} from '../../lib/electronUtil';
 import path from 'path';
-
+import defaults from '../../config/defaults';
 import utils from '../../utils';
+
+const {maxClips=20} = defaults;
+
 async function mkdir(directory){
     try {
         await utils.file.makeDirectory(directory);
@@ -46,8 +49,7 @@ function ChannleControl(props) {
     const [recorderStatus, setRecorderStatus] = React.useState('stopped');
 
     let localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);
-    // console.log('###rerender ChannelControl:currentUrl:', currentUrl)
-    // console.log('###rerender ChannelControl:previousUrl:', previousUrl)
+    const hlsSegmentsRegExp = new RegExp(`${channelName}_stream\\d.*.ts`);
 
     React.useEffect(() => {
         const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
@@ -145,17 +147,19 @@ function ChannleControl(props) {
                 console.log(`${channelName} stopping:`, inTransition, recorder.createTime)
                 setRecorderStatus('stopping');
                 setInTransition(true);
-                recorder.once('end', clipName => {
+                recorder.once('end', async clipName => {
                     console.log(`${channelName} stopped`)
                     // problem : currentUrl value fixed when executed in schedule (in setInterval)
                     //           if execute stopRecording() directly, currentUrl's value is correct (varies with setCurrentUrlStore)
                     // solution : use functional parameter of useState 
                     setClip(prevClips => {
-                        const newClips = [clipName, ...prevClips];
+                        const newClips = [clipName, ...prevClips].slice(0,maxClips)
                         setClipStore(newClips);
                         return newClips;
                     });
                     initialRecorder();
+                    await utils.file.delete(localm3u8);
+                    await utils.file.deleteFiles(saveDirectory, hlsSegmentsRegExp);
                     resolve(true);
                 })
                 recorder.once('error', (error) => {
