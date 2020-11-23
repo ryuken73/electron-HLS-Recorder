@@ -60,7 +60,7 @@ export default function ClipContainer(props) {
     }
     return (
         // <Zoom in={checkin} timeout={1000}>
-        <Slide direction="right" in={checkin} timeout={500} mountOnEnter unmountOnExit>
+        <Slide direction="right" in={checkin} timeout={{enter:500, exit:200}} mountOnEnter unmountOnExit>
             {/* <SmallButton>111</SmallButton> */}
             <div>
                 <ClipList></ClipList>

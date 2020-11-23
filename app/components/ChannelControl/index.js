@@ -79,7 +79,7 @@ function ChannleControl(props) {
         }
         // console.log('change currentUrl or saveDirectory,', currentUrl, saveDirectory, channelName)
         if(recorder !== null){
-            // console.log(`change recorder.src from ${recorder.src} to ${currentUrl}`)
+            console.log(`change recorder.src from ${recorder.src} to ${currentUrl}`)
             recorder.src = currentUrl;
             const target = path.join(saveDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`);
             localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);

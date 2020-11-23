@@ -33,9 +33,9 @@ class VideoPlayer extends Component {
         this.player.src(props.src)
         this.player.poster(props.poster)
         this.set_controls_visibility(this.player, props.hideControls);
-        this.checkReadyTimer = setInterval(() => {
-            console.log(this.player.readyState())
-        }, 1000)
+        // this.checkReadyTimer = setInterval(() => {
+        //     console.log(this.player.readyState())
+        // }, 1000)
     }
 
     generate_player_options(props){
@@ -82,8 +82,8 @@ class VideoPlayer extends Component {
             // }
         });
         this.player.on('canplay', () => {
-            console.log('video can play');
-            clearTimeout(this.checkReadyTimer);
+            // clearTimeout(this.checkReadyTimer);
+            props.onCanPlay()
         })
         this.player.on('seeking', () => {
             this.player.off('timeupdate', () => { });
@@ -102,6 +102,27 @@ class VideoPlayer extends Component {
             console.log(error);
             props.onError(error);
         });
+        this.player.on('stalled', () => {
+            props.onEvent('stalled')
+        })
+        this.player.on('suspend', () => {
+            props.onEvent('suspend')
+        })
+        this.player.on('waiting', () => {
+            props.onEvent('waiting')
+        })
+        this.player.on('waiting', () => {
+            props.onEvent('abort')
+        })
+        this.player.on('loadstart', () => {
+            props.onEvent('loadstart')
+        })
+        this.player.on('playing', () => {
+            props.onEvent('playing')
+        })
+        this.player.on('emptied', () => {
+            props.onEvent('emptied')
+        })
         this.player.on('durationchange', () => {
             // console.log(`durationchange : ${this.player.duration()}`)
             // console.log(`durationchange :`, this.player.options())

@@ -13,7 +13,6 @@ const {baseDirectory} = defaults;
 export default function ChannelContainer(props) {
     const {order, channelName, clips, setClip, intervals, setIntervals, store} = props;
     const {setClipStore, setIntervalStore} = props;
-    console.log('rerender:', channelName);
     const defaultUrl =  cctvs[order].url;
     const streamUrl = store.get(`src.${order}`, defaultUrl);
     const [currentUrl, setCurrentUrl] = React.useState(streamUrl);
@@ -26,6 +25,7 @@ export default function ChannelContainer(props) {
     const [mountPlayer, setMountPlayer] = React.useState(true);
     const [playbackMode, setPlaybackMode] = React.useState(false);
     const type = path.extname(currentUrl) === '.mp4' ? 'video/mp4':'application/x-mpegURL';
+    console.log('rerender:', channelName, currentUrl);
 
     React.useEffect(() => {
         async function mkdir(){

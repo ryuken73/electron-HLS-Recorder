@@ -15,9 +15,8 @@ const HLSPlayer = (props) => {
         url,
         type='application/x-mpegURL'
     } = props;
+
     console.log('rerender HLSPlayer:',channelName)
-
-
 
     const srcObject = {
         src: url,
@@ -34,8 +33,7 @@ const HLSPlayer = (props) => {
     const channelLog = createLogger(channelName);
 
     const onPlayerReady = player => {
-        console.log("Player is ready: ", player);
-        // setPlayer(player);
+        console.log("Player is ready: ",channelName, player);
         player.muted(true);
         // player.src(srcObject)
         /*
@@ -82,6 +80,13 @@ const HLSPlayer = (props) => {
     const onVideoEnd = () => {
         // channelLog("Video ended");
     }
+    const onVideoCanPlay = () => {
+        channelLog('can play');
+    }
+    const onVideoEvent = eventName => {
+        console.log(channelName, eventName)
+        // alert(eventName)
+    }
     return (
         <div>
             <VideoPlayer
@@ -93,6 +98,7 @@ const HLSPlayer = (props) => {
                 bigPlayButtonCentered={bigPlayButtonCentered}
                 width={width}
                 height={height}
+                onCanPlay={onVideoCanPlay}
                 onReady={onPlayerReady}
                 onPlay={onVideoPlay}
                 onPause={onVideoPause}
@@ -101,6 +107,7 @@ const HLSPlayer = (props) => {
                 onSeeked={onVideoSeeked}
                 onError={onVideoError}
                 onEnd={onVideoEnd}
+                onEvent={onVideoEvent}
                 handleManifestRedirects={true}
                 liveui={true}
             />
