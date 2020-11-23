@@ -7,7 +7,7 @@ const ffmpeg = require('fluent-ffmpeg');
 // const hlsInputOptions = ['-dts_delta_threshold', 0] // fornt part of clip not playable
 const hlsInputOptions = ['-dts_delta_threshold', 10];
 const mp4Options = ['-acodec', 'copy', '-vcodec', 'copy'];;
-const hlsOptions = ['-f','hls','-hls_time','2','-hls_list_size','10','-hls_flags','delete_segments','-g',25,'-sc_threshold',0,'-preset','ultrafast','-vsync',2];
+const hlsOptions = ['-f','hls','-hls_time','5','-hls_list_size','10','-hls_flags','delete_segments','-g',25,'-sc_threshold',0,'-preset','ultrafast','-vsync',2];
 
 class RecoderHLS extends EventEmitter {
     constructor(options){

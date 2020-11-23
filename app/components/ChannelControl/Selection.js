@@ -1,7 +1,7 @@
 import React from 'react';
 import OptionSelectList from '../template/OptionSelectList';
 
-export default function Selection(props) {
+function Selection(props) {
     const {currentUrl, cctvs, recorderStatus} = props;
     const {onChange} = props;
     const inRecording = recorderStatus !== 'stopped';
@@ -27,3 +27,5 @@ export default function Selection(props) {
         ></OptionSelectList>
     )
 }
+
+export default React.memo(Selection)

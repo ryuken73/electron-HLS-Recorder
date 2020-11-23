@@ -4,7 +4,7 @@ import Box from '@material-ui/core/Box';
 import BorderedList from '../template/BorderedList';
 import {SmallMarginTextField, SmallButton}  from '../template/smallComponents';
 
-export default function SaveDirectory(props) {
+function SaveDirectory(props) {
     const {saveDirectory, recorderStatus} = props;
     const {onClickSelectSaveDirectory} = props;
     const inRecording = recorderStatus !== 'stopped';
@@ -51,3 +51,5 @@ export default function SaveDirectory(props) {
         ></BorderedList>
     )
 }
+
+export default  React.memo(SaveDirectory)

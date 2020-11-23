@@ -1,7 +1,7 @@
 import React from 'react';
 import OptionSelectList from '../template/OptionSelectList';
 
-export default function IntervalSelection(props) {
+function IntervalSelection(props) {
     const {currentInterval, intervals, recorderStatus} = props;
     const {onChange} = props;
     const inRecording = recorderStatus !== 'stopped';
@@ -27,3 +27,5 @@ export default function IntervalSelection(props) {
         ></OptionSelectList>
     )
 }
+
+export default  React.memo(IntervalSelection)

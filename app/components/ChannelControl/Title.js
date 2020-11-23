@@ -4,10 +4,13 @@ import Box from '@material-ui/core/Box';
 import BorderedList from '../template/BorderedList';
 import {SmallMarginTextField}  from '../template/smallComponents';
 
-export default function Title(props) {
+function Title(props) {
     // console.log('rerender Title:', props)
     const {channelName, recorderStatus, duration} = props;
-    const inRecording = recorderStatus !== 'stopped';
+    const inRecording = recorderStatus === 'started';
+    const inTransition = recorderStatus === 'starting' || recorderStatus === 'stopping';
+    const bgColor = inRecording ? "maroon" : inTransition ? "crimson" : "black"
+    // console.log('&&&&&&',inTransition, inRecording, bgColor)
     const channel = {
         title: <Typography variant="body1">{channelName}</Typography>,
         content: (
@@ -16,7 +19,7 @@ export default function Title(props) {
                     width="100%"
                     variant="outlined"
                     margin="dense"
-                    bgcolor={inRecording ? "maroon" : "black"}
+                    bgcolor={bgColor}
                     value={duration}
                     fontSize={"20px"}
                 ></SmallMarginTextField> 
@@ -36,3 +39,5 @@ export default function Title(props) {
         ></BorderedList>
     )
 }
+
+export default  React.memo(Title)

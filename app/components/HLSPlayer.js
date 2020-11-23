@@ -75,7 +75,9 @@ const HLSPlayer = (props) => {
 
     const onVideoError = (error) => {
         channelLog(error);
-        reMountPlayer();
+        setTimeout(() => {
+            reMountPlayer();
+        }, 1000)
     }
 
     const onVideoEnd = () => {

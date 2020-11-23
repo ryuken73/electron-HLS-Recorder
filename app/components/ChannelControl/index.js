@@ -125,7 +125,7 @@ function ChannleControl(props) {
                 setCurrentUrl(localm3u8);
                 setPlaybackMode(true);
                 setInTransition(false);
-            },100);
+            },2000);
         })
         recorder.start();
     }
@@ -160,7 +160,8 @@ function ChannleControl(props) {
                     initialRecorder();
                     await utils.file.delete(localm3u8);
                     await utils.file.deleteFiles(saveDirectory, hlsSegmentsRegExp);
-                    resolve(true);
+                    console.log(`${channelName} stopped`)
+                        resolve(true);
                 })
                 recorder.once('error', (error) => {
                     // console.log('##previousUrl')

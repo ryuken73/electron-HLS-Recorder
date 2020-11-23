@@ -8,7 +8,7 @@ const buttonString = {
     'stopping' : 'stopping...'
 }
 
-export default function RecordButton(props) {
+function RecordButton(props) {
     const {inTransition, scheduledFunction, recorderStatus} = props;
     const {onClickStopRecord, onClickStartRecord} = props
     const inRecording = recorderStatus !== 'stopped';
@@ -28,3 +28,5 @@ export default function RecordButton(props) {
         >{buttonString[recorderStatus]}</SmallButton>
     )
 }
+
+export default  React.memo(RecordButton)

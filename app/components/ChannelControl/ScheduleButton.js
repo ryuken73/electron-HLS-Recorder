@@ -8,7 +8,7 @@ const scheduleButtonString = {
     'stopping' : 'stopping...'       
 }
 
-export default function ScheduleButton(props) {
+function ScheduleButton(props) {
     const {inTransition, scheduleStatus, scheduledFunction} = props;
     const {startSchedule, stopSchedule} = props;
     return (
@@ -30,3 +30,5 @@ export default function ScheduleButton(props) {
         >{scheduleButtonString[scheduleStatus]}</SmallButton>
     )
 }
+
+export default React.memo(ScheduleButton)

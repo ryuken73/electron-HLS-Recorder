@@ -4,7 +4,7 @@ import Box from '@material-ui/core/Box';
 import BorderedList from '../template/BorderedList';
 import {SmallMarginTextField, SmallButton}  from '../template/smallComponents';
 
-export default function ManualUrl(props) {
+function ManualUrl(props) {
     const {urlTyped, recorderStatus} = props;
     const {onClickSetManualUrl, onChange} = props;
     const inRecording = recorderStatus !== 'stopped';
@@ -52,3 +52,5 @@ export default function ManualUrl(props) {
         ></BorderedList>
     )
 }
+
+export default React.memo(ManualUrl)
