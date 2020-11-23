@@ -75,6 +75,10 @@ const HLSPlayer = (props) => {
         // channelLog(`Video seeked from ${from} to ${to}`);
     }
 
+    const onVideoError = (error) => {
+        channelLog(error);
+    }
+
     const onVideoEnd = () => {
         // channelLog("Video ended");
     }
@@ -95,6 +99,7 @@ const HLSPlayer = (props) => {
                 onTimeUpdate={onVideoTimeUpdate}
                 onSeeking={onVideoSeeking}
                 onSeeked={onVideoSeeked}
+                onError={onVideoError}
                 onEnd={onVideoEnd}
                 handleManifestRedirects={true}
                 liveui={true}

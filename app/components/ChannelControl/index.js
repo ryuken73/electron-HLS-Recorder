@@ -122,7 +122,7 @@ function ChannleControl(props) {
                 setCurrentUrl(localm3u8);
                 setPlaybackMode(true);
                 setInTransition(false);
-            },3000);
+            },100);
         })
         recorder.start();
     }

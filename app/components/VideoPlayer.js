@@ -33,6 +33,9 @@ class VideoPlayer extends Component {
         this.player.src(props.src)
         this.player.poster(props.poster)
         this.set_controls_visibility(this.player, props.hideControls);
+        this.checkReadyTimer = setInterval(() => {
+            console.log(this.player.readyState())
+        }, 1000)
     }
 
     generate_player_options(props){
@@ -78,6 +81,10 @@ class VideoPlayer extends Component {
             //     previousTime = currentTime;
             // }
         });
+        this.player.on('canplay', () => {
+            console.log('video can play');
+            clearTimeout(this.checkReadyTimer);
+        })
         this.player.on('seeking', () => {
             this.player.off('timeupdate', () => { });
             this.player.one('seeked', () => { });
