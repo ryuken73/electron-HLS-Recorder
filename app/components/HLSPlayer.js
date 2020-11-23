@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import VideoPlayer from 'react-video-js-player';
 import VideoPlayer from './VideoPlayer'
 
 const HLSPlayer = (props) => {
@@ -13,7 +12,8 @@ const HLSPlayer = (props) => {
         bigPlayButton=false, 
         bigPlayButtonCentered=false, 
         url,
-        type='application/x-mpegURL'
+        type='application/x-mpegURL',
+        reMountPlayer
     } = props;
 
     console.log('rerender HLSPlayer:',channelName)
@@ -75,6 +75,7 @@ const HLSPlayer = (props) => {
 
     const onVideoError = (error) => {
         channelLog(error);
+        reMountPlayer();
     }
 
     const onVideoEnd = () => {

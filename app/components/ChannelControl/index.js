@@ -56,7 +56,8 @@ function ChannleControl(props) {
             src: currentUrl, 
             target: path.join(saveDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`), 
             enablePlayback: true, 
-            localm3u8: path.join(saveDirectory, `${channelName}_stream.m3u8`),
+            // localm3u8: path.join(saveDirectory, `${channelName}_stream.m3u8`),
+            localm3u8,
             ffmpegBinary: ffmpegPath,
             renameDoneFile: true,
         }
@@ -127,6 +128,17 @@ function ChannleControl(props) {
         recorder.start();
     }
 
+    const initialRecorder = () => {
+        setRecorderStatus('stopped');
+        setInTransition(false);
+        setDuration(initialDuration);
+        setPreviousUrl(previousUrl => {
+            setCurrentUrl(previousUrl);
+            return '';
+        })
+        setPlaybackMode(false);
+    }
+
     const stopRecording = () => {
         return new Promise((resolve, reject) => {
             try {
@@ -135,47 +147,27 @@ function ChannleControl(props) {
                 setInTransition(true);
                 recorder.once('end', clipName => {
                     console.log(`${channelName} stopped`)
-                    // currentUrl value fixed when executed in schedule (in setInterval)
-                    // if execute stopRecording() directly, currentUrl's value is correct (varies with setCurrentUrlStore)
-                    // console.log(`###stop: ${currentUrl} : ${previousUrl}`)
+                    // problem : currentUrl value fixed when executed in schedule (in setInterval)
+                    //           if execute stopRecording() directly, currentUrl's value is correct (varies with setCurrentUrlStore)
+                    // solution : use functional parameter of useState 
                     setClip(prevClips => {
                         const newClips = [clipName, ...prevClips];
                         setClipStore(newClips);
                         return newClips;
                     });
-                    setRecorderStatus('stopped');
-                    setInTransition(false);
-                    setDuration(initialDuration);
-                    // setPreviousUrl('');
-                    // setCurrentUrlStore(previousUrl);
-                    setPreviousUrl(previousUrl => {
-                        setCurrentUrl(previousUrl);
-                        return '';
-                    })
-                    setPlaybackMode(false);
+                    initialRecorder();
                     resolve(true);
                 })
                 recorder.once('error', (error) => {
                     // console.log('##previousUrl')
                     alert(error)
-                    setRecorderStatus('stopped');
-                    setInTransition(false);
-                    setDuration(initialDuration);
-                    setCurrentUrl(previousUrl => {
-                        setCurrentUrl(previousUrl);
-                        return '';
-                    });
-                    setPlaybackMode(false);
+                    initialRecorder();
                     resolve(true);
                 })
                 recorder.stop();
             } catch (err) {
                 console.error(err);
-                setRecorderStatus('stopped');
-                setInTransition(false);
-                setDuration(initialDuration);
-                setCurrentUrl(previousUrl);
-                setPlaybackMode(false);
+                initialRecorder();
                 resolve(true)
             }
         })

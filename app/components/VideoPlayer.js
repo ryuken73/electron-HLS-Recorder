@@ -158,6 +158,8 @@ VideoPlayer.propTypes = {
     onSeeking: PropTypes.func,
     onSeeked: PropTypes.func,
     onEnd: PropTypes.func,
+    onError: PropTypes.func,
+    onEvent: PropTypes.func,
     playbackRates: PropTypes.arrayOf(PropTypes.number),
     hidePlaybackRates: PropTypes.bool,
     className: PropTypes.string

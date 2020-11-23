@@ -10,7 +10,7 @@ import defaults from '../config/defaults';
 import path from 'path';
 
 const {baseDirectory} = defaults;
-export default function ChannelContainer(props) {
+function ChannelContainer(props) {
     const {order, channelName, clips, setClip, intervals, setIntervals, store} = props;
     const {setClipStore, setIntervalStore} = props;
     const defaultUrl =  cctvs[order].url;
@@ -42,6 +42,12 @@ export default function ChannelContainer(props) {
         // },600000)
     },[])
 
+    const reMountPlayer = React.useCallback(() => {
+        console.log(`remount player : ${channelName}`)
+        setMountPlayer(false);
+        setMountPlayer(true)
+    },[])
+
     const setCurrentUrlStore = url => {
         setCurrentUrl(url);
         store.set(`src.${order}`, url);
@@ -62,7 +68,15 @@ export default function ChannelContainer(props) {
             {/* <Box display="flex" mx={"10px"} my={"3px"}> */}
             <Box display="flex">
                 <BorderedBox display="flex" alignContent="center" flexGrow="1" border={3} borderColor={playbackMode ? 'red':'black'}>
-                    {mountPlayer && <HLSPlayer channelName={channelName} url={currentUrl} type={type} controls={false} autoplay={true}></HLSPlayer>}
+                    {mountPlayer && 
+                    <HLSPlayer 
+                        channelName={channelName} 
+                        url={currentUrl} 
+                        type={type}
+                        controls={false} 
+                        autoplay={true} 
+                        reMountPlayer={reMountPlayer}
+                    ></HLSPlayer>}
                 </BorderedBox>
                 <BorderedBox bgcolor="#2d2f3b" display="flex" alignContent="center" flexGrow="1" width="1">
                     <ChannelControl 
@@ -90,3 +104,5 @@ export default function ChannelContainer(props) {
         </SectionWithFullHeight>     
     )
 }
+
+export default React.memo(ChannelContainer);
