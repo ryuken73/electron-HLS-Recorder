@@ -72,8 +72,9 @@ app.on('ready', async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1300,
-    height: 940,
+    height: 900,
     backgroundColor: '#252839',
+    minimizable: false,
     webPreferences: {
       nodeIntegration: true,
       nativeWindowOpen: true
