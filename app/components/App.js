@@ -8,6 +8,7 @@ import HLSPlayer from './HLSPlayer';
 import ChannelContainer from './ChannelContainer';
 import PreviewContainer from './PreviewContainer';
 import utils from '../utils';
+const {getAbsolutePath} = require('../lib/electronUtil')
 const {remote} = require('electron');
 
 const parseQuery = queryString => {
@@ -95,6 +96,7 @@ function App() {
   console.log(`^^^dirname:${__dirname}`)
 
   const onClickButton = () => {
+    console.log('^^^',getAbsolutePath('app.html',false))
     const win = new BrowserWindow({
         height: 850,
         width: 1120,
@@ -106,7 +108,7 @@ function App() {
     })
     win.loadURL(
       url.format({
-        pathname: path.join(__dirname, './app.html'),
+        pathname: getAbsolutePath('app.html',false),
         protocol: 'file:',
         slashes: true,
         query: {
