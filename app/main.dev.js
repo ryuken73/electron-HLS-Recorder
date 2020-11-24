@@ -73,6 +73,7 @@ app.on('ready', async () => {
     show: false,
     width: 1120,
     height: 850,
+    title: 'HLS Recorder [Main]',
     backgroundColor: '#252839',
     minimizable: false,
     webPreferences: {

@@ -11,17 +11,17 @@ import path from 'path';
 
 const {baseDirectory} = defaults;
 function ChannelContainer(props) {
-    const {order, channelName, clips, setClip, intervals, store} = props;
+    const {channelNumber, channelName, clips, setClip, intervals, store} = props;
     const {setClipStore} = props;
-    const defaultUrl =  cctvs[order].url;
+    const defaultUrl =  cctvs[channelNumber] ? cctvs[channelNumber].url : '';
     const defaultInterval = 3600000;
-    const streamUrl = store.get(`src.${order}`, defaultUrl);
-    const initialInterval = store.get(`interval.${order}`, defaultInterval);
+    const streamUrl = store.get(`src.${channelNumber}`, defaultUrl);
+    const initialInterval = store.get(`interval.${channelNumber}`, defaultInterval);
     const [currentUrl, setCurrentUrl] = React.useState(streamUrl);
     const [currentInterval, setCurrentInterval] = React.useState(initialInterval);
-    // const interval = store.get(`intervals.${order}`, defaultInterval)
+    // const interval = store.get(`intervals.${channelNumber}`, defaultInterval)
     const defaultDirectory = path.join(baseDirectory, channelName);
-    const initialDirectory = store.get(`directory.${order}`, defaultDirectory);
+    const initialDirectory = store.get(`directory.${channelNumber}`, defaultDirectory);
     const [saveDirectory, setSaveDirectory] = React.useState(initialDirectory);
     const [mountPlayer, setMountPlayer] = React.useState(true);
     const [playbackMode, setPlaybackMode] = React.useState(false);
@@ -47,18 +47,18 @@ function ChannelContainer(props) {
 
     const setCurrentUrlStore = url => {
         setCurrentUrl(url);
-        store.set(`src.${order}`, url);
+        store.set(`src.${channelNumber}`, url);
     }
 
     const setSaveDirectoryStore = directory => {
         setSaveDirectory(directory);
-        store.set(`directory.${order}`, directory)
+        store.set(`directory.${channelNumber}`, directory)
     }
 
     const setCurrentIntervalStore = interval => {
         setCurrentInterval(interval);
         console.log(`^^^ save interval`, interval);
-        store.set(`interval.${order}`, interval)
+        store.set(`interval.${channelNumber}`, interval)
     }
 
     return (

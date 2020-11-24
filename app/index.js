@@ -7,7 +7,7 @@ import { configureStore, history } from './store/configureStore';
 const store = configureStore();
 
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
-
+console.log(location)
 render(
   <AppContainer>
     <Root store={store} history={history} />
