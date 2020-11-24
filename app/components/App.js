@@ -31,13 +31,15 @@ const channelNames = [
   // 'channel5'
 ]
 
+const intervals = [
+
+]
+
 function App() {
   const defaultClips = [];
-  const defaultIntervals = [];
+  const defaultInterval = {title:'1 Hour', milliseconds:3600000};
   const initialClips = store.get(`clips`, defaultClips);
-  const initialIntervals = store.get('intervals', defaultIntervals);
   const [clips, setClip] = React.useState(initialClips);
-  const [intervals, setIntervals] = React.useState(initialIntervals);
 
   const removeClip = React.useCallback( async clipFullName => {
     console.log('########', clipFullName);
@@ -61,11 +63,6 @@ function App() {
     store.set('clips', clips);
   }
 
-  const setIntervalStore = intervals => {
-    setIntervals(intervals);
-    store.set('intervals', intervals);
-  }
-
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex">
@@ -78,9 +75,6 @@ function App() {
               clips={clips}
               setClip={setClip}
               setClipStore={setClipStore}
-              intervals={intervals}
-              setIntervals={setIntervals}
-              setIntervalStore={setIntervalStore}
               store={store}
             ></ChannelContainer>
           ))}      

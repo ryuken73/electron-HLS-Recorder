@@ -31,10 +31,10 @@ const initialDuration = '00:00:00.00';
 
 function ChannleControl(props) {
     const {channelName, cctvs, intervals} = props;
-    const {currentUrl="d:/temp/cctv/stream.m3u8", setCurrentUrl} = props;
-    const {currentInterval=600000, setCurrentInterval} = props;
+    const {currentUrl="d:/temp/cctv/stream.m3u8", setCurrentUrl, setCurrentUrlStore} = props;
+    const {currentInterval=600000, setCurrentInterval, setCurrentIntervalStore} = props;
     const {saveDirectory="d:/temp/cctv", setSaveDirectory} = props;
-    const {setCurrentUrlStore, setSaveDirectoryStore} = props;
+    const {setSaveDirectoryStore} = props;
     const {clips, setClip, setClipStore} = props;
     const {setPlaybackMode} = props;
 
@@ -96,7 +96,7 @@ function ChannleControl(props) {
             const {value} = event.target;
             type === 'manualUrl' && setManualUrl(value);
             type === 'url' && setCurrentUrlStore(value);
-            type === 'interval' && setCurrentInterval(value);
+            type === 'interval' && setCurrentIntervalStore(value);
         }
     }    
 
@@ -189,7 +189,7 @@ function ChannleControl(props) {
                 // console.log(`###in interval: ${currentUrl} : ${previousUrl}`)
                 await stopRecording();
                 startRecording()
-            }, 180000)
+            }, currentInterval);
             setScheduledFunction(scheduledFunction);
             setScheduleStatus('started')
     }
@@ -239,18 +239,16 @@ function ChannleControl(props) {
                     onClickStartRecord={startRecording}    
                     onClickStopRecord={stopRecording}
                 ></RecordButton>
-                <ScheduleButton 
-                    inTransition={inTransition}
-                    scheduleStatus={scheduleStatus} 
-                    scheduledFunction={scheduledFunction}
-                    startSchedule={startSchedule}
-                    stopSchedule={stopSchedule}
-                ></ScheduleButton>
                 <IntervalSelection
                     currentInterval={currentInterval}
                     recorderStatus={recorderStatus}
                     intervals={intervals}
                     onChange={onChange}
+                    inTransition={inTransition}
+                    scheduleStatus={scheduleStatus} 
+                    scheduledFunction={scheduledFunction}
+                    startSchedule={startSchedule}
+                    stopSchedule={stopSchedule}
                 ></IntervalSelection>
             </Box>
         </Box>

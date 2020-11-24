@@ -16,16 +16,13 @@ function ScheduleButton(props) {
             size="small" 
             color="secondary" 
             variant={"contained"} 
-            mt={"auto"}
-            mb={"5px"}
-            // ml={"auto"}
+            mt={"0px"}
+            mb={"0px"}
             ml={"0px"}
-            mr={"3px"}
+            mr={"0px"}
             bgcolor={scheduleStatus === 'started' ? 'maroon' : '#191d2e'}
-            height={"30px"}
             minwidth={"130px"}
             disabled={ inTransition || (scheduleStatus==='starting'||scheduleStatus==='stopping')}
-            // onClick={ scheduledFunction ===  null ? onClickScheduleButton('start') : onClickScheduleButton('stop')}
             onClick={ scheduledFunction ===  null ? startSchedule : stopSchedule }
         >{scheduleButtonString[scheduleStatus]}</SmallButton>
     )

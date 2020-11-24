@@ -11,14 +11,15 @@ import path from 'path';
 
 const {baseDirectory} = defaults;
 function ChannelContainer(props) {
-    const {order, channelName, clips, setClip, intervals, setIntervals, store} = props;
-    const {setClipStore, setIntervalStore} = props;
+    const {order, channelName, clips, setClip, intervals, store} = props;
+    const {setClipStore} = props;
     const defaultUrl =  cctvs[order].url;
+    const defaultInterval = 3600000;
     const streamUrl = store.get(`src.${order}`, defaultUrl);
+    const initialInterval = store.get(`interval.${order}`, defaultInterval);
     const [currentUrl, setCurrentUrl] = React.useState(streamUrl);
-    const defaultInterval = {title:'10 Minutes', milliseconds:600000};
-    const interval = store.get(`intervals.${order}`, defaultInterval)
-    const [currentInterval, setCurrentInterval] = React.useState(interval);
+    const [currentInterval, setCurrentInterval] = React.useState(initialInterval);
+    // const interval = store.get(`intervals.${order}`, defaultInterval)
     const defaultDirectory = path.join(baseDirectory, channelName);
     const initialDirectory = store.get(`directory.${order}`, defaultDirectory);
     const [saveDirectory, setSaveDirectory] = React.useState(initialDirectory);
@@ -55,7 +56,8 @@ function ChannelContainer(props) {
     }
 
     const setCurrentIntervalStore = interval => {
-        setIntervals(interval);
+        setCurrentInterval(interval);
+        console.log(`^^^ save interval`, interval);
         store.set(`interval.${order}`, interval)
     }
 
@@ -80,20 +82,21 @@ function ChannelContainer(props) {
                         intervals={intervals}
                         channelName={channelName}
                         currentUrl={currentUrl} 
-                        currentInterval={currentInterval}
-                        saveDirectory={saveDirectory}
-                        setCurrentUrlStore={setCurrentUrlStore}
                         setCurrentUrl={setCurrentUrl}
+                        setCurrentUrlStore={setCurrentUrlStore}
+                        currentInterval={currentInterval}
                         setCurrentInterval={setCurrentInterval}
+                        setCurrentIntervalStore={setCurrentIntervalStore}
+                        saveDirectory={saveDirectory}
                         setSaveDirectoryStore={setSaveDirectoryStore}
                         setSaveDirectory={setSaveDirectory}
                         setPlaybackMode={setPlaybackMode}
                         clips={clips}
                         setClip={setClip}
                         setClipStore={setClipStore}
-                        intervals={intervals}
-                        setIntervals={setIntervals}
-                        setIntervalStore={setIntervalStore}
+                        // intervals={intervals}
+                        // setIntervals={setIntervals}
+                        // setIntervalStore={setIntervalStore}
                     ></ChannelControl>
                 </BorderedBox>
             </Box>
