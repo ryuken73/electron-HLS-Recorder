@@ -1,6 +1,6 @@
 const defaults = {
     baseDirectory : 'c:/temp',
-    maxClips:20
+    maxClips:17
 }
 
 export default defaults

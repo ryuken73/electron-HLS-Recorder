@@ -71,8 +71,8 @@ app.on('ready', async () => {
   // const {width,height} = screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1300,
-    height: 900,
+    width: 1120,
+    height: 850,
     backgroundColor: '#252839',
     minimizable: false,
     webPreferences: {
