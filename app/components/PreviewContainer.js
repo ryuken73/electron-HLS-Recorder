@@ -32,6 +32,7 @@ export default function PreviewContainer(props) {
                     type={type}
                     controls={true}
                     autoplay={true}
+                    width={330}
                 ></HLSPlayer>
             </Box>
             <BorderedBox bgcolor="#2d2f3b" height="100%" ml="0px" mr="0px" overflow="auto">

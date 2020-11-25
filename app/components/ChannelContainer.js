@@ -3,6 +3,9 @@ import Box from '@material-ui/core/Box';
 import BorderedBox from './template/BorderedBox';
 import ChannelControl from './ChannelControl';
 import SectionWithFullHeight from './template/SectionWithFullHeight';
+import {SmallPaddingIconButton}  from './template/smallComponents';
+import RefreshIcon from '@material-ui/icons/Refresh';
+
 import HLSPlayer from './HLSPlayer';
 import {cctvs, webUrls} from '../config/cctvs';
 import utils from '../utils';
@@ -45,6 +48,14 @@ function ChannelContainer(props) {
         setMountPlayer(true)
     },[])
 
+    const refreshPlayer = (currentUrl) => {
+        return () => {
+            // const previousUrl = currentUrl;
+            setCurrentUrl('');
+            setCurrentUrl(currentUrl);
+        }
+    }
+
     const setCurrentUrlStore = url => {
         setCurrentUrl(url);
         store.set(`src.${channelNumber}`, url);
@@ -62,9 +73,12 @@ function ChannelContainer(props) {
     }
 
     return (
-        <SectionWithFullHeight width="750px">
+        <SectionWithFullHeight width="800px">
             {/* <Box display="flex" mx={"10px"} my={"3px"}> */}
-            <Box display="flex">
+            <Box display="flex" alignItems="flex-start">
+                <SmallPaddingIconButton padding="1px" size="small">
+                    <RefreshIcon color="secondary" fontSize={"small"} onClick={reMountPlayer}></RefreshIcon>
+                </SmallPaddingIconButton>
                 <BorderedBox display="flex" alignContent="center" flexGrow="1" border={3} borderColor={playbackMode ? 'red':'black'}>
                     {mountPlayer && 
                     <HLSPlayer 
