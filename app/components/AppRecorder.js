@@ -41,14 +41,6 @@ const theme = createMuiTheme({
   },
 });
 
-// const channelNames = [
-//   'channel1',
-//   'channel2',
-//   'channel3',
-//   'channel4',
-//   // 'channel5'
-// ]
-
 const intervals = [
 
 ]
@@ -80,6 +72,7 @@ function App() {
     setClip(clips);
     store.set('clips', clips);
   }
+
   const { BrowserWindow } = remote;
   const url = require('url');
   const path = require('path');

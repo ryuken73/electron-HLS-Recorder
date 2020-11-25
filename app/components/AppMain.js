@@ -26,7 +26,7 @@ const channelNames = generateChannelNames(start, stop)
 
 
 const Store = require('electron-store');
-const store = new Store();
+const store = new Store({watch: true});
 
 const theme = createMuiTheme({
   typography: {
@@ -85,10 +85,20 @@ function App() {
 
   }, [clips])
 
-  const setClipStore = clips => {
+  // const setClipStore = clips => {
+  //   setClip(clips);
+  //   store.set('clips', clips);
+  // }
+
+  store.onDidChange('clips', (clips) => {
+    // console.log('%%%store Changed', clips)
     setClip(clips);
-    store.set('clips', clips);
-  }
+  })
+
+  // store.onDidAnyChange((current, previous) => {
+  //   console.log('%%%', current, previous)
+  // })
+
   const { BrowserWindow } = remote;
   const url = require('url');
   const path = require('path');
