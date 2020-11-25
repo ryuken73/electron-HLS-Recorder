@@ -103,8 +103,11 @@ function App() {
         height: 850,
         width: 780,
         title: 'HLS Recoder [Child]',
+        x: 440 + channels.length * 20,
+        y: 50 + channels.length * 5,
         backgroundColor: '#252839',
         show: false,
+        minimizable: false,
         webPreferences: {
           nodeIntegration: true,
           webSecurity: false,
