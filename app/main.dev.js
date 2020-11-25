@@ -72,7 +72,7 @@ app.on('ready', async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 400,
-    height: 850,
+    height: 900,
     x:50,
     y:50,
     title: 'HLS Recorder [Main]',

@@ -40,14 +40,6 @@ const theme = createMuiTheme({
   },
 });
 
-// const channelNames = [
-//   'channel1',
-//   'channel2',
-//   'channel3',
-//   'channel4',
-//   // 'channel5'
-// ]
-
 const intervals = [
 
 ]
@@ -85,19 +77,11 @@ function App() {
 
   }, [clips])
 
-  // const setClipStore = clips => {
-  //   setClip(clips);
-  //   store.set('clips', clips);
-  // }
-
-  store.onDidChange('clips', (clips) => {
-    // console.log('%%%store Changed', clips)
-    setClip(clips);
-  })
-
-  // store.onDidAnyChange((current, previous) => {
-  //   console.log('%%%', current, previous)
-  // })
+  React.useEffect(() => {
+    store.onDidChange('clips', (clips) => {
+      setClip(clips);
+    })
+  },[])
 
   const { BrowserWindow } = remote;
   const url = require('url');
@@ -110,7 +94,7 @@ function App() {
     const nextChannels = getUnusedChannels(4)
     console.log('^^^',getAbsolutePath('app.html',false), channels, nextChannels )
     const win = new BrowserWindow({
-        height: 850,
+        height: 900,
         width: 780,
         title: 'HLS Recoder [Child]',
         x: 440 + channels.length * 20,
@@ -123,14 +107,14 @@ function App() {
           webSecurity: false,
       },
     })
-    win.on('show', () => {
+    win.once('show', () => {
       console.log('^^^1', nextChannels);
       setOpenInProgress(false);
       setUsedChannel(prevChannels => {
         return [...prevChannels, ...nextChannels];
       })
     })
-    win.on('close', () => {
+    win.once('close', () => {
       setUsedChannel(prevChannels => {
         return [...prevChannels].filter(channel => !nextChannels.includes(channel))
       })
