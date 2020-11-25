@@ -71,7 +71,7 @@ app.on('ready', async () => {
   // const {width,height} = screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1120,
+    width: 400,
     height: 850,
     title: 'HLS Recorder [Main]',
     backgroundColor: '#252839',
