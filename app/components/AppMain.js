@@ -92,7 +92,8 @@ function App() {
   const onClickButton = () => {
     setOpenInProgress(true);
     const nextChannels = getUnusedChannels(4)
-    console.log('^^^',getAbsolutePath('app.html',false), channels, nextChannels )
+    // console.log('^^^',getAbsolutePath('app.html',false), channels, nextChannels )
+    console.log('^^^',getAbsolutePath('appRecorder.html',false), channels, nextChannels )
     const win = new BrowserWindow({
         height: 900,
         width: 780,
@@ -122,7 +123,7 @@ function App() {
     win.show();
     win.loadURL(
       url.format({
-        pathname: getAbsolutePath('app.html',false),
+        pathname: getAbsolutePath('appRecorder.html',false),
         protocol: 'file:',
         slashes: true,
         query: {
