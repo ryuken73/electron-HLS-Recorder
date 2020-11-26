@@ -43,16 +43,23 @@ function ChannelContainer(props) {
         mkdir();
     },[])
 
-    const reMountPlayer = React.useCallback(() => {
-        console.log(`remount player : ${channelName}`)
-        setMountPlayer(false);
-        setMountPlayer(true)
-    },[])
+    // const reMountPlayer = React.useCallback(() => {
+    //     console.log(`remount player : ${channelName}`)
+    //     setMountPlayer(false);
+    //     setMountPlayer(true)
+    // },[])
 
-    const refreshPlayer = () => {
-        const currentSource = player.currentSource();
-        player.src(currentSource)
-    }
+    const refreshPlayer = React.useCallback(() => {
+        // const currentSource = player.currentSource();
+        if(player === null) return;
+        console.log('@@@@@',currentUrl)
+        const srcObject = {
+            src: currentUrl,
+            type,
+            handleManifestRedirects: true,
+        }
+        player.src(srcObject)
+    },[player, currentUrl]);
 
     const setCurrentUrlStore = url => {
         setCurrentUrl(url);
@@ -85,8 +92,9 @@ function ChannelContainer(props) {
                         type={type}
                         controls={false} 
                         autoplay={true} 
-                        reMountPlayer={reMountPlayer}
+                        player={player}
                         setPlayer={setPlayer}
+                        refreshPlayer={refreshPlayer}
                     ></HLSPlayer>}
                 </BorderedBox>
                 <BorderedBox bgcolor="#2d2f3b" display="flex" alignContent="center" flexGrow="1" width="1">

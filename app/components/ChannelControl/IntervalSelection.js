@@ -13,7 +13,6 @@ const intervals = [
 
 function IntervalSelection(props) {
     const {currentInterval, recorderStatus} = props;
-    console.log('^^^^^^^^^^^^^',currentInterval)
     const {inTransition, scheduleStatus, scheduledFunction} = props;
     const {startSchedule, stopSchedule} = props;
     const {onChange} = props;

@@ -3,7 +3,7 @@ import VideoPlayer from './VideoPlayer'
 
 const HLSPlayer = (props) => {
     // const [player, setPlayer] = React.useState({});
-    const {setPlayer} = props;
+    const {player, setPlayer, refreshPlayer=null} = props;
     const {
         channelName,
         width=320, 
@@ -78,9 +78,7 @@ const HLSPlayer = (props) => {
     const onVideoError = (error) => {
         channelLog(error);
         if(url === '') return;
-        setTimeout(() => {
-            reMountPlayer();
-        }, 1000)
+        // refreshPlayer()
     }
 
     const onVideoEnd = () => {
@@ -89,8 +87,21 @@ const HLSPlayer = (props) => {
     const onVideoCanPlay = () => {
         channelLog('can play');
     }
+
+    let refreshTimer = null;
     const onVideoEvent = eventName => {
         console.log(channelName, eventName)
+        if(eventName === 'abort'){
+            refreshTimer = setInterval(() => {
+                console.log('timier triggered')
+                refreshPlayer && refreshPlayer();
+            },1000)
+        }
+        if(eventName === 'playing'){
+            if(refreshTimer === null) return;
+            clearTimeout(refreshTimer);
+            refreshTimer = null;
+        }
         // alert(eventName)
     }
     return (
