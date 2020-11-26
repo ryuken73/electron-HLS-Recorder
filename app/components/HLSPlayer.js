@@ -17,7 +17,7 @@ const HLSPlayer = (props) => {
         reMountPlayer
     } = props;
 
-    console.log('rerender HLSPlayer:',channelName)
+    console.log('rerender HLSPlayer:',channelName);
 
     const srcObject = {
         src: url,
@@ -91,18 +91,22 @@ const HLSPlayer = (props) => {
     let refreshTimer = null;
     const onVideoEvent = eventName => {
         console.log(channelName, eventName)
-        if(eventName === 'abort'){
+        if(eventName === 'abort' && refreshPlayer !== null){
             refreshTimer = setInterval(() => {
-                console.log('timier triggered')
-                refreshPlayer && refreshPlayer();
-            },1000)
+                channelLog('timier triggered')
+                refreshPlayer(player);
+            },2000)
+        } else if(eventName === 'abort' && refreshPlayer === null) {
+            channelLog('refreshPlayer is null');
         }
-        if(eventName === 'playing'){
-            if(refreshTimer === null) return;
+        if(eventName === 'playing' || eventName === 'loadstart' || eventName === 'waiting'){
+            if(refreshTimer === null) {
+                channelLog('refreshTimer is null. exit')
+                return;
+            }
             clearTimeout(refreshTimer);
             refreshTimer = null;
         }
-        // alert(eventName)
     }
     return (
         <div>

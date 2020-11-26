@@ -30,7 +30,7 @@ function ChannelContainer(props) {
     const [playbackMode, setPlaybackMode] = React.useState(false);
     const [player, setPlayer] = React.useState(null);
     const type = path.extname(currentUrl) === '.mp4' ? 'video/mp4':'application/x-mpegURL';
-    console.log('rerender:', channelName, currentUrl);
+    console.log('rerender:', channelName, currentUrl, player);
 
     React.useEffect(() => {
         async function mkdir(){
@@ -43,15 +43,12 @@ function ChannelContainer(props) {
         mkdir();
     },[])
 
-    // const reMountPlayer = React.useCallback(() => {
-    //     console.log(`remount player : ${channelName}`)
-    //     setMountPlayer(false);
-    //     setMountPlayer(true)
-    // },[])
-
-    const refreshPlayer = React.useCallback(() => {
+    const refreshPlayer = React.useCallback( player => {
         // const currentSource = player.currentSource();
-        if(player === null) return;
+        if(player === null) {
+            console.log('player is null. not refresh!')
+            return;
+        }
         console.log('@@@@@',currentUrl)
         const srcObject = {
             src: currentUrl,
@@ -59,7 +56,7 @@ function ChannelContainer(props) {
             handleManifestRedirects: true,
         }
         player.src(srcObject)
-    },[player, currentUrl]);
+    }, [player, currentUrl]);
 
     const setCurrentUrlStore = url => {
         setCurrentUrl(url);
