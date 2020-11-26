@@ -28,6 +28,7 @@ function ChannelContainer(props) {
     const [saveDirectory, setSaveDirectory] = React.useState(initialDirectory);
     const [mountPlayer, setMountPlayer] = React.useState(true);
     const [playbackMode, setPlaybackMode] = React.useState(false);
+    const [player, setPlayer] = React.useState(null);
     const type = path.extname(currentUrl) === '.mp4' ? 'video/mp4':'application/x-mpegURL';
     console.log('rerender:', channelName, currentUrl);
 
@@ -48,12 +49,9 @@ function ChannelContainer(props) {
         setMountPlayer(true)
     },[])
 
-    const refreshPlayer = (currentUrl) => {
-        return () => {
-            // const previousUrl = currentUrl;
-            setCurrentUrl('');
-            setCurrentUrl(currentUrl);
-        }
+    const refreshPlayer = () => {
+        const currentSource = player.currentSource();
+        player.src(currentSource)
     }
 
     const setCurrentUrlStore = url => {
@@ -77,7 +75,7 @@ function ChannelContainer(props) {
             {/* <Box display="flex" mx={"10px"} my={"3px"}> */}
             <Box display="flex" alignItems="flex-start">
                 <SmallPaddingIconButton padding="1px" size="small">
-                    <RefreshIcon color="secondary" fontSize={"small"} onClick={reMountPlayer}></RefreshIcon>
+                    <RefreshIcon color="secondary" fontSize={"small"} onClick={refreshPlayer}></RefreshIcon>
                 </SmallPaddingIconButton>
                 <BorderedBox display="flex" alignContent="center" flexGrow="1" border={3} borderColor={playbackMode ? 'red':'black'}>
                     {mountPlayer && 
@@ -88,6 +86,7 @@ function ChannelContainer(props) {
                         controls={false} 
                         autoplay={true} 
                         reMountPlayer={reMountPlayer}
+                        setPlayer={setPlayer}
                     ></HLSPlayer>}
                 </BorderedBox>
                 <BorderedBox bgcolor="#2d2f3b" display="flex" alignContent="center" flexGrow="1" width="1">

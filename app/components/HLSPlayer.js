@@ -3,6 +3,7 @@ import VideoPlayer from './VideoPlayer'
 
 const HLSPlayer = (props) => {
     // const [player, setPlayer] = React.useState({});
+    const {setPlayer} = props;
     const {
         channelName,
         width=320, 
@@ -34,6 +35,7 @@ const HLSPlayer = (props) => {
 
     const onPlayerReady = player => {
         console.log("Player is ready: ",channelName, player);
+        setPlayer(player);
         player.muted(true);
         // player.src(srcObject)
         /*
