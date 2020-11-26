@@ -88,13 +88,25 @@ const HLSPlayer = (props) => {
         channelLog('can play');
     }
 
+    const refreshHLSPlayer = () => {
+        setPlayer(player => {
+            const srcObject = {
+                src: url,
+                type,
+                handleManifestRedirects: true,
+            }
+            player.src(srcObject)
+            return player;
+        })
+    }
+
     let refreshTimer = null;
     const onVideoEvent = eventName => {
         console.log(channelName, eventName)
         if(eventName === 'abort' && refreshPlayer !== null){
             refreshTimer = setInterval(() => {
                 channelLog('timier triggered')
-                refreshPlayer(player);
+                refreshHLSPlayer();
             },2000)
         } else if(eventName === 'abort' && refreshPlayer === null) {
             channelLog('refreshPlayer is null');

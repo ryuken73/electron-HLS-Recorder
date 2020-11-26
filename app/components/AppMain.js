@@ -97,7 +97,7 @@ function App() {
     const win = new BrowserWindow({
         height: 900,
         width: 850,
-        title: 'HLS Recoder [Rrecorder]',
+        title: 'HLS Recoder [Recorder]',
         x: 440 + channels.length * 20,
         y: 50 + channels.length * 5,
         backgroundColor: '#252839',

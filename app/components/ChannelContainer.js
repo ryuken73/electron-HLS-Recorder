@@ -43,13 +43,12 @@ function ChannelContainer(props) {
         mkdir();
     },[])
 
-    const refreshPlayer = React.useCallback( player => {
+    const refreshPlayer = React.useCallback(() => {
         // const currentSource = player.currentSource();
         if(player === null) {
             console.log('player is null. not refresh!')
             return;
         }
-        console.log('@@@@@',currentUrl)
         const srcObject = {
             src: currentUrl,
             type,
