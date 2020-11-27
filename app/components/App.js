@@ -2,7 +2,6 @@ import React from 'react';
 import AppMain from './AppMain';
 import AppRecorder from './AppRecorder';
 
-const {getAbsolutePath} = require('../lib/electronUtil')
 const {remote} = require('electron');
 
 const parseQuery = queryString => {

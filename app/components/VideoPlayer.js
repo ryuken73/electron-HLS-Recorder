@@ -27,15 +27,10 @@ class VideoPlayer extends Component {
 
     init_player(props) {
         const playerOptions = this.generate_player_options(props);
-        // console.log(this.playerId)
         this.player = videojs(document.querySelector(`#${this.playerId}`), playerOptions);
-        // console.log(playerOptions);
         this.player.src(props.src)
         this.player.poster(props.poster)
         this.set_controls_visibility(this.player, props.hideControls);
-        // this.checkReadyTimer = setInterval(() => {
-        //     console.log(this.player.readyState())
-        // }, 1000)
     }
 
     generate_player_options(props){

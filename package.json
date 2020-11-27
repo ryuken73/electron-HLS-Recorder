@@ -66,10 +66,12 @@
       "main.prod.js",
       "main.prod.js.map",
       "package.json",
-      "bin/"
+      "bin/",
+      "config/"
     ],
     "asarUnpack": [
-      "bin/ffmpeg.exe"
+      "bin/ffmpeg.exe",
+      "config/cctvs.json"
     ],
     "dmg": {
       "contents": [

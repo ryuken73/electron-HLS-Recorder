@@ -5,7 +5,6 @@ import ChannelControl from './ChannelControl';
 import SectionWithFullHeight from './template/SectionWithFullHeight';
 import HLSPlayer from './HLSPlayer';
 import ClipContainer from './ClipContainer';
-import cctvs from '../config/cctvs';
 import utils from '../utils';
 import defaults from '../config/defaults';
 import path from 'path';

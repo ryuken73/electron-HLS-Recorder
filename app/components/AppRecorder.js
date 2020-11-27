@@ -8,7 +8,6 @@ import HLSPlayer from './HLSPlayer';
 import ChannelContainer from './ChannelContainer';
 import PreviewContainer from './PreviewContainer';
 import utils from '../utils';
-const {getAbsolutePath} = require('../lib/electronUtil')
 const {remote} = require('electron');
 
 const parseQuery = queryString => {
