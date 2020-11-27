@@ -5,23 +5,23 @@ import ChannelControl from './ChannelControl';
 import SectionWithFullHeight from './template/SectionWithFullHeight';
 import {SmallPaddingIconButton}  from './template/smallComponents';
 import RefreshIcon from '@material-ui/icons/Refresh';
-const {cctvsDefault} = require('../config/cctvs.json');
+const {defaultCCTVs} = require('../config/cctvs.json');
 
 import HLSPlayer from './HLSPlayer';
-// import {cctvs, webUrls} from '../config/cctvs';
 import utils from '../utils';
 import defaults from '../config/defaults';
 import path from 'path';
 
 const {baseDirectory} = defaults;
+
 function ChannelContainer(props) {
     const {channelNumber, channelName, clips, setClip, intervals, store} = props;
     const {setClipStore} = props;
-    const defaultCCTVs = cctvsDefault;
-    const cctvs = store.get(`cctvs`, cctvsDefault);
-    if(cctvsDefault === defaultCCTVs){
-        console.log('no previously saved cctvs. initialize cctvs in store');
-        store.set('cctvs', cctvs);
+    let cctvs = store.get(`cctvs`, null);
+    if(cctvs === null){
+        console.log('no previously saved cctvs. initialize cctvs in store', cctvs);
+        cctvs = defaultCCTVs;
+        store.set('cctvs', defaultCCTVs);
     }
     const defaultUrl =  cctvs[channelNumber] ? cctvs[channelNumber].url : '';
     const defaultInterval = 3600000;
