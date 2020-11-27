@@ -1,9 +1,16 @@
+import { SettingsOverscanRounded, Store } from '@material-ui/icons';
 import React, { Component } from 'react';
 import VideoPlayer from './VideoPlayer'
 
 const HLSPlayer = (props) => {
     // const [player, setPlayer] = React.useState({});
-    const {player, setPlayer, refreshPlayer=null} = props;
+    const {
+        player, 
+        setPlayer, 
+        refreshPlayer=null, 
+        setPlaybackRateStore=() => {},
+        getPlaybackRateStore=() => 1
+    } = props;
     const {
         channelName,
         width=320, 
@@ -36,6 +43,8 @@ const HLSPlayer = (props) => {
     const onPlayerReady = player => {
         console.log("Player is ready: ",channelName, player);
         setPlayer(player);
+        const playbackRate = getPlaybackRateStore();
+        player.playbackRate(playbackRate);
         player.muted(true);
         // player.src(srcObject)
         /*
@@ -86,6 +95,11 @@ const HLSPlayer = (props) => {
     }
     const onVideoCanPlay = () => {
         channelLog('can play');
+        const playbackRate = getPlaybackRateStore();
+        setPlayer(player => {
+            player.playbackRate(playbackRate);
+            return player
+        })
     }
 
     const refreshHLSPlayer = () => {
@@ -108,8 +122,10 @@ const HLSPlayer = (props) => {
                 channelLog('timier triggered')
                 refreshHLSPlayer();
             },2000)
+            return
         } else if(eventName === 'abort' && refreshPlayer === null) {
             channelLog('refreshPlayer is null');
+            return
         }
         if(eventName === 'playing' || eventName === 'loadstart' || eventName === 'waiting'){
             if(refreshTimer === null) {
@@ -118,6 +134,17 @@ const HLSPlayer = (props) => {
             }
             clearTimeout(refreshTimer);
             refreshTimer = null;
+            return
+        }
+        if(eventName === 'ratechange'){
+            setPlayer(player => {
+                // if ratechange occurred not manually but by changing media, just return
+               if(player.readyState() === 0) return player;
+                const currentPlaybackRate = player.playbackRate();
+                setPlaybackRateStore(currentPlaybackRate);
+                return player;
+            })
+
         }
     }
     return (

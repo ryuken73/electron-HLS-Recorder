@@ -60,6 +60,17 @@ function App() {
     return results;
   }
 
+  const setPlaybackRateStore = (playbackRate) => {
+    console.log('$$$$$$$$$$$ set', playbackRate)
+    store.set('playbackRate', playbackRate);
+  }
+
+  const getPlaybackRateStore = () => {
+    const playbackRate = store.get('playbackRate', 3);
+    console.log('$$$$$$$$$$$ get', playbackRate)
+    return playbackRate
+  }
+
   const removeClip = React.useCallback( async clipFullName => {
     console.log('########', clipFullName);
     try {
@@ -137,7 +148,12 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex" height="100%">
-        <PreviewContainer clips={clips} removeClip={removeClip}></PreviewContainer>
+        <PreviewContainer 
+          clips={clips} 
+          removeClip={removeClip}
+          setPlaybackRateStore={setPlaybackRateStore}
+          getPlaybackRateStore={getPlaybackRateStore}
+        ></PreviewContainer>
       </Box>
       <BasicButton 
         bgcolor={"#191d2e"} 

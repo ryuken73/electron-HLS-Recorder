@@ -44,6 +44,7 @@ class VideoPlayer extends Component {
         playerOptions.liveui = props.liveui;
         const hidePlaybackRates = props.hidePlaybackRates || props.hideControls.includes('playbackrates');
         if (!hidePlaybackRates) playerOptions.playbackRates = props.playbackRates;
+        console.log(playerOptions)
         return playerOptions;
     }
 
@@ -118,6 +119,9 @@ class VideoPlayer extends Component {
         this.player.on('emptied', () => {
             props.onEvent('emptied')
         })
+        this.player.on('ratechange', () => {
+            props.onEvent('ratechange');
+        })
         this.player.on('durationchange', () => {
             // console.log(`durationchange : ${this.player.duration()}`)
             // console.log(`durationchange :`, this.player.options())
@@ -166,7 +170,7 @@ VideoPlayer.defaultProps = {
     controls: true,
     autoplay: false,
     preload: 'auto',
-    playbackRates: [0.5, 1, 1.5, 2],
+    playbackRates: [1, 1.5, 2, 4, 8],
     hidePlaybackRates: false,
     className: "",
     hideControls: [],

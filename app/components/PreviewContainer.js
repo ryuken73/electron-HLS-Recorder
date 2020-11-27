@@ -11,8 +11,10 @@ import path from 'path';
 
 const {baseDirectory} = defaults;
 export default function PreviewContainer(props) {
-    const {clips, removeClip} = props;
+    const {clips, removeClip, setPlaybackRateStore, getPlaybackRateStore} = props;
     const [currentUrl, setCurrentUrl] = React.useState('');
+    const [player, setPlayer] = React.useState(null);
+
     const [type, setType] = React.useState('video/mp4');
 
     const playClip = (clip) => {
@@ -32,6 +34,10 @@ export default function PreviewContainer(props) {
                     controls={true}
                     autoplay={true}
                     width={330}
+                    player={player}
+                    setPlayer={setPlayer}
+                    setPlaybackRateStore={setPlaybackRateStore}
+                    getPlaybackRateStore={getPlaybackRateStore}
                 ></HLSPlayer>
             </Box>
             <BorderedBox bgcolor="#2d2f3b" height="100%" ml="0px" mr="0px" overflow="auto">
