@@ -25,18 +25,20 @@ async function mkdir(directory){
     }
 }
 
+const Store = require('electron-store');
+const store = new Store({watch: true});
+
 const { dialog } = require('electron').remote;
 
 const initialDuration = '00:00:00.00';
 
 function ChannleControl(props) {
-    const {channelName, cctvs, intervals} = props;
+    const {channelName, cctvs} = props;
     const {currentUrl="d:/temp/cctv/stream.m3u8", setCurrentUrl, setCurrentUrlStore} = props;
     const {currentTitle="", setCurrentTitle, setCurrentTitleStore} = props;
     const {currentInterval=600000, setCurrentInterval, setCurrentIntervalStore} = props;
     const {saveDirectory="d:/temp/cctv", setSaveDirectory} = props;
     const {setSaveDirectoryStore} = props;
-    const {clips, setClip, setClipStore} = props;
     const {setPlaybackMode} = props;
 
     const [duration, setDuration] = React.useState(initialDuration);
@@ -48,6 +50,20 @@ function ChannleControl(props) {
     const [scheduleTimer, setScheduleTimer] = React.useState({remainSeconds:0});
     const [scheduleStatus, setScheduleStatus] = React.useState('stopped');
     const [recorderStatus, setRecorderStatus] = React.useState('stopped');
+
+    const defaultClips = [];
+    const initialClips = store.get(`clips`, defaultClips);
+    const [clips, setClip] = React.useState(initialClips);
+
+    const setClipStore = React.useCallback( clips => {
+        store.set('clips', clips);
+    }, [])
+
+    React.useEffect(() => {
+        store.onDidChange('clips', (clips) => {
+            setClip(clips);
+        })
+    })
 
     let localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);
     const hlsSegmentsRegExp = new RegExp(`${channelName}_stream\\d.*.ts`);
@@ -261,7 +277,7 @@ function ChannleControl(props) {
                 <IntervalSelection
                     currentInterval={currentInterval}
                     recorderStatus={recorderStatus}
-                    intervals={intervals}
+                    // intervals={intervals}
                     onChange={onChange}
                     inTransition={inTransition}
                     scheduleStatus={scheduleStatus} 

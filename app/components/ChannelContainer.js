@@ -14,8 +14,11 @@ import path from 'path';
 
 const {baseDirectory} = defaults;
 
+const Store = require('electron-store');
+const store = new Store();
+
 function ChannelContainer(props) {
-    const {channelNumber, channelName, clips, setClip, intervals, store} = props;
+    const {channelNumber, channelName, clips, setClip} = props;
     const {setClipStore} = props;
     let cctvs = store.get(`cctvs`, null);
     if(cctvs === null){
@@ -117,7 +120,7 @@ function ChannelContainer(props) {
                 <BorderedBox bgcolor="#2d2f3b" display="flex" alignContent="center" flexGrow="1" width="1">
                     <ChannelControl 
                         cctvs={cctvs}
-                        intervals={intervals}
+                        // intervals={intervals}
                         channelName={channelName}
                         currentUrl={currentUrl} 
                         setCurrentUrl={setCurrentUrl}
@@ -131,9 +134,9 @@ function ChannelContainer(props) {
                         setSaveDirectoryStore={setSaveDirectoryStore}
                         setSaveDirectory={setSaveDirectory}
                         setPlaybackMode={setPlaybackMode}
-                        clips={clips}
-                        setClip={setClip}
-                        setClipStore={setClipStore}
+                        // clips={clips}
+                        // setClip={setClip}
+                        // setClipStore={setClipStore}
                         // intervals={intervals}
                         // setIntervals={setIntervals}
                         // setIntervalStore={setIntervalStore}

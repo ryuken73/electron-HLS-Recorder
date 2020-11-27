@@ -25,8 +25,8 @@ const channelPrefix = 'channel';
 const {channels='1:2:3:4'} = query;
 const channelNames = decodeURIComponent(channels).split(':').map(number => `${channelPrefix}${number}`)
 
-const Store = require('electron-store');
-const store = new Store();
+// const Store = require('electron-store');
+// const store = new Store();
 
 const theme = createMuiTheme({
   typography: {
@@ -40,43 +40,8 @@ const theme = createMuiTheme({
   },
 });
 
-const intervals = [
-
-]
-
 function App() {
-  const defaultClips = [];
-  const defaultInterval = {title:'1 Hour', milliseconds:3600000};
-  const initialClips = store.get(`clips`, defaultClips);
-  const [clips, setClip] = React.useState(initialClips);
-
-  const removeClip = React.useCallback( async clipFullName => {
-    console.log('########', clipFullName);
-    try {
-      await utils.file.delete(clipFullName);
-    } catch(err) {
-      // alert(err);
-      console.error(err)
-    } finally {
-      setClip(oldClips => {
-        const newClips = oldClips.filter(clip => clip !== clipFullName);
-        store.set('clips', newClips);
-        return newClips;
-      })
-    }
-
-  }, [clips])
-
-  const setClipStore = clips => {
-    setClip(clips);
-    store.set('clips', clips);
-  }
-
   const { BrowserWindow } = remote;
-  const url = require('url');
-  const path = require('path');
-  console.log(`^^^dirname:${__dirname}`)
-
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex">
@@ -86,10 +51,7 @@ function App() {
               key={index} 
               channelNumber={parseInt(channelName.replace(channelPrefix,''))} 
               channelName={channelName}
-              clips={clips}
-              setClip={setClip}
-              setClipStore={setClipStore}
-              store={store}
+              // store={store}
             ></ChannelContainer>
           ))}      
         </Box>
@@ -98,5 +60,5 @@ function App() {
   );
 }
 
-export default App;
+export default React.memo(App);
    
