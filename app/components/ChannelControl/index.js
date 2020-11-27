@@ -63,7 +63,7 @@ function ChannleControl(props) {
         store.onDidChange('clips', (clips) => {
             setClip(clips);
         })
-    })
+    },[])
 
     let localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);
     const hlsSegmentsRegExp = new RegExp(`${channelName}_stream\\d.*.ts`);
