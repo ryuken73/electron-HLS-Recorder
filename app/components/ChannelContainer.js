@@ -35,7 +35,6 @@ function ChannelContainer(props) {
     const [currentUrl, setCurrentUrl] = React.useState(streamUrl);
     const [currentTitle, setCurrentTitle] = React.useState(title);
     const [currentInterval, setCurrentInterval] = React.useState(initialInterval);
-    // const interval = store.get(`intervals.${channelNumber}`, defaultInterval)
     const defaultDirectory = path.join(baseDirectory, channelName);
     const initialDirectory = store.get(`directory.${channelNumber}`, defaultDirectory);
     const [saveDirectory, setSaveDirectory] = React.useState(initialDirectory);
@@ -57,7 +56,6 @@ function ChannelContainer(props) {
     },[])
 
     const refreshPlayer = React.useCallback(() => {
-        // const currentSource = player.currentSource();
         if(player === null) {
             console.log('player is null. not refresh!')
             return;
@@ -120,7 +118,6 @@ function ChannelContainer(props) {
                 <BorderedBox bgcolor="#2d2f3b" display="flex" alignContent="center" flexGrow="1" width="1">
                     <ChannelControl 
                         cctvs={cctvs}
-                        // intervals={intervals}
                         channelName={channelName}
                         currentUrl={currentUrl} 
                         setCurrentUrl={setCurrentUrl}
@@ -134,12 +131,6 @@ function ChannelContainer(props) {
                         setSaveDirectoryStore={setSaveDirectoryStore}
                         setSaveDirectory={setSaveDirectory}
                         setPlaybackMode={setPlaybackMode}
-                        // clips={clips}
-                        // setClip={setClip}
-                        // setClipStore={setClipStore}
-                        // intervals={intervals}
-                        // setIntervals={setIntervals}
-                        // setIntervalStore={setIntervalStore}
                     ></ChannelControl>
                 </BorderedBox>
             </Box>

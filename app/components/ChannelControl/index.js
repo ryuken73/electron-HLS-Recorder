@@ -75,14 +75,12 @@ function ChannleControl(props) {
             src: currentUrl, 
             target: path.join(saveDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`), 
             enablePlayback: true, 
-            // localm3u8: path.join(saveDirectory, `${channelName}_stream.m3u8`),
             localm3u8,
             ffmpegBinary: ffmpegPath,
             renameDoneFile: true,
         }
         const recorder = HLSRecorder.createHLSRecoder(options);
         recorder.on('progress', progress => {
-            // console.log({...progress, elapsed: recorder.elapsed, ...process.memoryUsage()});
             setDuration(progress.duration);
         })
         setRecorder(recorder);
@@ -97,7 +95,6 @@ function ChannleControl(props) {
             console.log('now playback. no need to change source of recorder');
             return;
         }
-        // console.log('change currentUrl or saveDirectory,', currentUrl, saveDirectory, channelName)
         if(recorder !== null){
             console.log(`change recorder.src from ${recorder.src} to ${currentUrl}`)
             recorder.src = currentUrl;
@@ -147,8 +144,6 @@ function ChannleControl(props) {
         setRecorderStatus('starting');
         recorder.once('start', (cmd) => {
             setTimeout(() => {
-                // console.log(`${channelName} started:`, inTransition, recorder.createTime)
-                // console.log(`###start: ${currentUrl} : ${previousUrl}`)
                 setRecorderStatus('started');
                 setPreviousUrl(currentUrl);
                 setCurrentUrl(localm3u8);
@@ -199,7 +194,6 @@ function ChannleControl(props) {
                         resolve(true);
                 })
                 recorder.once('error', (error) => {
-                    // console.log('##previousUrl')
                     alert(error)
                     initialRecorder();
                     resolve(true);
@@ -235,7 +229,6 @@ function ChannleControl(props) {
             setScheduleStatus('stopping')
             clearInterval(scheduledFunction);
             setScheduledFunction(null);
-            // console.log('### recorder.isBusy:',recorder.isBusy)
             if(recorder.isBusy) {
                 await stopRecording();
                 setScheduleStatus('stopped')
@@ -277,7 +270,6 @@ function ChannleControl(props) {
                 <IntervalSelection
                     currentInterval={currentInterval}
                     recorderStatus={recorderStatus}
-                    // intervals={intervals}
                     onChange={onChange}
                     inTransition={inTransition}
                     scheduleStatus={scheduleStatus} 
