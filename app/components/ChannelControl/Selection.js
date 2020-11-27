@@ -19,7 +19,7 @@ function Selection(props) {
             currentItem={currentUrl}
             multiple={false}
             menuItems={selectItems}
-            onChangeSelect={onChange('url')} 
+            onChange={onChange('url')} 
             smallComponent={true}
             bgcolor={'#232738'}
             selectColor={"#2d2f3b"}

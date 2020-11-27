@@ -32,6 +32,7 @@ const initialDuration = '00:00:00.00';
 function ChannleControl(props) {
     const {channelName, cctvs, intervals} = props;
     const {currentUrl="d:/temp/cctv/stream.m3u8", setCurrentUrl, setCurrentUrlStore} = props;
+    const {currentTitle="", setCurrentTitle, setCurrentTitleStore} = props;
     const {currentInterval=600000, setCurrentInterval, setCurrentIntervalStore} = props;
     const {saveDirectory="d:/temp/cctv", setSaveDirectory} = props;
     const {setSaveDirectoryStore} = props;
@@ -92,17 +93,21 @@ function ChannleControl(props) {
     }, [currentUrl, saveDirectory, channelName])
 
     const onChange = type => {
+        console.log('$$$$$ onchange1', type);
         return event => {
+            console.log('$$$$$ onchange2')
             const {value} = event.target;
             type === 'manualUrl' && setManualUrl(value);
             type === 'url' && setCurrentUrlStore(value);
+            // type === 'title' && setCurrentTitleStore(value);
             type === 'interval' && setCurrentIntervalStore(value);
         }
     }    
 
     const onClickSetManualUrl = event => {
         console.log('change url manually : ',urlTyped);
-        setCurrentUrl(urlTyped)
+        setCurrentUrl(urlTyped);
+        setCurrentTitle(urlTyped);
     };
     const onClickSelectSaveDirectory = () => {
         dialog.showOpenDialog(({properties:['openDirectory']}), filePaths=> {
@@ -123,6 +128,7 @@ function ChannleControl(props) {
                 setRecorderStatus('started');
                 setPreviousUrl(currentUrl);
                 setCurrentUrl(localm3u8);
+                setCurrentTitle(currentTitle);
                 setPlaybackMode(true);
                 setInTransition(false);
             },2000);
@@ -136,6 +142,7 @@ function ChannleControl(props) {
         setDuration(initialDuration);
         setPreviousUrl(previousUrl => {
             setCurrentUrl(previousUrl);
+            setCurrentTitle(currentTitle);
             return '';
         })
         setPlaybackMode(false);

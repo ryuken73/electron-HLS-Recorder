@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import Box from '@material-ui/core/Box'
 import PropTypes from 'prop-types';
 import Controls from './Controls.json';
 import videojs from 'video.js';
+import overlay from 'videojs-overlay';
 
 class VideoPlayer extends Component {
     // playerId = `video-player-${(new Date) * 1}`
@@ -27,7 +29,22 @@ class VideoPlayer extends Component {
 
     init_player(props) {
         const playerOptions = this.generate_player_options(props);
+        // const overlayText = document.createElement('div');
+        // overlayText.innerHTML = 'element by createElement';
+        // overlayText.style = "color:black;font-weight:strong";
+        const {enableOverlay=false, overlayContent="This is HLS Player!"} = props;
         this.player = videojs(document.querySelector(`#${this.playerId}`), playerOptions);
+        if(enableOverlay){
+            this.player.overlay(
+                {
+                    overlays:[{
+                        content: overlayContent,
+                        start:'playing',
+                        end:'pause'
+                    }]
+                }
+            )
+        }
         this.player.src(props.src)
         this.player.poster(props.poster)
         this.set_controls_visibility(this.player, props.hideControls);

@@ -24,10 +24,13 @@ function ChannelContainer(props) {
         store.set('cctvs', defaultCCTVs);
     }
     const defaultUrl =  cctvs[channelNumber] ? cctvs[channelNumber].url : '';
+    const defaultTitle = cctvs[channelNumber] ? cctvs[channelNumber].title : '';
     const defaultInterval = 3600000;
     const streamUrl = store.get(`src.${channelNumber}`, defaultUrl);
+    const title = store.get(`title.${channelNumber}`, defaultTitle);
     const initialInterval = store.get(`interval.${channelNumber}`, defaultInterval);
     const [currentUrl, setCurrentUrl] = React.useState(streamUrl);
+    const [currentTitle, setCurrentTitle] = React.useState(title);
     const [currentInterval, setCurrentInterval] = React.useState(initialInterval);
     // const interval = store.get(`intervals.${channelNumber}`, defaultInterval)
     const defaultDirectory = path.join(baseDirectory, channelName);
@@ -69,6 +72,15 @@ function ChannelContainer(props) {
         store.set(`src.${channelNumber}`, url);
     }
 
+    const setCurrentTitleStore = title => {
+        setCurrentTitle(title);
+        store.set(`title.${channelNumber}`, title);
+    }
+
+    const titleElement = document.createElement('div');
+    titleElement.innerHTML = currentTitle;
+    titleElement.style = "color:black;font-weight:strong";
+
     const setSaveDirectoryStore = directory => {
         setSaveDirectory(directory);
         store.set(`directory.${channelNumber}`, directory)
@@ -98,6 +110,8 @@ function ChannelContainer(props) {
                         player={player}
                         setPlayer={setPlayer}
                         refreshPlayer={refreshPlayer}
+                        overlayContent={titleElement}
+                        enableOverlay={true}
                     ></HLSPlayer>}
                 </BorderedBox>
                 <BorderedBox bgcolor="#2d2f3b" display="flex" alignContent="center" flexGrow="1" width="1">
@@ -107,7 +121,9 @@ function ChannelContainer(props) {
                         channelName={channelName}
                         currentUrl={currentUrl} 
                         setCurrentUrl={setCurrentUrl}
+                        setCurrentTitle={setCurrentTitle}
                         setCurrentUrlStore={setCurrentUrlStore}
+                        setCurrentTitleStore={setCurrentTitleStore}
                         currentInterval={currentInterval}
                         setCurrentInterval={setCurrentInterval}
                         setCurrentIntervalStore={setCurrentIntervalStore}

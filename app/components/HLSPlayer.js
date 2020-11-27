@@ -9,7 +9,9 @@ const HLSPlayer = (props) => {
         setPlayer, 
         refreshPlayer=null, 
         setPlaybackRateStore=() => {},
-        getPlaybackRateStore=() => 1
+        getPlaybackRateStore=() => 1,
+        enableOverlay=true,
+        overlayContent='Default Overlay Content'
     } = props;
     const {
         channelName,
@@ -170,6 +172,8 @@ const HLSPlayer = (props) => {
                 onEvent={onVideoEvent}
                 handleManifestRedirects={true}
                 liveui={true}
+                enableOverlay={true}
+                overlayContent={overlayContent}
             />
         </div>
     );
