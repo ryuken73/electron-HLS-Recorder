@@ -92,14 +92,21 @@ function ChannleControl(props) {
         }
     }, [currentUrl, saveDirectory, channelName])
 
+    const getTitleFromUrl = React.useCallback((url) => {
+        const matched = cctvs.find(cctv => cctv.url === url);
+        return matched.title;
+    }, [cctvs])
+
     const onChange = type => {
-        console.log('$$$$$ onchange1', type);
         return event => {
-            console.log('$$$$$ onchange2')
             const {value} = event.target;
             type === 'manualUrl' && setManualUrl(value);
             type === 'url' && setCurrentUrlStore(value);
-            // type === 'title' && setCurrentTitleStore(value);
+            if(type === 'title') {
+                const url = value;
+                const title = getTitleFromUrl(url);
+                setCurrentTitleStore(title);
+            }
             type === 'interval' && setCurrentIntervalStore(value);
         }
     }    
@@ -109,6 +116,7 @@ function ChannleControl(props) {
         setCurrentUrl(urlTyped);
         setCurrentTitle(urlTyped);
     };
+
     const onClickSelectSaveDirectory = () => {
         dialog.showOpenDialog(({properties:['openDirectory']}), filePaths=> {
             if(filePaths === undefined) return;
@@ -128,7 +136,9 @@ function ChannleControl(props) {
                 setRecorderStatus('started');
                 setPreviousUrl(currentUrl);
                 setCurrentUrl(localm3u8);
-                setCurrentTitle(currentTitle);
+                setCurrentTitle(previousTitle => {
+                    return previousTitle;
+                });
                 setPlaybackMode(true);
                 setInTransition(false);
             },2000);
@@ -142,7 +152,9 @@ function ChannleControl(props) {
         setDuration(initialDuration);
         setPreviousUrl(previousUrl => {
             setCurrentUrl(previousUrl);
-            setCurrentTitle(currentTitle);
+            setCurrentTitle(previousTitle => {
+                return previousTitle;
+            });
             return '';
         })
         setPlaybackMode(false);

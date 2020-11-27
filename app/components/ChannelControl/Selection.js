@@ -11,6 +11,11 @@ function Selection(props) {
             label: cctv.title
         }
     })
+    const onChangeSelect = React.useCallback((event) => {
+        onChange('url')(event);
+        onChange('title')(event);
+    }, [onChange])
+
     return (
         <OptionSelectList 
             subtitle='CCTV'
@@ -19,7 +24,8 @@ function Selection(props) {
             currentItem={currentUrl}
             multiple={false}
             menuItems={selectItems}
-            onChange={onChange('url')} 
+            // onChangeSelect={onChange('url')} 
+            onChangeSelect={onChangeSelect} 
             smallComponent={true}
             bgcolor={'#232738'}
             selectColor={"#2d2f3b"}
