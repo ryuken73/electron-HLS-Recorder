@@ -144,27 +144,29 @@ class RecoderHLS extends EventEmitter {
             throw new Error('already started!. stop first')
         }
         this.isPreparing = true;
-        log.info('start encoding..', this.src);
+        log.info(`[ffmpeg stderr][${this.name}]start encoding..`, this.src);
         // this.command = ffmpeg(this._src).inputOptions(hlsInputOptions).output(this.target).outputOptions(mp4Options);
         // this.enablePlayback && this.command.output(this._localm3u8).outputOptions(hlsOptions);
         this.command = ffmpeg(this._src).inputOptions(hlsInputOptions).output(this._localm3u8).outputOptions(hlsOptions);
         this.command
         .on('start', this.startHandler)
         .on('progress', this.progressHandler)
+        .on('stderr', stderrLine => {
+            log.log(`[ffmpeg stderr][${this.name}]${stderrLine}`);
+        })
         .on('error', error => {
-            alert('ffmpeg error')
-            console.error('ffmpeg error: ', error) ;
+            console.error(`[ffmpeg stderr][${this.name}]ffmpeg error: `, error) ;
             this.onWriteStreamClosed(error);
         })
         .on('end', (stdout, stderr) => {
-            log.info('ffmpeg end!')
+            log.info(`[ffmpeg stderr][${this.name}]ffmpeg end!`)
             this.onWriteStreamClosed()
         })
         .run();
     }
     stop = () => {
         if(!this.isRecording){
-            log.warn('start recording first!.')
+            log.warn(`[ffmpeg stderr][${this.name}]start recording first!.`)
             throw new Error('start recording first!.')
         }
         this.command.ffmpegProc.stdin.write('q');
