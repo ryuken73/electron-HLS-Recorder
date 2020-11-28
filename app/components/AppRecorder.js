@@ -7,6 +7,7 @@ import FirstChildSection from './template/FirstChildSection';
 import HLSPlayer from './HLSPlayer';
 import ChannelContainer from './ChannelContainer';
 import PreviewContainer from './PreviewContainer';
+import ActionAll from './ActionAll';
 import utils from '../utils';
 const {remote} = require('electron');
 
@@ -45,7 +46,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex">
-      <Box>
+        <Box>
           {channelNames.map((channelName, index) => (
             <ChannelContainer 
               key={index} 
@@ -53,7 +54,10 @@ function App() {
               channelName={channelName}
               // store={store}
             ></ChannelContainer>
-          ))}      
+          ))}     
+          <Box ml={"25px"}>
+            <ActionAll></ActionAll>
+          </Box>
         </Box>
       </Box>
     </ThemeProvider>

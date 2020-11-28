@@ -80,6 +80,7 @@ function App() {
       console.error(err)
     } finally {
       setClip(oldClips => {
+        console.log('$$$$ remove clip')
         const newClips = oldClips.filter(clip => clip !== clipFullName);
         store.set('clips', newClips);
         return newClips;
@@ -109,7 +110,7 @@ function App() {
         height: 900,
         width: 850,
         title: 'HLS Recoder [Recorder]',
-        x: 440 + channels.length * 20,
+        x: 434 + channels.length * 20,
         y: 50 + channels.length * 5,
         backgroundColor: '#252839',
         show: false,

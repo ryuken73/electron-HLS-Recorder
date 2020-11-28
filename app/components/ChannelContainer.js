@@ -80,7 +80,7 @@ function ChannelContainer(props) {
 
     const titleElement = document.createElement('div');
     titleElement.innerHTML = currentTitle;
-    titleElement.style = "color:black;font-weight:strong";
+    titleElement.style = "color:black;font-weight:bold";
 
     const setSaveDirectoryStore = directory => {
         setSaveDirectory(directory);

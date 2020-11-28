@@ -67,7 +67,9 @@
       "main.prod.js.map",
       "package.json",
       "bin/",
-      "config/"
+      "config/",
+      "video-js.css",
+      "videojs-overlay.css"
     ],
     "asarUnpack": [
       "bin/ffmpeg.exe",
