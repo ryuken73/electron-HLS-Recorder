@@ -154,6 +154,7 @@ function ChannleControl(props) {
                 setInTransition(false);
             },2000);
         })
+        recorder.on('error', (error) => console.error(error))
         recorder.start();
     }
 

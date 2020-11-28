@@ -1,6 +1,8 @@
 import React from 'react';
 import AppMain from './AppMain';
 import AppRecorder from './AppRecorder';
+import log from 'electron-log';
+log.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
 
 const {remote} = require('electron');
 
@@ -9,7 +11,8 @@ const parseQuery = queryString => {
     return queryArray.reduce((parsed, queryParam) => {
         const key = queryParam.split('=')[0];
         const value = queryParam.split('=')[1];
-        console.log('**',key,value)
+        // console.log('**',key,value)
+        log.info('**',key,value)
         parsed[key] = value;
         return parsed
     },{})
@@ -21,7 +24,7 @@ const isMainWindow = query.child !== 'true';
 const isChildWindow = !isMainWindow;
 const channelCount = INITIAL_CHANNEL_COUNT;
 
-console.log('^^^', query)
+log.info('^^^', query)
 
 export default function App() {
     return (
