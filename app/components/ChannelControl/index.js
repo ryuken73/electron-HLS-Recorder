@@ -14,6 +14,9 @@ import {getAbsolutePath} from '../../lib/electronUtil';
 import path from 'path';
 import defaults from '../../config/defaults';
 import utils from '../../utils';
+import log from 'electron-log';
+
+import { v4 as uuidv4 } from 'uuid';
 
 const {maxClips=20} = defaults;
 
@@ -50,6 +53,7 @@ function ChannleControl(props) {
     const [scheduleTimer, setScheduleTimer] = React.useState({remainSeconds:0});
     const [scheduleStatus, setScheduleStatus] = React.useState('stopped');
     const [recorderStatus, setRecorderStatus] = React.useState('stopped');
+    // const [workingDirectory, setWorkingDirectory] = React.useState(saveDirectory);
 
     const defaultClips = [];
     const initialClips = store.get(`clips`, defaultClips);
@@ -69,6 +73,7 @@ function ChannleControl(props) {
     const hlsSegmentsRegExp = new RegExp(`${channelName}_stream\\d.*.ts`);
 
     React.useEffect(() => {
+        log.info('Channel Control mounted!')
         const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
         const options = {
             name: channelName,
@@ -77,7 +82,7 @@ function ChannleControl(props) {
             enablePlayback: true, 
             localm3u8,
             ffmpegBinary: ffmpegPath,
-            renameDoneFile: true,
+            renameDoneFile: false,
         }
         const recorder = HLSRecorder.createHLSRecoder(options);
         recorder.on('progress', progress => {
@@ -85,25 +90,36 @@ function ChannleControl(props) {
         })
         setRecorder(recorder);
         return () => {
+            log.info('Channel Control dismounted!');
             recorder.destroy();
-            recorder = null;
         }
     },[])
 
     React.useEffect(() => {
+        log.info(`currentUrl changed : currentUrl=[${currentUrl}], loaclm3u8=[${localm3u8}]`)
         if(currentUrl === localm3u8){
-            console.log('now playback. no need to change source of recorder');
+            log.info('now playback. no need to change source of recorder');
             return;
         }
-        if(recorder !== null){
-            console.log(`change recorder.src from ${recorder.src} to ${currentUrl}`)
+        if(recorder !== null && recorder.isBusy === false){
+            log.info(`currentUrl changed : ${currentUrl}`)
             recorder.src = currentUrl;
-            const target = path.join(saveDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`);
-            localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);
-            recorder.target = target;
-            recorder.localm3u8 = localm3u8;
         }
-    }, [currentUrl, saveDirectory, channelName])
+    }, [currentUrl])
+
+    // React.useEffect(() => {
+    //     if(currentUrl === localm3u8){
+    //         log.info('now playback. no need to change source of recorder');
+    //         return;
+    //     }
+    //     if(recorder !== null){
+    //         log.info(`workingDirectory changed ${workingDirectory}`);
+    //         const target = path.join(workingDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`);
+    //         localm3u8 = path.join(workingDirectory, `${channelName}_stream.m3u8`);
+    //         recorder.target = target;
+    //         recorder.localm3u8 = localm3u8;
+    //     }
+    // }, [workingDirectory, channelName])   
 
     const getTitleFromUrl = React.useCallback((url) => {
         const matched = cctvs.find(cctv => cctv.url === url);
@@ -138,11 +154,18 @@ function ChannleControl(props) {
     };
 
     const startRecording = async () => {
-        mkdir(saveDirectory);
+        const randomString = uuidv4();
+        const workingDirectory = path.join(saveDirectory, randomString);
+        mkdir(workingDirectory);
+        const target = path.join(workingDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`);
+        localm3u8 = path.join(workingDirectory, `${channelName}_stream.m3u8`);
+        recorder.target = target;
+        recorder.localm3u8 = localm3u8;
         setInTransition(true);
-        console.log(`${channelName} starting`)
+        log.info(`${channelName} starting`)
         setRecorderStatus('starting');
         recorder.once('start', (cmd) => {
+            log.info('recorder emitted start : ', cmd)
             setTimeout(() => {
                 setRecorderStatus('started');
                 setPreviousUrl(currentUrl);
@@ -152,9 +175,9 @@ function ChannleControl(props) {
                 });
                 setPlaybackMode(true);
                 setInTransition(false);
-            },2000);
+            },4000);
         })
-        recorder.on('error', (error) => console.error(error))
+        recorder.on('error', (error) => log.error(error))
         recorder.start();
     }
 
@@ -175,11 +198,11 @@ function ChannleControl(props) {
     const stopRecording = () => {
         return new Promise((resolve, reject) => {
             try {
-                console.log(`${channelName} stopping:`, inTransition, recorder.createTime)
+                log.info(`${channelName} stopping:`, inTransition, recorder.createTime)
                 setRecorderStatus('stopping');
                 setInTransition(true);
                 recorder.once('end', async clipName => {
-                    console.log(`${channelName} stopped`)
+                    log.info(`${channelName} stopped`)
                     // problem : currentUrl value fixed when executed in schedule (in setInterval)
                     //           if execute stopRecording() directly, currentUrl's value is correct (varies with setCurrentUrlStore)
                     // solution : use functional parameter of useState 
@@ -189,19 +212,19 @@ function ChannleControl(props) {
                         return newClips;
                     });
                     initialRecorder();
-                    await utils.file.delete(localm3u8);
-                    await utils.file.deleteFiles(saveDirectory, hlsSegmentsRegExp);
-                    console.log(`${channelName} stopped`)
+                    // await utils.file.delete(localm3u8);
+                    // await utils.file.deleteFiles(saveDirectory, hlsSegmentsRegExp);
+                    log.info(`${channelName} stopped`)
                         resolve(true);
                 })
                 recorder.once('error', (error) => {
-                    alert(error)
+                    log.error(error)
                     initialRecorder();
                     resolve(true);
                 })
                 recorder.stop();
             } catch (err) {
-                console.error(err);
+                log.error(err);
                 initialRecorder();
                 resolve(true)
             }

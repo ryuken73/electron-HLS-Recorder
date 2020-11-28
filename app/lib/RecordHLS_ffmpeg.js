@@ -3,11 +3,13 @@ const utils = require('../utils');
 const fs = require('fs');
 const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
+const log = require('electron-log');
 
 // const hlsInputOptions = ['-dts_delta_threshold', 0] // fornt part of clip not playable
 const hlsInputOptions = ['-dts_delta_threshold', 10];
 const mp4Options = ['-acodec', 'copy', '-vcodec', 'copy'];;
-const hlsOptions = ['-f','hls','-hls_time','8','-hls_list_size','10','-hls_flags','delete_segments','-g',25,'-sc_threshold',0,'-preset','ultrafast','-vsync',2];
+const hlsOptions = ['-f','hls', '-hls_time', 4, '-hls_list_size','0','-g',25,'-sc_threshold',0,'-preset','ultrafast','-vsync',2];
+// const hlsOptions = ['-f','hls','-hls_time','8','-hls_list_size','10','-hls_flags','delete_segments','-g',25,'-sc_threshold',0,'-preset','ultrafast','-vsync',2];
 
 class RecoderHLS extends EventEmitter {
     constructor(options){
@@ -21,7 +23,7 @@ class RecoderHLS extends EventEmitter {
             ffmpegBinary='./ffmpeg.exe',
             renameDoneFile=false
         } = options;
-        console.log(ffmpegBinary)
+        log.debug(ffmpegBinary)
         this._name = name;
         this._src = src;
         this._target = target;
@@ -41,7 +43,7 @@ class RecoderHLS extends EventEmitter {
         this._durationRecorded = '00:00:00.00';
         this._startTime = null;
         this._rStream = null;
-        console.log('recoder initialized...')
+        log.info('recoder initialized...')
     }
 
     get name() { return this._name }
@@ -93,7 +95,7 @@ class RecoderHLS extends EventEmitter {
     };
 
     onWriteStreamClosed = (error) => {
-        console.log(`write stream closed : ${this.target}`);
+        log.info(`write stream closed : ${this.target}`);
         if(error){
             this.initialize();
             this.emit('error', error)
@@ -111,7 +113,7 @@ class RecoderHLS extends EventEmitter {
                     return;
                     // throw new Error(err)
                 }
-                console.log(`change filename : ${this.target} to ${newFullPath}`)
+                log.info(`change filename : ${this.target} to ${newFullPath}`)
                 this.initialize();
                 this.emit('end', newFullPath)
             });
@@ -122,10 +124,10 @@ class RecoderHLS extends EventEmitter {
 
     }
     onReadStreamClosed = () => {
-        console.log(`read stream closed : ${this.src}`);
+        log.info(`read stream closed : ${this.src}`);
     }
     startHandler = cmd => {
-        console.log('started: ',cmd);
+        log.info('started: ',cmd);
         this.isPreparing = false;
         this.isRecording = true;
         this.startTime = Date.now();
@@ -138,13 +140,14 @@ class RecoderHLS extends EventEmitter {
 
     start = () => {
         if(this.isBusy) {
-            console.log('already started!. stop first');
+            log.warn('already started!. stop first');
             throw new Error('already started!. stop first')
         }
         this.isPreparing = true;
-        console.log('start encoding..', this.src);
-        this.command = ffmpeg(this._src).inputOptions(hlsInputOptions).output(this.target).outputOptions(mp4Options);
-        this.enablePlayback && this.command.output(this._localm3u8).outputOptions(hlsOptions);
+        log.info('start encoding..', this.src);
+        // this.command = ffmpeg(this._src).inputOptions(hlsInputOptions).output(this.target).outputOptions(mp4Options);
+        // this.enablePlayback && this.command.output(this._localm3u8).outputOptions(hlsOptions);
+        this.command = ffmpeg(this._src).inputOptions(hlsInputOptions).output(this._localm3u8).outputOptions(hlsOptions);
         this.command
         .on('start', this.startHandler)
         .on('progress', this.progressHandler)
@@ -154,14 +157,14 @@ class RecoderHLS extends EventEmitter {
             this.onWriteStreamClosed(error);
         })
         .on('end', (stdout, stderr) => {
-            console.log('ffmpeg end!')
+            log.info('ffmpeg end!')
             this.onWriteStreamClosed()
         })
         .run();
     }
     stop = () => {
         if(!this.isRecording){
-            console.log('start recording first!.')
+            log.warn('start recording first!.')
             throw new Error('start recording first!.')
         }
         this.command.ffmpegProc.stdin.write('q');
