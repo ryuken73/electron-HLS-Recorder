@@ -2,8 +2,21 @@ import React from 'react';
 import AppMain from './AppMain';
 import AppRecorder from './AppRecorder';
 import log from 'electron-log';
+const fs = require('fs');
+const utils = require('../utils');
+
 log.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
 log.transports.file.maxSize = 10485760;
+log.transports.file.archiveLog = file => {
+    file = file.toString();
+    const info = path.parse(file);
+    const dayString = utils.date.getString(new Date());
+    try {
+      fs.renameSync(file, path.join(info.dir, info.name + dayString + '.' + info.ext));
+    } catch (e) {
+      console.warn('Could not rotate log', e);
+    }
+  }
 
 const {remote} = require('electron');
 
