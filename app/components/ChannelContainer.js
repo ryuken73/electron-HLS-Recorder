@@ -11,6 +11,7 @@ import HLSPlayer from './HLSPlayer';
 import utils from '../utils';
 import defaults from '../config/defaults';
 import path from 'path';
+import log, { levels } from 'electron-log';
 
 const {baseDirectory} = defaults;
 
@@ -20,9 +21,18 @@ const store = new Store();
 function ChannelContainer(props) {
     const {channelNumber, channelName, clips, setClip} = props;
     const {setClipStore} = props;
+    const createLogger = channelName => {
+        return {
+                    info: (msg) => {
+                        log.info(`[${channelName}]${msg}`)
+                    }
+        }
+    }
+    
+    const channelLogger = createLogger(channelName);
     let cctvs = store.get(`cctvs`, null);
     if(cctvs === null){
-        console.log('no previously saved cctvs. initialize cctvs in store', cctvs);
+        channelLogger.info(`no previously saved cctvs. initialize cctvs in store [${cctv}]`);
         cctvs = defaultCCTVs;
         store.set('cctvs', defaultCCTVs);
     }
@@ -42,7 +52,8 @@ function ChannelContainer(props) {
     const [playbackMode, setPlaybackMode] = React.useState(false);
     const [player, setPlayer] = React.useState(null);
     const type = path.extname(currentUrl) === '.mp4' ? 'video/mp4':'application/x-mpegURL';
-    console.log('rerender:', channelName, currentUrl, player);
+    console.log(channelLogger.info)
+    channelLogger.info(`rerender: ${channelName}: ${currentUrl}`);
 
     React.useEffect(() => {
         async function mkdir(){
@@ -57,7 +68,7 @@ function ChannelContainer(props) {
 
     const refreshPlayer = React.useCallback(() => {
         if(player === null) {
-            console.log('player is null. not refresh!')
+            channelLogger.info('player is null. not refresh!')
             return;
         }
         const srcObject = {
@@ -89,7 +100,7 @@ function ChannelContainer(props) {
 
     const setCurrentIntervalStore = interval => {
         setCurrentInterval(interval);
-        console.log(`^^^ save interval`, interval);
+        channelLogger.info(`save interval: ${interval}`);
         store.set(`interval.${channelNumber}`, interval)
     }
 

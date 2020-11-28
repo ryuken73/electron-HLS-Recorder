@@ -3,6 +3,7 @@ import AppMain from './AppMain';
 import AppRecorder from './AppRecorder';
 import log from 'electron-log';
 log.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
+log.transports.file.maxSize = 10485760;
 
 const {remote} = require('electron');
 

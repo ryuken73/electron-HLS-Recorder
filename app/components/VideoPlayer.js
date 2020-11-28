@@ -28,26 +28,31 @@ class VideoPlayer extends Component {
     }
 
     init_player(props) {
-        const playerOptions = this.generate_player_options(props);
-        // const overlayText = document.createElement('div');
-        // overlayText.innerHTML = 'element by createElement';
-        // overlayText.style = "color:black;font-weight:strong";
-        const {enableOverlay=false, overlayContent="This is HLS Player!"} = props;
-        this.player = videojs(document.querySelector(`#${this.playerId}`), playerOptions);
-        if(enableOverlay){
-            this.player.overlay(
-                {
-                    overlays:[{
-                        content: overlayContent,
-                        start:'playing',
-                        end:'pause'
-                    }]
-                }
-            )
+        try {
+            const playerOptions = this.generate_player_options(props);
+            // const overlayText = document.createElement('div');
+            // overlayText.innerHTML = 'element by createElement';
+            // overlayText.style = "color:black;font-weight:strong";
+            const {enableOverlay=false, overlayContent="This is HLS Player!"} = props;
+            this.player = videojs(document.querySelector(`#${this.playerId}`), playerOptions);
+            if(enableOverlay){
+                this.player.overlay(
+                    {
+                        overlays:[{
+                            content: overlayContent,
+                            start:'playing',
+                            end:'pause'
+                        }]
+                    }
+                )
+            }
+            this.player.src(props.src)
+            this.player.poster(props.poster)
+            this.set_controls_visibility(this.player, props.hideControls);
+        } catch(error) {
+            console.error(error)
         }
-        this.player.src(props.src)
-        this.player.poster(props.poster)
-        this.set_controls_visibility(this.player, props.hideControls);
+  
     }
 
     generate_player_options(props){
@@ -112,8 +117,8 @@ class VideoPlayer extends Component {
             props.onEnd();
         });
         this.player.on('error', error => {
-            console.log(error);
-            props.onError(error);
+            console.log(player.error());
+            props.onError(player.error());
         });
         this.player.on('stalled', () => {
             props.onEvent('stalled')

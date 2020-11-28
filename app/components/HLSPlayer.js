@@ -1,6 +1,7 @@
 import { SettingsOverscanRounded, Store } from '@material-ui/icons';
 import React, { Component } from 'react';
-import VideoPlayer from './VideoPlayer'
+import VideoPlayer from './VideoPlayer';
+import log from 'electron-log';
 
 const HLSPlayer = (props) => {
     // const [player, setPlayer] = React.useState({});
@@ -14,7 +15,7 @@ const HLSPlayer = (props) => {
         overlayContent='Default Overlay Content'
     } = props;
     const {
-        channelName,
+        channelName='preview',
         width=320, 
         height=180, 
         controls=false, 
@@ -26,7 +27,7 @@ const HLSPlayer = (props) => {
         reMountPlayer
     } = props;
 
-    console.log('rerender HLSPlayer:',channelName);
+    log.info(`[${channelName}] rerender HLSPlayer:`,channelName);
 
     const srcObject = {
         src: url,
@@ -36,14 +37,14 @@ const HLSPlayer = (props) => {
 
     const createLogger = channelName => {
         return msg => {
-            console.log(`[${channelName}]`,msg)
+            log.info(`[${channelName}]`,msg)
         }
     }
 
     const channelLog = createLogger(channelName);
 
     const onPlayerReady = player => {
-        console.log("Player is ready: ",channelName, player);
+        channelLog("Player is ready: ",channelName);
         setPlayer(player);
         const playbackRate = getPlaybackRateStore();
         player.playbackRate(playbackRate);
@@ -87,7 +88,7 @@ const HLSPlayer = (props) => {
     }
 
     const onVideoError = (error) => {
-        channelLog(error);
+        channelLog(`error occurred: ${error.message}`);
         if(url === '') return;
         // refreshPlayer()
     }
@@ -106,6 +107,7 @@ const HLSPlayer = (props) => {
 
     const refreshHLSPlayer = () => {
         setPlayer(player => {
+            channelLog(`refreshHLSPlayer : change hls src to ${url}`);
             const srcObject = {
                 src: url,
                 type,
@@ -118,7 +120,7 @@ const HLSPlayer = (props) => {
 
     let refreshTimer = null;
     const onVideoEvent = eventName => {
-        console.log(channelName, eventName)
+        channelLog(channelName, eventName)
         if(eventName === 'abort' && refreshPlayer !== null){
             refreshTimer = setInterval(() => {
                 channelLog('timier triggered')
@@ -126,14 +128,15 @@ const HLSPlayer = (props) => {
             },2000)
             return
         } else if(eventName === 'abort' && refreshPlayer === null) {
-            channelLog('refreshPlayer is null');
+            channelLog('abort but not refresh because refreshPlayer parameter is null');
             return
         }
         if(eventName === 'playing' || eventName === 'loadstart' || eventName === 'waiting'){
             if(refreshTimer === null) {
-                channelLog('refreshTimer is null. exit')
+                channelLog('playing, loadstart or waiting event emitted. but do not clearTimeout(refreshTimer) because refreshTimer is null. exit')
                 return;
             }
+            channelLog('execute clearTimeout(refreshTimer)')
             clearTimeout(refreshTimer);
             refreshTimer = null;
             return
@@ -141,7 +144,7 @@ const HLSPlayer = (props) => {
         if(eventName === 'ratechange'){
             setPlayer(player => {
                 // if ratechange occurred not manually but by changing media, just return
-               if(player.readyState() === 0) return player;
+                if(player.readyState() === 0) return player;
                 const currentPlaybackRate = player.playbackRate();
                 setPlaybackRateStore(currentPlaybackRate);
                 return player;
