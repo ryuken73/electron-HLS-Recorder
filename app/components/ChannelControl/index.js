@@ -55,6 +55,14 @@ function ChannleControl(props) {
     const [recorderStatus, setRecorderStatus] = React.useState('stopped');
     // const [workingDirectory, setWorkingDirectory] = React.useState(saveDirectory);
 
+    const createLogger = channelName => {
+        return {
+                    info: (msg) => {log.info(`[${channelName}][ChannelControl]${msg}`)},
+                    error: (msg) => {log.error(`[${channelName}][ChannelControl]${msg}`)},
+        }
+    }
+    const channelLog = createLogger(channelName);
+
     const defaultClips = [];
     const initialClips = store.get(`clips`, defaultClips);
     const [clips, setClip] = React.useState(initialClips);
@@ -73,7 +81,7 @@ function ChannleControl(props) {
     const hlsSegmentsRegExp = new RegExp(`${channelName}_stream\\d.*.ts`);
 
     React.useEffect(() => {
-        log.info('Channel Control mounted!')
+        channelLog.info(`Channel Control mounted!`)
         const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
         const options = {
             name: channelName,
@@ -88,32 +96,37 @@ function ChannleControl(props) {
         recorder.on('progress', progress => {
             setDuration(progress.duration);
         })
+        recorder.on('error', (error) => {
+            channelLog.error(`error occurred`);
+            log.error(error);
+            initialRecorder();
+        })
         setRecorder(recorder);
         return () => {
-            log.info('Channel Control dismounted!');
+            channelLog.info(`Channel Control dismounted!`);
             recorder.destroy();
         }
     },[])
 
     React.useEffect(() => {
-        log.info(`currentUrl changed : currentUrl=[${currentUrl}], loaclm3u8=[${localm3u8}]`)
+        channelLog.info(`currentUrl changed : currentUrl=[${currentUrl}], loaclm3u8=[${localm3u8}]`)
         if(currentUrl === localm3u8){
-            log.info('now playback. no need to change source of recorder');
+            channelLog.info(`now playback. no need to change source of recorder`);
             return;
         }
         if(recorder !== null && recorder.isBusy === false){
-            log.info(`currentUrl changed : ${currentUrl}`)
+            channelLog.info(`change currentUrl : ${currentUrl}`)
             recorder.src = currentUrl;
         }
     }, [currentUrl])
 
     // React.useEffect(() => {
     //     if(currentUrl === localm3u8){
-    //         log.info('now playback. no need to change source of recorder');
+    //         channelLog.info('now playback. no need to change source of recorder');
     //         return;
     //     }
     //     if(recorder !== null){
-    //         log.info(`workingDirectory changed ${workingDirectory}`);
+    //         channelLog.info(`workingDirectory changed ${workingDirectory}`);
     //         const target = path.join(workingDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`);
     //         localm3u8 = path.join(workingDirectory, `${channelName}_stream.m3u8`);
     //         recorder.target = target;
@@ -162,10 +175,10 @@ function ChannleControl(props) {
         recorder.target = target;
         recorder.localm3u8 = localm3u8;
         setInTransition(true);
-        log.info(`${channelName} starting`)
+        channelLog.info('start startRecroding()')
         setRecorderStatus('starting');
         recorder.once('start', (cmd) => {
-            log.info('recorder emitted start : ', cmd)
+            channelLog.info(`recorder emitted start : ${cmd}`)
             setTimeout(() => {
                 setRecorderStatus('started');
                 setPreviousUrl(currentUrl);
@@ -177,7 +190,10 @@ function ChannleControl(props) {
                 setInTransition(false);
             },4000);
         })
-        recorder.on('error', (error) => log.error(error))
+        // recorder.on('error', (error) => {
+        //     channelLog.error(`${channelName} error occurred while recording`);
+        //     channelLog.error(error)
+        // })
         recorder.start();
     }
 
@@ -198,11 +214,11 @@ function ChannleControl(props) {
     const stopRecording = () => {
         return new Promise((resolve, reject) => {
             try {
-                log.info(`${channelName} stopping:`, inTransition, recorder.createTime)
+                channelLog.info(`start stopRecording(): inTransition: ${inTransition}, recorder.createTime:${recorder.createTime}`)
                 setRecorderStatus('stopping');
                 setInTransition(true);
                 recorder.once('end', async clipName => {
-                    log.info(`${channelName} stopped`)
+                    channelLog.info(`recorder emitted end`)
                     // problem : currentUrl value fixed when executed in schedule (in setInterval)
                     //           if execute stopRecording() directly, currentUrl's value is correct (varies with setCurrentUrlStore)
                     // solution : use functional parameter of useState 
@@ -214,16 +230,17 @@ function ChannleControl(props) {
                     initialRecorder();
                     // await utils.file.delete(localm3u8);
                     // await utils.file.deleteFiles(saveDirectory, hlsSegmentsRegExp);
-                    log.info(`${channelName} stopped`)
-                        resolve(true);
-                })
-                recorder.once('error', (error) => {
-                    log.error(error)
-                    initialRecorder();
                     resolve(true);
                 })
+                // recorder.once('error', (error) => {
+                //     channelLog.error(`${channelName} recorder error in stopRecording`)
+                //     channelLog.error(error)
+                //     initialRecorder();
+                //     resolve(true);
+                // })
                 recorder.stop();
             } catch (err) {
+                channelLog.error(`error in stopRecording`)
                 log.error(err);
                 initialRecorder();
                 resolve(true)

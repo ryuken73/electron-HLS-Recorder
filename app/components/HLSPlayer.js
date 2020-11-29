@@ -27,7 +27,6 @@ const HLSPlayer = (props) => {
         reMountPlayer
     } = props;
 
-    log.info(`[${channelName}] rerender HLSPlayer:`,channelName);
 
     const srcObject = {
         src: url,
@@ -36,15 +35,17 @@ const HLSPlayer = (props) => {
     }
 
     const createLogger = channelName => {
-        return msg => {
-            log.info(`[${channelName}]`,msg)
+        return {
+                    info: (msg) => {log.info(`[${channelName}][player]${msg}`)},
+                    error: (msg) => {log.error(`[${channelName}][player]${msg}`)},
         }
     }
-
     const channelLog = createLogger(channelName);
 
+    channelLog.info(`[${channelName}] rerender HLSPlayer:${channelName}`);
+
     const onPlayerReady = player => {
-        channelLog("Player is ready: ",channelName);
+        channelLog.info("Player is ready");
         setPlayer(player);
         const playbackRate = getPlaybackRateStore();
         player.playbackRate(playbackRate);
@@ -59,45 +60,45 @@ const HLSPlayer = (props) => {
 
             // console.log(player.ended());
             // console.log(player.paused());
-            // channelLog(`pastSeekEnd ${player.liveTracker.pastSeekEnd()}`)
-            // channelLog(`isTracking ${player.liveTracker.isTracking()}`)
-            // channelLog(`behindLiveEdge ${player.liveTracker.behindLiveEdge()}`)
-            // channelLog(player.liveTracker)
+            // channelLog.info(`pastSeekEnd ${player.liveTracker.pastSeekEnd()}`)
+            // channelLog.info(`isTracking ${player.liveTracker.isTracking()}`)
+            // channelLog.info(`behindLiveEdge ${player.liveTracker.behindLiveEdge()}`)
+            // channelLog.info(player.liveTracker)
         },10000)
         */
     }
 
     const onVideoPlay = duration => {
-        // channelLog("Video played at: ", duration);
+        // channelLog.info("Video played at: ", duration);
     }
 
     const onVideoPause = duration =>{
-        // channelLog("Video paused at: ", duration);
+        // channelLog.info("Video paused at: ", duration);
     }
 
     const onVideoTimeUpdate = duration => {
-        // channelLog("Time updated: ", duration);
+        // channelLog.info("Time updated: ", duration);
     }
 
     const onVideoSeeking = duration => {
-        // channelLog("Video seeking: ", duration);
+        // channelLog.info("Video seeking: ", duration);
     }
 
     const onVideoSeeked = (from, to) => {
-        // channelLog(`Video seeked from ${from} to ${to}`);
+        // channelLog.info(`Video seeked from ${from} to ${to}`);
     }
 
     const onVideoError = (error) => {
-        channelLog(`error occurred: ${error.message}`);
+        channelLog.error(`error occurred: ${error.message}`);
         if(url === '') return;
         // refreshPlayer()
     }
 
     const onVideoEnd = () => {
-        // channelLog("Video ended");
+        // channelLog.info("Video ended");
     }
     const onVideoCanPlay = () => {
-        channelLog('can play');
+        channelLog.info('can play');
         const playbackRate = getPlaybackRateStore();
         setPlayer(player => {
             player.playbackRate(playbackRate);
@@ -107,7 +108,7 @@ const HLSPlayer = (props) => {
 
     const refreshHLSPlayer = () => {
         setPlayer(player => {
-            channelLog(`refreshHLSPlayer : change hls src to ${url}`);
+            channelLog.info(`refreshHLSPlayer : change hls src to ${url}`);
             const srcObject = {
                 src: url,
                 type,
@@ -120,23 +121,23 @@ const HLSPlayer = (props) => {
 
     let refreshTimer = null;
     const onVideoEvent = eventName => {
-        channelLog(channelName, eventName)
+        channelLog.info(`event occurred: ${eventName}`)
         if(eventName === 'abort' && refreshPlayer !== null){
             refreshTimer = setInterval(() => {
-                channelLog('timier triggered')
+                channelLog.info('refresh timer started')
                 refreshHLSPlayer();
             },2000)
             return
         } else if(eventName === 'abort' && refreshPlayer === null) {
-            channelLog('abort but not refresh because refreshPlayer parameter is null');
+            channelLog.info('abort but not start refresh timer because refreshPlayer parameter is null');
             return
         }
         if(eventName === 'playing' || eventName === 'loadstart' || eventName === 'waiting'){
             if(refreshTimer === null) {
-                channelLog('playing, loadstart or waiting event emitted. but do not clearTimeout(refreshTimer) because refreshTimer is null. exit')
+                channelLog.info('playing, loadstart or waiting event emitted. but do not clearTimeout(refreshTimer) because refreshTimer is null. exit')
                 return;
             }
-            channelLog('execute clearTimeout(refreshTimer)')
+            channelLog.info('clear refresh timer.')
             clearTimeout(refreshTimer);
             refreshTimer = null;
             return

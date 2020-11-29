@@ -24,7 +24,7 @@ function ChannelContainer(props) {
     const createLogger = channelName => {
         return {
                     info: (msg) => {
-                        log.info(`[${channelName}]${msg}`)
+                        log.info(`[${channelName}][ChannelContainer]${msg}`)
                     }
         }
     }

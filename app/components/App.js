@@ -26,7 +26,6 @@ const parseQuery = queryString => {
         const key = queryParam.split('=')[0];
         const value = queryParam.split('=')[1];
         // console.log('**',key,value)
-        log.info('**',key,value)
         parsed[key] = value;
         return parsed
     },{})
@@ -37,8 +36,6 @@ const query = parseQuery(location.search);
 const isMainWindow = query.child !== 'true';
 const isChildWindow = !isMainWindow;
 const channelCount = INITIAL_CHANNEL_COUNT;
-
-log.info('^^^', query)
 
 export default function App() {
     return (

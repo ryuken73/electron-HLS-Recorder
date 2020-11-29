@@ -43,7 +43,7 @@ class RecoderHLS extends EventEmitter {
         this._durationRecorded = '00:00:00.00';
         this._startTime = null;
         this._rStream = null;
-        log.info('recoder initialized...')
+        log.info(`[ffmpeg recorder][${this.name}]recoder initialized...`)
     }
 
     get name() { return this._name }
@@ -95,7 +95,7 @@ class RecoderHLS extends EventEmitter {
     };
 
     onWriteStreamClosed = (error) => {
-        log.info(`write stream closed : ${this.target}`);
+        log.info(`[ffmpeg recorder][${this.name}]write stream closed : ${this.target}`);
         if(error){
             this.initialize();
             this.emit('error', error)
@@ -113,7 +113,7 @@ class RecoderHLS extends EventEmitter {
                     return;
                     // throw new Error(err)
                 }
-                log.info(`change filename : ${this.target} to ${newFullPath}`)
+                log.info(`[ffmpeg recorder][${this.name}]change filename : ${this.target} to ${newFullPath}`)
                 this.initialize();
                 this.emit('end', newFullPath)
             });
@@ -124,10 +124,10 @@ class RecoderHLS extends EventEmitter {
 
     }
     onReadStreamClosed = () => {
-        log.info(`read stream closed : ${this.src}`);
+        log.info(`[ffmpeg recorder][${this.name}]read stream closed : ${this.src}`);
     }
     startHandler = cmd => {
-        log.info('started: ',cmd);
+        log.info(`[ffmpeg recorder][${this.name}]started: ${cmd}`);
         this.isPreparing = false;
         this.isRecording = true;
         this.startTime = Date.now();
@@ -144,7 +144,7 @@ class RecoderHLS extends EventEmitter {
             throw new Error('already started!. stop first')
         }
         this.isPreparing = true;
-        log.info(`[ffmpeg stderr][${this.name}]start encoding..`, this.src);
+        log.info(`[ffmpeg recorder][${this.name}]start encoding..`, this.src);
         // this.command = ffmpeg(this._src).inputOptions(hlsInputOptions).output(this.target).outputOptions(mp4Options);
         // this.enablePlayback && this.command.output(this._localm3u8).outputOptions(hlsOptions);
         this.command = ffmpeg(this._src).inputOptions(hlsInputOptions).output(this._localm3u8).outputOptions(hlsOptions);
@@ -152,22 +152,29 @@ class RecoderHLS extends EventEmitter {
         .on('start', this.startHandler)
         .on('progress', this.progressHandler)
         .on('stderr', stderrLine => {
-            log.log(`[ffmpeg stderr][${this.name}]${stderrLine}`);
+            log.info(`[ffmpeg stderr][${this.name}]${stderrLine}`);
         })
         .on('error', error => {
-            console.error(`[ffmpeg stderr][${this.name}]ffmpeg error: `, error) ;
+            log.error(`[ffmpeg stderr][${this.name}]ffmpeg error: `, error) ;
             this.onWriteStreamClosed(error);
         })
         .on('end', (stdout, stderr) => {
-            log.info(`[ffmpeg stderr][${this.name}]ffmpeg end!`)
+            log.info(`[ffmpeg recorder][${this.name}]ffmpeg end!`)
             this.onWriteStreamClosed()
         })
         .run();
     }
     stop = () => {
         if(!this.isRecording){
-            log.warn(`[ffmpeg stderr][${this.name}]start recording first!.`)
-            throw new Error('start recording first!.')
+            log.warn(`[ffmpeg recorder][${this.name}]start recording first!. there may be premature ending of ffmpeg.`)
+            this.initialize();
+            this.emit('end', this.target)
+            // throw new Error('start recording first!.')  
+            // "throw new Error" comment, because ffmpeg ended already case can be occurred and can make some trouble.
+            // if that case happened, manual(or scheduled) stop can't be processed forever if throws error, 
+            // because isRecording is already false...
+            // initialization already processed, don't need do something. just return;
+            return;
         }
         this.command.ffmpegProc.stdin.write('q');
     }
