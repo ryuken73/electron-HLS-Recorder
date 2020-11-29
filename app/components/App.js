@@ -4,13 +4,15 @@ import AppRecorder from './AppRecorder';
 import log from 'electron-log';
 const fs = require('fs');
 const utils = require('../utils');
+const path = require('path');
 
 log.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
 log.transports.file.maxSize = 10485760;
 log.transports.file.archiveLog = file => {
     file = file.toString();
     const info = path.parse(file);
-    const dayString = utils.date.getString(new Date());
+    const dayString = utils.date.getString(new Date(),{});
+    console.log('^^^', dayString)
     try {
       fs.renameSync(file, path.join(info.dir, info.name + dayString + '.' + info.ext));
     } catch (e) {
