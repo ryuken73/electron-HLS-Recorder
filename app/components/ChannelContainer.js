@@ -172,6 +172,7 @@ function ChannelContainer(props) {
                     <ChannelControl 
                         cctvs={cctvs}
                         channelName={channelName}
+                        channelNumber={channelNumber}
                         currentUrl={currentUrl} 
                         setCurrentUrl={setCurrentUrl}
                         setCurrentTitle={setCurrentTitle}

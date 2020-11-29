@@ -1,6 +1,7 @@
 import React from 'react';
 import OptionSelectButton from '../template/OptionSelectButton';
 import ScheduleButton from './ScheduleButton';
+import log from 'electron-log';
 
 const intervals = [
     {title: '1 Hour', milliseconds: 3600000},
@@ -12,10 +13,11 @@ const intervals = [
 ]
 
 function IntervalSelection(props) {
-    const {currentInterval, recorderStatus} = props;
+    const {channelName, currentInterval, recorderStatus} = props;
     const {inTransition, scheduleStatus, scheduledFunction} = props;
     const {startSchedule, stopSchedule} = props;
     const {onChange} = props;
+    const {autoStartSchedule=false} = props;
     const inRecording = recorderStatus !== 'stopped';
     const selectItems = intervals.map(interval => {
         return {
@@ -23,6 +25,12 @@ function IntervalSelection(props) {
             label: interval.title
         }
     })
+
+    React.useEffect(() => {
+        autoStartSchedule && log.info(`[${channelName}]auto start schedule!!!`);
+        autoStartSchedule && startSchedule();
+    },[autoStartSchedule])
+
     const ButtonElement = () => {
         return <ScheduleButton
                 inTransition={inTransition}

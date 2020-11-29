@@ -100,7 +100,8 @@ class RecoderHLS extends EventEmitter {
             // this.initialize();
             // not manually initialize
             // send error message to ChannelControl
-            this.emit('error', error)
+            this.emit('error', error);
+            return;
         }
         if(this._renameDoneFile) {
             const baseDir = path.dirname(this.target);
@@ -183,7 +184,7 @@ class RecoderHLS extends EventEmitter {
         this.command.ffmpegProc.stdin.write('q');
     }
     destroy = () => {
-        this.command.kill();
+        this.command && this.command.kill();
     }
 }
 
@@ -197,6 +198,7 @@ const createHLSRecoder = options => {
         ffmpegBinary= 'd:/temp/cctv/ffmpeg.exe',
         renameDoneFile= true
     } = options;
+    log.warn(`[ffmpeg recorder][${this.name}]create HLS Recorder!`);
     return new RecoderHLS(options);
 }
 
