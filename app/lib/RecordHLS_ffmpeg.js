@@ -11,6 +11,36 @@ const mp4Options = ['-acodec', 'copy', '-vcodec', 'copy'];;
 const hlsOptions = ['-f','hls', '-hls_time', 4, '-hls_list_size','0','-g',25,'-sc_threshold',0,'-preset','ultrafast','-vsync',2];
 // const hlsOptions = ['-f','hls','-hls_time','8','-hls_list_size','10','-hls_flags','delete_segments','-g',25,'-sc_threshold',0,'-preset','ultrafast','-vsync',2];
 
+const sameAsBefore = initialValue => {
+    let previousValue = initialValue;
+    return currentValue => {
+        if(previousValue !== currentValue){
+            previousValue = currentValue;
+            return false;
+        }
+        return true;
+    }
+}
+
+const successiveEvent = checkFunction => {
+    let occurred = 0;
+    return (value, limit) => {
+        if(checkFunction(value)){
+            occurred ++;
+        } else {
+            occurred = 0;
+        }
+        if(occurred === limit){
+            return true;
+        }
+        return false;   
+    }
+}
+
+const INITIAL_TIMEMARKER = '00:00:00.00';
+const checkSame = sameAsBefore(INITIAL_TIMEMARKER);
+const checkSuccessiveEvent = successiveEvent(checkSame)
+
 class RecoderHLS extends EventEmitter {
     constructor(options){
         super();
@@ -139,6 +169,13 @@ class RecoderHLS extends EventEmitter {
     progressHandler = event => {
         // this.bytesRecorded = this.wStream.bytesWritten;
         this.duration = event.timemark;
+        const CRITICAL_OCCURR_LIMIT = 5;
+        const durationNotChanged = checkSuccessiveEvent(this.duration, CRITICAL_OCCURR_LIMIT);
+        if(durationNotChanged){
+            log.error(`[ffmpeg recorder][${this.name}]duration not changed last ${CRITICAL_OCCURR_LIMIT} times`)
+            log.error(`[ffmpeg recorder][${this.name}]kill ffmpeg`)
+            this.command.kill();
+        }
     }
 
     start = () => {
@@ -163,8 +200,8 @@ class RecoderHLS extends EventEmitter {
         })
         .on('end', (stdout, stderr) => {
             log.info(`[ffmpeg recorder][${this.name}]ffmpeg end!`)
-            log.info(stdout)
-            log.info(stderr)
+            log.info(`[ffmpeg stdout][${this.name}]`,stdout)
+            log.info(`[ffmpeg stderr][${this.name}]`,stderr)
             this.onWriteStreamClosed()
         })
         .run();
