@@ -236,6 +236,20 @@ function ChannleControl(props) {
                     setInTransition(false);
                 },4000);
             })
+            recorder.once('end', async clipName => {
+                channelLog.info(`recorder emitted end (listener1)`)
+                // problem : currentUrl value fixed when executed in schedule (in setInterval)
+                //           if execute stopRecording() directly, currentUrl's value is correct (varies with setCurrentUrlStore)
+                // solution : use functional parameter of useState 
+                setClip(prevClips => {
+                    const newClips = [clipName, ...prevClips].slice(0,maxClips)
+                    setClipStore(newClips);
+                    return newClips;
+                });
+                initialRecorder();
+                // await utils.file.delete(localm3u8);
+                // await utils.file.deleteFiles(saveDirectory, hlsSegmentsRegExp);
+            })
             recorder.start();
             // return recorder
         // })
@@ -264,26 +278,20 @@ function ChannleControl(props) {
                     setRecorderStatus('stopping');
                     setInTransition(true);
                     recorder.once('end', async clipName => {
-                        channelLog.info(`recorder emitted end`)
+                        channelLog.info(`recorder emitted end (listener2)`)
                         // problem : currentUrl value fixed when executed in schedule (in setInterval)
                         //           if execute stopRecording() directly, currentUrl's value is correct (varies with setCurrentUrlStore)
                         // solution : use functional parameter of useState 
-                        setClip(prevClips => {
-                            const newClips = [clipName, ...prevClips].slice(0,maxClips)
-                            setClipStore(newClips);
-                            return newClips;
-                        });
-                        initialRecorder();
+                        // setClip(prevClips => {
+                        //     const newClips = [clipName, ...prevClips].slice(0,maxClips)
+                        //     setClipStore(newClips);
+                        //     return newClips;
+                        // });
+                        // initialRecorder();
                         // await utils.file.delete(localm3u8);
                         // await utils.file.deleteFiles(saveDirectory, hlsSegmentsRegExp);
                         resolve(true);
                     })
-                    // recorder.once('error', (error) => {
-                    //     channelLog.error(`${channelName} recorder error in stopRecording`)
-                    //     channelLog.error(error)
-                    //     initialRecorder();
-                    //     resolve(true);
-                    // })
                     recorder.stop();
                     // return recorder
                 // })
