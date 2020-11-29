@@ -160,6 +160,8 @@ class RecoderHLS extends EventEmitter {
         })
         .on('end', (stdout, stderr) => {
             log.info(`[ffmpeg recorder][${this.name}]ffmpeg end!`)
+            log.info(stdout)
+            log.info(stderr)
             this.onWriteStreamClosed()
         })
         .run();
