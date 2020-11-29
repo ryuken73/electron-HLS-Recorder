@@ -9,7 +9,14 @@ function Title(props) {
     const {channelName, recorderStatus, duration} = props;
     const inRecording = recorderStatus === 'started';
     const inTransition = recorderStatus === 'starting' || recorderStatus === 'stopping';
-    const bgColor = inRecording ? "maroon" : inTransition ? "crimson" : "black"
+    const bgColors = {
+        'starting': 'crimson',
+        'started': 'maroon',
+        'stopping': '#590000',
+        'stopped': 'black'
+    }
+    // const bgColor = inRecording ? "maroon" : inTransition ? "crimson" : "black"
+    const bgColor = bgColors[recorderStatus];
     // console.log('&&&&&&',inTransition, inRecording, bgColor)
     const channel = {
         title: <Typography variant="body1">{channelName}</Typography>,
