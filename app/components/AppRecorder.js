@@ -7,8 +7,8 @@ import FirstChildSection from './template/FirstChildSection';
 import HLSPlayer from './HLSPlayer';
 import ChannelContainer from './ChannelContainer';
 import PreviewContainer from './PreviewContainer';
+import ActionAll from './ActionAll';
 import utils from '../utils';
-const {getAbsolutePath} = require('../lib/electronUtil')
 const {remote} = require('electron');
 
 const parseQuery = queryString => {
@@ -26,8 +26,8 @@ const channelPrefix = 'channel';
 const {channels='1:2:3:4'} = query;
 const channelNames = decodeURIComponent(channels).split(':').map(number => `${channelPrefix}${number}`)
 
-const Store = require('electron-store');
-const store = new Store();
+// const Store = require('electron-store');
+// const store = new Store();
 
 const theme = createMuiTheme({
   typography: {
@@ -41,63 +41,28 @@ const theme = createMuiTheme({
   },
 });
 
-const intervals = [
-
-]
-
 function App() {
-  const defaultClips = [];
-  const defaultInterval = {title:'1 Hour', milliseconds:3600000};
-  const initialClips = store.get(`clips`, defaultClips);
-  const [clips, setClip] = React.useState(initialClips);
-
-  const removeClip = React.useCallback( async clipFullName => {
-    console.log('########', clipFullName);
-    try {
-      await utils.file.delete(clipFullName);
-    } catch(err) {
-      // alert(err);
-      console.error(err)
-    } finally {
-      setClip(oldClips => {
-        const newClips = oldClips.filter(clip => clip !== clipFullName);
-        store.set('clips', newClips);
-        return newClips;
-      })
-    }
-
-  }, [clips])
-
-  const setClipStore = clips => {
-    setClip(clips);
-    store.set('clips', clips);
-  }
-
   const { BrowserWindow } = remote;
-  const url = require('url');
-  const path = require('path');
-  console.log(`^^^dirname:${__dirname}`)
-
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex">
-      <Box>
+        <Box>
           {channelNames.map((channelName, index) => (
             <ChannelContainer 
               key={index} 
               channelNumber={parseInt(channelName.replace(channelPrefix,''))} 
               channelName={channelName}
-              clips={clips}
-              setClip={setClip}
-              setClipStore={setClipStore}
-              store={store}
+              // store={store}  
             ></ChannelContainer>
-          ))}      
+          ))}     
+          <Box ml={"25px"}>
+            <ActionAll></ActionAll>
+          </Box>
         </Box>
       </Box>
     </ThemeProvider>
   );
 }
 
-export default App;
+export default React.memo(App);
    

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import Box from '@material-ui/core/Box'
 import PropTypes from 'prop-types';
 import Controls from './Controls.json';
 import videojs from 'video.js';
+import overlay from 'videojs-overlay';
 
 class VideoPlayer extends Component {
     // playerId = `video-player-${(new Date) * 1}`
@@ -26,16 +28,31 @@ class VideoPlayer extends Component {
     }
 
     init_player(props) {
-        const playerOptions = this.generate_player_options(props);
-        // console.log(this.playerId)
-        this.player = videojs(document.querySelector(`#${this.playerId}`), playerOptions);
-        // console.log(playerOptions);
-        this.player.src(props.src)
-        this.player.poster(props.poster)
-        this.set_controls_visibility(this.player, props.hideControls);
-        // this.checkReadyTimer = setInterval(() => {
-        //     console.log(this.player.readyState())
-        // }, 1000)
+        try {
+            const playerOptions = this.generate_player_options(props);
+            // const overlayText = document.createElement('div');
+            // overlayText.innerHTML = 'element by createElement';
+            // overlayText.style = "color:black;font-weight:strong";
+            const {enableOverlay=false, overlayContent="This is HLS Player!"} = props;
+            this.player = videojs(document.querySelector(`#${this.playerId}`), playerOptions);
+            if(enableOverlay){
+                this.player.overlay(
+                    {
+                        overlays:[{
+                            content: overlayContent,
+                            start:'playing',
+                            end:'pause'
+                        }]
+                    }
+                )
+            }
+            this.player.src(props.src)
+            this.player.poster(props.poster)
+            this.set_controls_visibility(this.player, props.hideControls);
+        } catch(error) {
+            console.error(error)
+        }
+  
     }
 
     generate_player_options(props){
@@ -49,6 +66,7 @@ class VideoPlayer extends Component {
         playerOptions.liveui = props.liveui;
         const hidePlaybackRates = props.hidePlaybackRates || props.hideControls.includes('playbackrates');
         if (!hidePlaybackRates) playerOptions.playbackRates = props.playbackRates;
+        console.log(playerOptions)
         return playerOptions;
     }
 
@@ -99,8 +117,8 @@ class VideoPlayer extends Component {
             props.onEnd();
         });
         this.player.on('error', error => {
-            console.log(error);
-            props.onError(error);
+            console.log(player.error());
+            props.onError(player.error());
         });
         this.player.on('stalled', () => {
             props.onEvent('stalled')
@@ -122,6 +140,9 @@ class VideoPlayer extends Component {
         })
         this.player.on('emptied', () => {
             props.onEvent('emptied')
+        })
+        this.player.on('ratechange', () => {
+            props.onEvent('ratechange');
         })
         this.player.on('durationchange', () => {
             // console.log(`durationchange : ${this.player.duration()}`)
@@ -171,7 +192,7 @@ VideoPlayer.defaultProps = {
     controls: true,
     autoplay: false,
     preload: 'auto',
-    playbackRates: [0.5, 1, 1.5, 2],
+    playbackRates: [1, 1.5, 2, 4, 8],
     hidePlaybackRates: false,
     className: "",
     hideControls: [],

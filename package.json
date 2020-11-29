@@ -66,10 +66,14 @@
       "main.prod.js",
       "main.prod.js.map",
       "package.json",
-      "bin/"
+      "bin/",
+      "config/",
+      "video-js.css",
+      "videojs-overlay.css"
     ],
     "asarUnpack": [
-      "bin/ffmpeg.exe"
+      "bin/ffmpeg.exe",
+      "config/cctvs.json"
     ],
     "dmg": {
       "contents": [
@@ -274,7 +278,7 @@
     "core-js": "3.4.1",
     "devtron": "^1.4.0",
     "electron-debug": "^3.0.1",
-    "electron-log": "^3.0.9",
+    "electron-log": "^4.3.0",
     "electron-store": "^6.0.1",
     "electron-updater": "^4.2.0",
     "fluent-ffmpeg": "^2.1.2",
@@ -291,7 +295,9 @@
     "redux-thunk": "^2.3.0",
     "source-map-support": "^0.5.16",
     "styled-components": "^5.2.1",
-    "video-react": "^0.14.1"
+    "uuid": "^8.3.1",
+    "video-react": "^0.14.1",
+    "videojs-overlay": "^2.1.4"
   },
   "devEngines": {
     "node": ">=7.x",

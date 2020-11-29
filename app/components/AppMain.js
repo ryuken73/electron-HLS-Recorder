@@ -60,6 +60,17 @@ function App() {
     return results;
   }
 
+  const setPlaybackRateStore = (playbackRate) => {
+    console.log('$$$$$$$$$$$ set', playbackRate)
+    store.set('playbackRate', playbackRate);
+  }
+
+  const getPlaybackRateStore = () => {
+    const playbackRate = store.get('playbackRate', 3);
+    console.log('$$$$$$$$$$$ get', playbackRate)
+    return playbackRate
+  }
+
   const removeClip = React.useCallback( async clipFullName => {
     console.log('########', clipFullName);
     try {
@@ -69,6 +80,7 @@ function App() {
       console.error(err)
     } finally {
       setClip(oldClips => {
+        console.log('$$$$ remove clip')
         const newClips = oldClips.filter(clip => clip !== clipFullName);
         store.set('clips', newClips);
         return newClips;
@@ -97,8 +109,8 @@ function App() {
     const win = new BrowserWindow({
         height: 900,
         width: 850,
-        title: 'HLS Recoder [Rrecorder]',
-        x: 440 + channels.length * 20,
+        title: 'HLS Recoder [Recorder]',
+        x: 434 + channels.length * 20,
         y: 50 + channels.length * 5,
         backgroundColor: '#252839',
         show: false,
@@ -137,7 +149,12 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex" height="100%">
-        <PreviewContainer clips={clips} removeClip={removeClip}></PreviewContainer>
+        <PreviewContainer 
+          clips={clips} 
+          removeClip={removeClip}
+          setPlaybackRateStore={setPlaybackRateStore}
+          getPlaybackRateStore={getPlaybackRateStore}
+        ></PreviewContainer>
       </Box>
       <BasicButton 
         bgcolor={"#191d2e"} 
