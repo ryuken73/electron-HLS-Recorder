@@ -52,7 +52,7 @@ function App() {
               key={index} 
               channelNumber={parseInt(channelName.replace(channelPrefix,''))} 
               channelName={channelName}
-              // store={store}
+              // store={store}  
             ></ChannelContainer>
           ))}     
           <Box ml={"25px"}>

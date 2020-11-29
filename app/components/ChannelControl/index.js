@@ -40,9 +40,10 @@ function ChannleControl(props) {
     const {currentUrl="d:/temp/cctv/stream.m3u8", setCurrentUrl, setCurrentUrlStore} = props;
     const {currentTitle="", setCurrentTitle, setCurrentTitleStore} = props;
     const {currentInterval=600000, setCurrentInterval, setCurrentIntervalStore} = props;
-    const {saveDirectory="d:/temp/cctv", setSaveDirectory} = props;
-    const {setSaveDirectoryStore} = props;
+    const {saveDirectory="d:/temp/cctv", setSaveDirectory, setSaveDirectoryStore} = props;
     const {setPlaybackMode} = props;
+    const {setMountPlayer, setMountChannelControl} = props;
+    const {resetPlayer} = props;
 
     const [duration, setDuration] = React.useState(initialDuration);
     const [urlTyped, setManualUrl] = React.useState('');
@@ -50,15 +51,28 @@ function ChannleControl(props) {
     const [previousUrl, setPreviousUrl] = React.useState('');
     const [inTransition, setInTransition] = React.useState(false);
     const [scheduledFunction, setScheduledFunction] = React.useState(null);
-    const [scheduleTimer, setScheduleTimer] = React.useState({remainSeconds:0});
     const [scheduleStatus, setScheduleStatus] = React.useState('stopped');
     const [recorderStatus, setRecorderStatus] = React.useState('stopped');
-    // const [workingDirectory, setWorkingDirectory] = React.useState(saveDirectory);
+
+    const resetControl = () => {
+        channelLog.info('resetControl() execute')
+        setDuration(initialDuration);
+        setManualUrl('');
+        setRecorder(null);
+        setPreviousUrl('');
+        setInTransition(false);
+        setScheduledFunction(func => {
+            clearInterval(func);
+            return null;
+        })
+        setScheduleStatus('stoopped');
+        setRecorderStatus('stoopped');
+    }
 
     const createLogger = channelName => {
         return {
-                    info: (msg) => {log.info(`[${channelName}][ChannelControl]${msg}`)},
-                    error: (msg) => {log.error(`[${channelName}][ChannelControl]${msg}`)},
+            info: msg => {log.info(`[${channelName}][ChannelControl]${msg}`)},
+            error: msg => {log.error(`[${channelName}][ChannelControl]${msg}`)}
         }
     }
     const channelLog = createLogger(channelName);
@@ -99,12 +113,18 @@ function ChannleControl(props) {
         recorder.on('error', (error) => {
             channelLog.error(`error occurred`);
             log.error(error);
-            initialRecorder();
+            // initialRecorder();
+            resetControl()
+            resetPlayer()
+            setMountChannelControl(false)
         })
         setRecorder(recorder);
         return () => {
             channelLog.info(`Channel Control dismounted!`);
             recorder.destroy();
+            setMountChannelControl(prevValue => {
+                setMountChannelControl(true);
+            })
         }
     },[])
 

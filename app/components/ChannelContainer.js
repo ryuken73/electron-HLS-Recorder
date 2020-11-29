@@ -15,21 +15,9 @@ import log, { levels } from 'electron-log';
 
 const {baseDirectory} = defaults;
 
-const Store = require('electron-store');
-const store = new Store();
-
-function ChannelContainer(props) {
-    const {channelNumber, channelName, clips, setClip} = props;
-    const {setClipStore} = props;
-    const createLogger = channelName => {
-        return {
-                    info: (msg) => {
-                        log.info(`[${channelName}][ChannelContainer]${msg}`)
-                    }
-        }
-    }
-    
-    const channelLogger = createLogger(channelName);
+const getInitialValues = (channelLogger, channelName, channelNumber) => {
+    const Store = require('electron-store');
+    const store = new Store();
     let cctvs = store.get(`cctvs`, null);
     if(cctvs === null){
         channelLogger.info(`no previously saved cctvs. initialize cctvs in store [${cctv}]`);
@@ -42,18 +30,94 @@ function ChannelContainer(props) {
     const streamUrl = store.get(`src.${channelNumber}`, defaultUrl);
     const title = store.get(`title.${channelNumber}`, defaultTitle);
     const initialInterval = store.get(`interval.${channelNumber}`, defaultInterval);
+    const defaultDirectory = path.join(baseDirectory, channelName);
+    const initialDirectory = store.get(`directory.${channelNumber}`, defaultDirectory);
+    const initialType = path.extname(streamUrl) === '.mp4' ? 'video/mp4':'application/x-mpegURL';
+    const initialTitleElement = document.createElement('div');
+    initialTitleElement.innerHTML = title;
+    initialTitleElement.style = "color:black;font-weight:bold";
+    return {
+        cctvs,
+        streamUrl, 
+        title, 
+        initialInterval, 
+        initialDirectory,
+        initialType,
+        initialTitleElement,
+        store
+    }
+}
+
+
+function ChannelContainer(props) {
+    const {channelNumber, channelName, clips, setClip} = props;
+    const {setClipStore} = props;
+    const createLogger = channelName => {
+        return {
+            info: (msg) => {
+                log.info(`[${channelName}][ChannelContainer]${msg}`)
+            }
+        }
+    }    
+    const channelLogger = createLogger(channelName);
+    const {
+        cctvs,
+        streamUrl, 
+        title, 
+        initialInterval, 
+        initialDirectory,
+        initialType,
+        initialTitleElement,
+        store,
+    } = getInitialValues(channelLogger, channelName, channelNumber)
+
     const [currentUrl, setCurrentUrl] = React.useState(streamUrl);
     const [currentTitle, setCurrentTitle] = React.useState(title);
     const [currentInterval, setCurrentInterval] = React.useState(initialInterval);
-    const defaultDirectory = path.join(baseDirectory, channelName);
-    const initialDirectory = store.get(`directory.${channelNumber}`, defaultDirectory);
     const [saveDirectory, setSaveDirectory] = React.useState(initialDirectory);
     const [mountPlayer, setMountPlayer] = React.useState(true);
+    const [mountChannelControl, setMountChannelControl] = React.useState(true);
     const [playbackMode, setPlaybackMode] = React.useState(false);
     const [player, setPlayer] = React.useState(null);
-    const type = path.extname(currentUrl) === '.mp4' ? 'video/mp4':'application/x-mpegURL';
-    console.log(channelLogger.info)
+    const [type, setType] = React.useState(initialType);
+    const [titleElement, setTitleElement] = React.useState(initialTitleElement);
     channelLogger.info(`rerender: ${channelName}: ${currentUrl}`);
+
+    const resetPlayer = () => {
+        channelLogger.info('restPlayer() execute')
+        const {
+            cctvs,
+            streamUrl, 
+            title, 
+            initialInterval, 
+            initialDirectory,
+            initialTitleElement,
+        } = getInitialValues(channelLogger, channelName, channelNumber);
+        setCurrentUrl(streamUrl);
+        setCurrentTitle(title);
+        setCurrentInterval(initialInterval);
+        setSaveDirectory(initialDirectory);
+        setTitleElement(initialTitleElement);
+        setPlaybackMode(false);
+    }
+
+    const setSaveDirectoryStore = directory => {
+        setSaveDirectory(directory);
+        store.set(`directory.${channelNumber}`, directory)
+    }
+    const setCurrentUrlStore = url => {
+        setCurrentUrl(url);
+        store.set(`src.${channelNumber}`, url);
+    }
+    const setCurrentTitleStore = title => {
+        setCurrentTitle(title);
+        store.set(`title.${channelNumber}`, title);
+    }
+    const setCurrentIntervalStore = interval => {
+        setCurrentInterval(interval);
+        channelLogger.info(`save interval: ${interval}`);
+        store.set(`interval.${channelNumber}`, interval)
+    }
 
     React.useEffect(() => {
         async function mkdir(){
@@ -79,30 +143,7 @@ function ChannelContainer(props) {
         player.src(srcObject)
     }, [player, currentUrl]);
 
-    const setCurrentUrlStore = url => {
-        setCurrentUrl(url);
-        store.set(`src.${channelNumber}`, url);
-    }
 
-    const setCurrentTitleStore = title => {
-        setCurrentTitle(title);
-        store.set(`title.${channelNumber}`, title);
-    }
-
-    const titleElement = document.createElement('div');
-    titleElement.innerHTML = currentTitle;
-    titleElement.style = "color:black;font-weight:bold";
-
-    const setSaveDirectoryStore = directory => {
-        setSaveDirectory(directory);
-        store.set(`directory.${channelNumber}`, directory)
-    }
-
-    const setCurrentIntervalStore = interval => {
-        setCurrentInterval(interval);
-        channelLogger.info(`save interval: ${interval}`);
-        store.set(`interval.${channelNumber}`, interval)
-    }
 
     return (
         <SectionWithFullHeight width="800px">
@@ -127,6 +168,7 @@ function ChannelContainer(props) {
                     ></HLSPlayer>}
                 </BorderedBox>
                 <BorderedBox bgcolor="#2d2f3b" display="flex" alignContent="center" flexGrow="1" width="1">
+                    {mountChannelControl &&
                     <ChannelControl 
                         cctvs={cctvs}
                         channelName={channelName}
@@ -142,7 +184,10 @@ function ChannelContainer(props) {
                         setSaveDirectoryStore={setSaveDirectoryStore}
                         setSaveDirectory={setSaveDirectory}
                         setPlaybackMode={setPlaybackMode}
-                    ></ChannelControl>
+                        setMountChannelControl={setMountChannelControl}
+                        setMountPlayer={setMountPlayer}
+                        resetPlayer={resetPlayer}
+                    ></ChannelControl>}
                 </BorderedBox>
             </Box>
         </SectionWithFullHeight>     

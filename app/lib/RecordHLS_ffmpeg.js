@@ -97,7 +97,9 @@ class RecoderHLS extends EventEmitter {
     onWriteStreamClosed = (error) => {
         log.info(`[ffmpeg recorder][${this.name}]write stream closed : ${this.target}`);
         if(error){
-            this.initialize();
+            // this.initialize();
+            // not manually initialize
+            // send error message to ChannelControl
             this.emit('error', error)
         }
         if(this._renameDoneFile) {
@@ -180,7 +182,9 @@ class RecoderHLS extends EventEmitter {
         }
         this.command.ffmpegProc.stdin.write('q');
     }
-    destroy = () => {}
+    destroy = () => {
+        this.command.kill();
+    }
 }
 
 const createHLSRecoder = options => {
