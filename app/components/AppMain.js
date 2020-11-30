@@ -98,7 +98,7 @@ function App() {
   React.useEffect(() => {
     const unsubscribe = store.onDidChange('clips', async (newClips, oldClips) => {
       console.log(`clips store changed!!`, newClips, oldClips)
-      // setClip(newClips);
+      setClip(newClips);
       if(newClips.length > oldClips.length || newClips.length === maxClips){
         // new clip added
         console.log('new clip added!!')
