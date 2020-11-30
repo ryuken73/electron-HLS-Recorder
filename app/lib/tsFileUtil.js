@@ -50,7 +50,6 @@ const m3u8ToFileArray = (m3u8File, baseDirectory) => {
 // main()
 
 module.exports = {
-    readByLine,
     m3u8ToFileArray
 }
 

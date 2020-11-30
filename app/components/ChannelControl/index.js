@@ -82,13 +82,17 @@ function ChannleControl(props) {
     const defaultClips = [];
     const initialClips = store.get(`clips`, defaultClips);
     const [clips, setClip] = React.useState(initialClips);
+    // clilps
+    // [{channelName, channelNumber, startTime, endTime, url, title, hlsDirectory, mp4File, duration}]
 
+    // when deleted in AppMain, status must be synchronized;
     const setClipStore = React.useCallback( clips => {
         store.set('clips', clips);
     }, [])
 
     React.useEffect(() => {
-        store.onDidChange('clips', (clips) => {
+        store.onDidChange('clips', (clips, prevClips) => {
+            console.log('store onDidChange triggered. setClip', clips, prevClips) 
             setClip(clips);
         })
     },[])
@@ -215,7 +219,7 @@ function ChannleControl(props) {
         // setRecorder(recorder => {
             channelLog.info(`start startRecroding() recorder.createTime:${recorder.createTime}`)
             const randomString = uuidv4();
-            const workingDirectory = path.join(saveDirectory, randomString);
+            const workingDirectory = path.join(saveDirectory, 'working', randomString);
             mkdir(workingDirectory);
             const target = path.join(workingDirectory, `${channelName}_cctv_kbs_ffmpeg.mp4`);
             localm3u8 = path.join(workingDirectory, `${channelName}_stream.m3u8`);
@@ -236,16 +240,61 @@ function ChannleControl(props) {
                     setInTransition(false);
                 },4000);
             })
-            recorder.once('end', async clipName => {
-                channelLog.info(`recorder emitted end (listener1)`)
-                // problem : currentUrl value fixed when executed in schedule (in setInterval)
-                //           if execute stopRecording() directly, currentUrl's value is correct (varies with setCurrentUrlStore)
-                // solution : use functional parameter of useState 
-                setClip(prevClips => {
-                    const newClips = [clipName, ...prevClips].slice(0,maxClips)
-                    setClipStore(newClips);
-                    return newClips;
-                });
+            recorder.once('end', async (clipName, startTimestamp, duration) => {
+                channelLog.info(`recorder emitted end (listener1): ${clipName}`)
+                const endTimestamp = Date.now();
+                const startTime = utils.date.getString(new Date(startTimestamp),{})
+                const endTime = utils.date.getString(new Date(endTimestamp),{})
+                const url = currentUrl;
+                const title = store.get(`title.${channelNumber}`);
+                const hlsDirectory = workingDirectory;
+                const durationSafeString = duration.replace(/:/g,';'); 
+                const mp4Name = path.join(saveDirectory, `${channelName}_${startTime}_[${durationSafeString}].mp4`);
+                const clipId = `${channelName}_${startTime}_${endTime}`
+                const hlsm3u8 = localm3u8;
+                channelLog.info(channelNumber)
+                channelLog.info(channelName)
+                channelLog.info(startTime)
+                channelLog.info(endTime)
+                channelLog.info(startTimestamp)
+                channelLog.info(endTimestamp)
+                channelLog.info(url)
+                channelLog.info(title)
+                channelLog.info(hlsDirectory)
+                channelLog.info(mp4Name)
+                channelLog.info(duration)
+                channelLog.info(clipId)
+                channelLog.info(hlsm3u8)
+
+                const clipData = {
+                    clipId,
+                    channelNumber,
+                    channelName,
+                    startTime,
+                    endTime,
+                    startTimestamp,
+                    endTimestamp,
+                    url,
+                    title,
+                    hlsDirectory,
+                    mp4Name,
+                    duration,
+                    hlsm3u8,
+                    saveDirectory,
+                    mp4Converted:false
+                }
+                console.log(clipData);
+
+                // setClip(prevClips => {
+                //     console.log('about to add clip to store prevClips ', prevClips)
+                //     const newClips = [clipData, ...prevClips].slice(0,maxClips)
+                //     setClipStore(newClips);
+                //     return newClips;
+                // });
+                const prevClips = store.get('clips');
+                const newClips = [clipData, ...prevClips].slice(0,maxClips)
+                setClipStore(newClips);
+                
                 initialRecorder();
                 // await utils.file.delete(localm3u8);
                 // await utils.file.deleteFiles(saveDirectory, hlsSegmentsRegExp);

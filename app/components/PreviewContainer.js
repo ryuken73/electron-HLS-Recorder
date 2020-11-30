@@ -14,13 +14,12 @@ export default function PreviewContainer(props) {
     const {clips, removeClip, setPlaybackRateStore, getPlaybackRateStore} = props;
     const [currentUrl, setCurrentUrl] = React.useState('');
     const [player, setPlayer] = React.useState(null);
-
     const [type, setType] = React.useState('video/mp4');
 
-    const playClip = (clip) => {
-        console.log('playClip', clip)
-        setCurrentUrl(clip)
-        if(path.extname(clip) === 'mp4'){
+    const playClip = (clipFullName) => {
+        console.log('playClip', clipFullName)
+        setCurrentUrl(clipFullName)
+        if(path.extname(clipFullName) === 'mp4'){
             setType('video/mp4');
         }
     }
@@ -41,7 +40,16 @@ export default function PreviewContainer(props) {
                 ></HLSPlayer>
             </Box>
             <BorderedBox bgcolor="#2d2f3b" height="100%" ml="0px" mr="0px" overflow="auto">
-                {clips.map(clip => <ClipContainer key={clip} clipFullName={clip} removeFromList={removeClip} currentClip={currentUrl} clipName={path.basename(clip)} playClip={playClip}></ClipContainer>)}
+                {clips.map(clip => 
+                    <ClipContainer 
+                        key={clip.mp4Name} 
+                        clipFullName={clip.mp4Name} 
+                        removeFromList={removeClip} 
+                        currentClip={currentUrl} 
+                        clipName={path.basename(clip.mp4Name)} 
+                        playClip={playClip}
+                        previewDisable={!clip.mp4Converted}
+                    ></ClipContainer>)}
             </BorderedBox>
         </SectionWithFullHeight>     
     )

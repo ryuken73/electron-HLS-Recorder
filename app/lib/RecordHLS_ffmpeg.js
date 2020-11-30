@@ -147,12 +147,13 @@ class RecoderHLS extends EventEmitter {
                     // throw new Error(err)
                 }
                 log.info(`[ffmpeg recorder][${this.name}]change filename : ${this.target} to ${newFullPath}`)
+                this.emit('end', this.target, this.startTime, this.duration)
                 this.initialize();
-                this.emit('end', newFullPath)
             });
         } else {
+            log.info(`[ffmpeg recorder][${this.name}]ended ${this.startTime}:${this.duration}`)
+            this.emit('end', this.target, this.startTime, this.duration)
             this.initialize();
-            this.emit('end', this.target)
         }
 
     }
@@ -210,8 +211,8 @@ class RecoderHLS extends EventEmitter {
     stop = () => {
         if(!this.isRecording){
             log.warn(`[ffmpeg recorder][${this.name}]start recording first!. there may be premature ending of ffmpeg.`)
+            this.emit('end', this.target, this.startTime, this.duration)
             this.initialize();
-            this.emit('end', this.target)
             // throw new Error('start recording first!.')  
             // "throw new Error" comment, because ffmpeg ended already case can be occurred and can make some trouble.
             // if that case happened, manual(or scheduled) stop can't be processed forever if throws error, 
@@ -240,8 +241,33 @@ const createHLSRecoder = options => {
     return new RecoderHLS(options);
 }
 
+const convertMP4 = (inFile, outFile, ffmpegPath) => {
+    console.log(ffmpegPath)
+    ffmpeg.setFfmpegPath(ffmpegPath);
+    return new Promise((resolve, reject) => {
+        const command = 
+            ffmpeg(inFile)
+            .outputOptions(['-c','copy']) 
+            .output(outFile)
+            .on('progress', progress => console.log(progress))
+            .on('start', cmd => console.log('started: ',cmd))
+            .on('error', error => {
+                console.log(error);
+                reject(error)
+            })
+            .on('end', (stdout, stderr) => {
+                const regExp = new RegExp(/Duration: (\d\d:\d\d:\d\d.\d\d), start:/)
+                const duration = regExp.exec(stderr)[1];
+                resolve(duration)
+            })
+
+        command.run();
+    })
+}
+
 module.exports = {
-    createHLSRecoder
+    createHLSRecoder,
+    convertMP4
 };
 
 

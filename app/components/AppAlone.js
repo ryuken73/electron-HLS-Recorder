@@ -87,7 +87,7 @@ function App() {
   }, [clips])
 
   const setClipStore = clips => {
-    setClip(clips);
+    // setClip(clips);
     store.set('clips', clips);
   }
   const { BrowserWindow } = remote;

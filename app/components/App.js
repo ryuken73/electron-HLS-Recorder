@@ -21,6 +21,9 @@ log.transports.file.archiveLog = file => {
   }
 
 const {remote} = require('electron');
+// const Store = require('electron-store');
+// const store = new Store();
+// store.delete('clips')
 
 const parseQuery = queryString => {
     const queryArray = queryString.replace(/^\?/,'').split('&');

@@ -8,7 +8,8 @@ import {SmallButton, SmallPaddingIconButton, SmallPaddingButton}  from './templa
 import CloseIcon from '@material-ui/icons/Close';
 
 export default function ClipContainer(props) {
-    const {clipFullName, currentClip, clipName, playClip, removeFromList} = props;
+    const {clipFullName, currentClip, clipName, playClip, removeFromList, previewDisable} = props;
+    console.log(`rerender ClipContainer`, clipFullName, previewDisable)
     const [checkin, setCheckin] = React.useState(true);
     const [willRemoved, setWillRemoved] = React.useState(false);
     const onClickClip = () => {
@@ -45,6 +46,7 @@ export default function ClipContainer(props) {
                     onClick={onClickClip}
                     minwidth={"75px"}
                     fontSize={"10px"}
+                    disabled={previewDisable}
                 >{onPlaying ? "SELECTED": "Preview"}</SmallButton>
             </Box>
         )

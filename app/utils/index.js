@@ -142,16 +142,19 @@ const file = {
             return Promise.reject(false);            
         }
     },
-    async concatFiles(inFiles, wStream){
+    async concatFiles(inFiles, outFile){
         try {
             const getNext =  getNextFile(inFiles);
             let inFile = getNext();
+            const wStream = fs.createWriteStream(outFile);
             while(inFile !== undefined){
                 console.log(`processing...${inFile}`);
                 const rStream = fs.createReadStream(inFile);
                 await appendToWriteStream(rStream, wStream);
                 inFile = getNext();
             }
+            wStream.close();
+            return;
         } catch(error) {
             // console.error('some errors:')
             throw new Error(error);
