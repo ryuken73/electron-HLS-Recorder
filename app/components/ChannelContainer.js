@@ -107,7 +107,14 @@ function ChannelContainer(props) {
         store.set(`directory.${channelNumber}`, directory)
     }
     const setCurrentUrlStore = url => {
-        setCurrentUrl(url);
+        setCurrentUrl(url)
+        setTitleElement(currentElement => {
+            const title = store.get(`title.${channelNumber}`);
+            const nextElement = document.createElement('div');
+            nextElement.innerHTML = title;
+            nextElement.style = "color:black;font-weight:bold";
+            return nextElement;
+        })
         store.set(`src.${channelNumber}`, url);
     }
     const setCurrentTitleStore = title => {
