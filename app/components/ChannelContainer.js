@@ -18,11 +18,12 @@ const {baseDirectory} = defaults;
 const getInitialValues = (channelLogger, channelName, channelNumber) => {
     const Store = require('electron-store');
     const store = new Store();
+    // store.delete('cctvs')
     let cctvs = store.get(`cctvs`, null);
     if(cctvs === null){
-        channelLogger.info(`no previously saved cctvs. initialize cctvs in store [${cctv}]`);
+        channelLogger.info(`no previously saved cctvs. initialize cctvs in store [${cctvs}]`);
         cctvs = defaultCCTVs;
-        store.set('cctvs', defaultCCTVs);
+        // store.set('cctvs', defaultCCTVs);
     }
     const defaultUrl =  cctvs[channelNumber] ? cctvs[channelNumber].url : '';
     const defaultTitle = cctvs[channelNumber] ? cctvs[channelNumber].title : '';

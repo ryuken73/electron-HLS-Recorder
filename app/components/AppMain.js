@@ -103,7 +103,7 @@ function App() {
 
   const onClickButton = () => {
     setOpenInProgress(true);
-    const nextChannels = getUnusedChannels(4)
+    const nextChannels = getUnusedChannels(1)
     // console.log('^^^',getAbsolutePath('app.html',false), channels, nextChannels )
     console.log('^^^',getAbsolutePath('appRecorder.html',false), channels, nextChannels )
     const win = new BrowserWindow({
