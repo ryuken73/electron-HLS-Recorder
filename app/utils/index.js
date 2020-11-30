@@ -141,6 +141,23 @@ const file = {
             console.log(err)
             return Promise.reject(false);            
         }
+    },
+    async concatFiles(inFiles, wStream){
+        try {
+            const getNext =  getNextFile(inFiles);
+            let inFile = getNext();
+            while(inFile !== undefined){
+                console.log(`processing...${inFile}`);
+                const rStream = fs.createReadStream(inFile);
+                await appendToWriteStream(rStream, wStream);
+                inFile = getNext();
+            }
+        } catch(error) {
+            // console.error('some errors:')
+            throw new Error(error);
+            console.error(error)
+        }
+    
     }
 }
 
@@ -214,6 +231,21 @@ const fp = {
             })
         }
     }  
+}
+
+const getNextFile = inFiles => {
+    return () => inFiles.shift()
+}
+
+const appendToWriteStream = async (rStream, wStream) => {
+    return new Promise((resolve, reject) => {
+        try {
+            rStream.on('data', data => wStream.write(data));
+            rStream.on('end', () => resolve(true));
+        } catch (error) {
+            reject(error);
+        }
+    })
 }
 
 const browserStorage = {
