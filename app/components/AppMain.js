@@ -15,6 +15,7 @@ const {m3u8ToFileArray} = require('../lib/tsFileUtil');
 const {convertMP4} = require('../lib/RecordHLS_ffmpeg');
 const fs = require('fs');
 const rimraf = require('rimraf')
+const log = require('electron-log');
 const {remote} = require('electron');
 
 import defaults from '../config/defaults';
@@ -35,20 +36,32 @@ const theme = createMuiTheme({
   },
 });
 
+const appLog = (() => {
+  return {
+      debug : msg => log.debug(`[AppMain]${msg}`),
+      info : msg => log.info(`[AppMain]${msg}`),
+      warn : msg => log.warn(`[AppMain]${msg}`),
+      error : msg => log.error(`[AppMain]${msg}`)
+    }
+})()
+
 const Store = require('electron-store');
 const store = new Store({watch: true});
 
 function App() {
+  appLog.info('re-rerendered!')
   const defaultClips = [];
   const defaultInterval = {title:'1 Hour', milliseconds:3600000};
   const clipsFromStore = store.get(`clips`, defaultClips);
   let initialClips = clipsFromStore;
   const oldVersionType = clipsFromStore.length > 0 && clipsFromStore.some(clip => typeof(clip) === 'string');
   if(oldVersionType) {
-    console.log('^^^app has old version clips in store. resetting clips value to []....');
+    appLog.info('^^^app has old version clips in store. resetting clips value to []....');
     initialClips = defaultClips;
     store.set('clips', defaultClips);
   }
+  const initialPlayerCount = store.get(`playerCount`, 4);
+  const [currentPlayerCount, setCurrentPlayerCount] = React.useState(initialPlayerCount);
   const [clips, setClip] = React.useState(initialClips);
   const [channels, setUsedChannel] = React.useState([]);
   const [openInProgress, setOpenInProgress] = React.useState(false);
@@ -77,7 +90,7 @@ function App() {
       console.error(err)
     } finally {
       setClip(oldClips => {
-        console.log('$$$$ remove clip')
+        appLog.info(`delete clip [${clipFullName}]`);
         const newClips = oldClips.filter(clip => clip.mp4Name !== clipFullName);
         store.set('clips', newClips);
         return newClips;
@@ -88,26 +101,29 @@ function App() {
 
   React.useEffect(() => {
     const unsubscribe = store.onDidChange('clips', async (newClips, oldClips) => {
-      console.log(`clips store changed!!`, newClips, oldClips)
+      appLog.info(`store changed![clips]`)
       setClip(newClips);
       if(newClips.length > oldClips.length || newClips.length === maxClips){
+        appLog.info(`new clip encoded!`)
         // new clip added
         const newClip = newClips.find(clip => {
           return oldClips.every(oldClip => oldClip.clipId !== clip.clipId);
         })
-        console.log(newClip)
+        appLog.info(`new hls stream saved: ${newClip.hlsDirectory}`);
         if(newClip.mp4Converted == true){
+          appLog.error(`new hls stream is already converted. just return : ${newClip.hlsDirectory}`)
           return;
         }
         const {hlsm3u8, hlsDirectory, channelName, mp4Name, saveDirectory,startTime, duration} = newClip;
         const tsFilesArray = await m3u8ToFileArray(newClip.hlsm3u8);
         const oneTSFile = path.join(hlsDirectory, `${channelName}.ts`);
         const result = await utils.file.concatFiles(tsFilesArray, oneTSFile);
+        appLog.info(`new hls stream merged to one ts file: ${oneTSFile}`);
         try {
           const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
           const durationNew = await convertMP4(oneTSFile, mp4Name, ffmpegPath);
           if(durationNew === duration){
-            console.log(`########## ts file's duration equals with converted mp4's duration ##########`);
+            appLog.info(`########## ts file's duration equals with converted mp4's duration ##########`);
             deleteTSFiles && rimraf(hlsDirectory, err => console.error(err));
           } else {
             deleteEvenDurationIncorrect && rimraf(hlsDirectory, err => console.error(err));
@@ -115,8 +131,10 @@ function App() {
           const durationSafeString = durationNew.replace(/:/g,';');  
           const mp4NameNew = path.join(saveDirectory, `${channelName}_${startTime}_[${durationSafeString}].mp4`);
           if(mp4Name !== mp4NameNew){
+            appLog.warn(`converted mp4's duration differ from origial hls: original=${mp4Name} mp4 converted=${mp4NameNew}`);
             await fs.promises.rename(mp4Name, mp4NameNew);
           }
+          appLog.info(`merged ts file successfully converted to mp4: ${mp4Name}`);
           const doneClip = {...newClip, duration: durationNew, mp4Name: mp4NameNew, mp4Converted: true};
           const currentClips = store.get('clips');
           const doneClips = currentClips.map(clip => {
@@ -125,10 +143,11 @@ function App() {
             }
             return clip
           })
+          appLog.info(`save new Clip to list: ${mp4Name}`)
           setClip(doneClips)
           store.set('clips', doneClips);
         } catch (error) {
-          console.log(error)
+          appLog.error(error)
         }
       }
     })
@@ -142,12 +161,15 @@ function App() {
   const path = require('path');
 
   const onClickButton = () => {
+    const playerWindowHeight = {
+      4: 900,
+      2: 520,
+      1: 280
+    }
     setOpenInProgress(true);
-    const nextChannels = getUnusedChannels(4)
-    // console.log('^^^',getAbsolutePath('app.html',false), channels, nextChannels )
-    console.log('^^^',getAbsolutePath('appRecorder.html',false), channels, nextChannels )
+    const nextChannels = getUnusedChannels(currentPlayerCount)
     const win = new BrowserWindow({
-        height: 900,
+        height: playerWindowHeight[currentPlayerCount],
         width: 850,
         title: 'HLS Recoder [Recorder]',
         x: 434 + channels.length * 20,
@@ -161,7 +183,6 @@ function App() {
       },
     })
     win.once('show', () => {
-      console.log('^^^1', nextChannels);
       setOpenInProgress(false);
       setUsedChannel(prevChannels => {
         return [...prevChannels, ...nextChannels];
@@ -184,6 +205,18 @@ function App() {
         },
       })
     )
+  }
+
+  const playerCount = [
+    {label:1, value:1},
+    {label:2, value:2},
+    {label:4, value:4},
+  ]
+
+  const onChangeSelect = (event) => {
+    const playerCount = event.target.value;
+    setCurrentPlayerCount(playerCount);
+    store.set('playerCount', playerCount);
   }
 
   return (
@@ -210,7 +243,12 @@ function App() {
           </BasicButton>
         </Box>
         <Box width="50%">
-          <SelectComponent>
+          <SelectComponent
+            currentItem={currentPlayerCount}
+            menuItems={playerCount}
+            onChangeSelect={onChangeSelect} 
+            selectColor={'#232738'}
+          >
           </SelectComponent>
         </Box>
       </Box>

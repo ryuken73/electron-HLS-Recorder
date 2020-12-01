@@ -24,7 +24,9 @@ const query = parseQuery(location.search);
 console.log('^^^^^',query);
 const channelPrefix = 'channel';
 const {channels='1:2:3:4'} = query;
-const channelNames = decodeURIComponent(channels).split(':').map(number => `${channelPrefix}${number}`)
+const channelNames = decodeURIComponent(channels).split(':').map(number => `${channelPrefix}${number}`);
+const moreThenOneWhindow = channelNames.length > 1;
+const showActionAll = moreThenOneWhindow;
 
 // const Store = require('electron-store');
 // const store = new Store();
@@ -55,9 +57,10 @@ function App() {
               // store={store}  
             ></ChannelContainer>
           ))}     
+          {showActionAll && 
           <Box ml={"25px"}>
             <ActionAll></ActionAll>
-          </Box>
+          </Box>}
         </Box>
       </Box>
     </ThemeProvider>

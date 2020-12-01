@@ -36,8 +36,8 @@ const HLSPlayer = (props) => {
 
     const createLogger = channelName => {
         return {
-                    info: (msg) => {log.info(`[${channelName}][player]${msg}`)},
-                    error: (msg) => {log.error(`[${channelName}][player]${msg}`)},
+            info: (msg) => {log.info(`[${channelName}][player]${msg}`)},
+            error: (msg) => {log.error(`[${channelName}][player]${msg}`)},
         }
     }
     const channelLog = createLogger(channelName);
@@ -50,7 +50,6 @@ const HLSPlayer = (props) => {
         const playbackRate = getPlaybackRateStore();
         player.playbackRate(playbackRate);
         player.muted(true);
-        // player.src(srcObject)
         /*
         setInterval(() => {
             console.log(player.duration());

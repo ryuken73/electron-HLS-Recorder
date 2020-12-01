@@ -1,10 +1,10 @@
 import React from 'react'
 import Typography from '@material-ui/core/Typography';
-import Select from '@material-ui/core/Select';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import BorderedList from './BorderedList';
 import {SmallPaddingSelect}  from './smallComponents';
+import {BasicSelect}  from './basicComponents';
 
 
 export default function SelectComponent(props) {
@@ -13,25 +13,25 @@ export default function SelectComponent(props) {
         currentItem, 
         menuItems=[], 
         onChangeSelect, 
-        multiple=true, 
-        bgcolor, 
+        multiple=false,  
         selectColor, 
         disabled=false,
+        color="white",
         ml="2px"
     } = props;    
     const {small} = props;
-    const SelectComponent = small ? SmallPaddingSelect : Select;
+    const SelectComponent = small ? SmallPaddingSelect : BasicSelect;
     return (
         <FormControl style={{minWidth:minWidth,width:"100%",marginTop:ml }}>
             <SelectComponent
                 labelId="select-label" 
                 variant="outlined"
-                margin="dense"
                 value={currentItem}
                 multiple={multiple}
                 onChange={onChangeSelect}
                 bgcolor={selectColor}
                 disabled={disabled}
+                color={color}
             >
                 {menuItems.map((menuItem, index) => {
                     const {value, label} = menuItem;
