@@ -7,7 +7,7 @@ import BorderedList from './template/BorderedList';
 import {SmallButton, SmallPaddingIconButton, SmallPaddingButton}  from './template/smallComponents';
 import CloseIcon from '@material-ui/icons/Close';
 
-export default function ClipContainer(props) {
+function ClipContainer(props) {
     const {clipFullName, currentClip, clipName, playClip, removeFromList, previewDisable} = props;
     console.log(`rerender ClipContainer`, clipFullName, previewDisable)
     const [checkin, setCheckin] = React.useState(true);
@@ -72,3 +72,5 @@ export default function ClipContainer(props) {
         // </Zoom>
     )
 }
+
+export default React.memo(ClipContainer)

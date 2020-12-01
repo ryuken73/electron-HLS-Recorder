@@ -10,7 +10,7 @@ import defaults from '../config/defaults';
 import path from 'path';
 
 const {baseDirectory} = defaults;
-export default function PreviewContainer(props) {
+function PreviewContainer(props) {
     const {clips, removeClip, setPlaybackRateStore, getPlaybackRateStore} = props;
     const [currentUrl, setCurrentUrl] = React.useState('');
     const [player, setPlayer] = React.useState(null);
@@ -54,3 +54,5 @@ export default function PreviewContainer(props) {
         </SectionWithFullHeight>     
     )
 }
+
+export default React.memo(PreviewContainer)

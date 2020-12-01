@@ -53,7 +53,14 @@ const store = new Store({watch: true});
 function App() {
   const defaultClips = [];
   const defaultInterval = {title:'1 Hour', milliseconds:3600000};
-  const initialClips = store.get(`clips`, defaultClips);
+  const clipsFromStore = store.get(`clips`, defaultClips);
+  let initialClips = clipsFromStore;
+  const oldVersionType = clipsFromStore.length > 0 && clipsFromStore.some(clip => typeof(clip) === 'string');
+  if(oldVersionType) {
+    console.log('^^^app has old version clips in store. resetting clips value to []....');
+    initialClips = defaultClips;
+    store.set('clips', defaultClips);
+  }
   const [clips, setClip] = React.useState(initialClips);
   const [channels, setUsedChannel] = React.useState([]);
   const [openInProgress, setOpenInProgress] = React.useState(false);
@@ -124,6 +131,9 @@ function App() {
           }
           const durationSafeString = durationNew.replace(/:/g,';');  
           const mp4NameNew = path.join(saveDirectory, `${channelName}_${startTime}_[${durationSafeString}].mp4`);
+          if(mp4Name !== mp4NameNew){
+            await fs.promises.rename(mp4Name, mp4NameNew);
+          }
           const doneClip = {...newClip, duration: durationNew, mp4Name: mp4NameNew, mp4Converted: true};
           const currentClips = store.get('clips');
           const doneClips = currentClips.map(clip => {
@@ -149,6 +159,7 @@ function App() {
   const path = require('path');
   console.log(`^^^dirname:${__dirname}`)
   console.log(`^^^2channels`, channels)
+  console.log(`^^^clips`, clips)
 
   const onClickButton = () => {
     setOpenInProgress(true);
