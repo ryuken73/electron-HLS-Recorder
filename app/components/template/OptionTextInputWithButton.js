@@ -9,7 +9,7 @@ export default function OptionTextInputWithButton(props) {
     const {subtitle, width, value, titlewidth="20%", iconButton} = props;
     console.log(iconButton)
     const optionText = {
-        title: <Typography component={'span'} variant="body1">{subtitle}</Typography>,
+        subject: <Typography component={'span'} variant="body1">{subtitle}</Typography>,
         content:  (
             <Box display="flex" width={width}>
                 <SmallMarginTextField 
@@ -24,7 +24,7 @@ export default function OptionTextInputWithButton(props) {
     }
     return (
         <BorderedList 
-            title={optionText.title} 
+            subject={optionText.subject} 
             titlewidth={titlewidth}
             content={optionText.content}
             {...props}

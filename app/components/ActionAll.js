@@ -24,7 +24,7 @@ function ActionAll(props) {
     const minWidth = "100px"
 
     const manualUrl = {
-        title: (<Box textAlign="center">
+        subject: (<Box textAlign="center">
                     <Typography variant="body1">Apply All</Typography>
                 </Box>),
         content: (
@@ -86,7 +86,7 @@ function ActionAll(props) {
     }
     return (
         <BorderedList 
-            title={manualUrl.title} 
+            subject={manualUrl.subject} 
             titlewidth={"315px"}
             content={manualUrl.content}
             mb={"0px"} 

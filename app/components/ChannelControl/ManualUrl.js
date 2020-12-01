@@ -9,7 +9,7 @@ function ManualUrl(props) {
     const {onClickSetManualUrl, onChange} = props;
     const inRecording = recorderStatus !== 'stopped';
     const manualUrl = {
-        title: <Typography variant="body1">Manual URL</Typography>,
+        subject: <Typography variant="body1">Manual URL</Typography>,
         content: (
             <React.Fragment>
                 <Box width="100%">
@@ -44,7 +44,7 @@ function ManualUrl(props) {
     }
     return (
         <BorderedList 
-            title={manualUrl.title} 
+            subject={manualUrl.subject} 
             titlewidth={"115px"}
             content={manualUrl.content}
             mb={"0px"} 

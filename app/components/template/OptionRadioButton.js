@@ -12,7 +12,7 @@ export default function OptionRadioButton(props) {
     const {subtitle, currentvalue, onChange, titlewidth="20%"} = props;
     const {formlabels} = props;
     const optionRadio = {
-        title: <Typography component={'span'} variant="body1">{subtitle}</Typography>,
+        subject: <Typography component={'span'} variant="body1">{subtitle}</Typography>,
         content:  (
             <React.Fragment>
                 <FormControl component="fieldset">
@@ -30,7 +30,7 @@ export default function OptionRadioButton(props) {
     }
     return (
         <BorderedList 
-            title={optionRadio.title} 
+            subject={optionRadio.subject} 
             titlewidth={titlewidth}
             content={optionRadio.content} 
             border={1}

@@ -12,7 +12,7 @@ export default function OptionSelectList(props) {
     const {smallComponent} = props;
     const SelectComponent = smallComponent ? SmallPaddingSelect : Select;
     const optionSelect = {
-        title: <Typography component={'span'} variant="body1">{subtitle}</Typography>,
+        subject: <Typography component={'span'} variant="body1">{subtitle}</Typography>,
         content: (
             <React.Fragment>
                 <FormControl style={{minWidth:minWidth, width:"100%"}}>
@@ -37,7 +37,7 @@ export default function OptionSelectList(props) {
     }
     return (
         <BorderedList 
-            title={optionSelect.title} 
+            subject={optionSelect.subject} 
             titlewidth={titlewidth}
             content={optionSelect.content} 
             mb={0}

@@ -33,7 +33,7 @@ const BasicSelect = styled(Select)`
         padding-top: ${props => props.pt || "12px"};
         padding-bottom: ${props => props.pb || "12px"};
         background: ${props => props.bgcolor || defaultBgColor};
-        color: ${defaultFontColor};
+        color: ${props => props.fontcolor || defaultFontColor};
         font-size: ${props => props.fontSize || '13px'}
     }
 `

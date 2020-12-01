@@ -16,7 +16,7 @@ export default function SelectComponent(props) {
         multiple=false,  
         selectColor, 
         disabled=false,
-        color="white",
+        fontcolor="white",
         ml="2px"
     } = props;    
     const {small} = props;
@@ -31,7 +31,7 @@ export default function SelectComponent(props) {
                 onChange={onChangeSelect}
                 bgcolor={selectColor}
                 disabled={disabled}
-                color={color}
+                fontcolor={fontcolor}
             >
                 {menuItems.map((menuItem, index) => {
                     const {value, label} = menuItem;

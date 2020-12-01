@@ -10,7 +10,7 @@ function SaveDirectory(props) {
     const inRecording = recorderStatus !== 'stopped';
     
     const location = {
-        title: <Typography variant="body1">Save Directory</Typography>,
+        subject: <Typography variant="body1">Save Directory</Typography>,
         content: (
             <React.Fragment>
                 <Box width="100%">
@@ -44,7 +44,7 @@ function SaveDirectory(props) {
     }
     return (
         <BorderedList 
-            title={location.title} 
+            subject={location.subject} 
             titlewidth={"115px"}
             content={location.content} 
             bgcolor={"#232738"}

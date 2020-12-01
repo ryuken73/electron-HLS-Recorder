@@ -19,7 +19,7 @@ function Title(props) {
     const bgColor = bgColors[recorderStatus];
     // console.log('&&&&&&',inTransition, inRecording, bgColor)
     const channel = {
-        title: <Typography variant="body1">{channelName}</Typography>,
+        subject: <Typography variant="body1">{channelName}</Typography>,
         content: (
             <Box width="100%"> 
                 <SmallMarginTextField 
@@ -35,7 +35,7 @@ function Title(props) {
     }
     return (
         <BorderedList 
-            title={channel.title} 
+            subject={channel.subject} 
             titlewidth={"115px"}
             content={channel.content} 
             color={"white"}

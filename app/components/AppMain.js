@@ -248,6 +248,7 @@ function App() {
             menuItems={playerCount}
             onChangeSelect={onChangeSelect} 
             selectColor={'#232738'}
+            fontcolor={"white"}
           >
           </SelectComponent>
         </Box>

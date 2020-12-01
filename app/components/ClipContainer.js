@@ -26,7 +26,7 @@ function ClipContainer(props) {
     const backgroundColor = willRemoved ? 'darkcyan' : onPlaying ? "snow" : "#232738";
 
     const clipPreview = {
-        title: (   
+        subject: (   
             <Box display="flex" alignItems="center">
                 <SmallPaddingIconButton onClick={deleteClip} padding="1px" size="small">
                     <CloseIcon fontSize={"small"}></CloseIcon>
@@ -54,7 +54,7 @@ function ClipContainer(props) {
     const ClipList = () => {
         return (
             <BorderedList 
-                title={clipPreview.title} 
+                subject={clipPreview.subject} 
                 content={clipPreview.content} 
                 bgcolor={backgroundColor}
             ></BorderedList>
