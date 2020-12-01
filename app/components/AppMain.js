@@ -1,6 +1,6 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button'
+import Button from '@material-ui/core/Button';
 import {createMuiTheme, ThemeProvider} from '@material-ui/core/styles';
 import FullHeightContainer from './template/FullHeightContainer';
 import FirstChildSection from './template/FirstChildSection';
@@ -74,14 +74,14 @@ function App() {
     return results;
   }
 
-  const setPlaybackRateStore = (playbackRate) => {
-    store.set('playbackRate', playbackRate);
-  }
+  // const setPlaybackRateStore = React.useEffect((playbackRate) => {
+  //   store.set('playbackRate', playbackRate);
+  // },[]);
 
-  const getPlaybackRateStore = () => {
-    const playbackRate = store.get('playbackRate', 1);
-    return playbackRate
-  }
+  // const getPlaybackRateStore = React.useEffect(() => {
+  //   const playbackRate = store.get('playbackRate', 1);
+  //   return playbackRate
+  // },[]);
 
   const removeClip = React.useCallback( async clipFullName => {
     try {
@@ -102,7 +102,7 @@ function App() {
   React.useEffect(() => {
     const unsubscribe = store.onDidChange('clips', async (newClips, oldClips) => {
       appLog.info(`store changed![clips]`)
-      setClip(newClips);
+      // setClip(newClips);
       if(newClips.length > oldClips.length || newClips.length === maxClips){
         appLog.info(`new clip encoded!`)
         // new clip added
@@ -225,8 +225,8 @@ function App() {
         <PreviewContainer 
           clips={clips.slice(0, maxPreviewClips)} 
           removeClip={removeClip}
-          setPlaybackRateStore={setPlaybackRateStore}
-          getPlaybackRateStore={getPlaybackRateStore}
+          // setPlaybackRateStore={setPlaybackRateStore}
+          // getPlaybackRateStore={getPlaybackRateStore}
         ></PreviewContainer>
       </Box>
       <Box display="flex">

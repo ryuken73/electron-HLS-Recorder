@@ -1,7 +1,9 @@
-import { SettingsOverscanRounded, Store } from '@material-ui/icons';
 import React, { Component } from 'react';
 import VideoPlayer from './VideoPlayer';
 import log from 'electron-log';
+
+const Store = require('electron-store');
+const store = new Store({watch: true});
 
 const HLSPlayer = (props) => {
     // const [player, setPlayer] = React.useState({});
@@ -9,8 +11,8 @@ const HLSPlayer = (props) => {
         player, 
         setPlayer, 
         refreshPlayer=null, 
-        setPlaybackRateStore=() => {},
-        getPlaybackRateStore=() => 1,
+        // setPlaybackRateStore=() => {},
+        // getPlaybackRateStore=() => 1,
         enableOverlay=true,
         overlayContent='Default Overlay Content'
     } = props;
@@ -44,6 +46,15 @@ const HLSPlayer = (props) => {
 
     channelLog.info(`[${channelName}] rerender HLSPlayer:${channelName}`);
 
+    const setPlaybackRateStore = (playbackRate) => {
+        store.set('playbackRate', playbackRate);
+    };
+
+    const getPlaybackRateStore = () => {
+        const playbackRate = store.get('playbackRate', 1);
+        return playbackRate
+    };
+
     const onPlayerReady = player => {
         channelLog.info("Player is ready");
         setPlayer(player);
@@ -67,43 +78,43 @@ const HLSPlayer = (props) => {
         */
     }
 
-    const onVideoPlay = duration => {
+    const onVideoPlay = React.useCallback(duration => {
         // channelLog.info("Video played at: ", duration);
-    }
+    },[]);
 
-    const onVideoPause = duration =>{
+    const onVideoPause = React.useCallback(duration =>{
         // channelLog.info("Video paused at: ", duration);
-    }
+    },[]);
 
-    const onVideoTimeUpdate = duration => {
+    const onVideoTimeUpdate =  React.useCallback(duration => {
         // channelLog.info("Time updated: ", duration);
-    }
+    },[]);
 
-    const onVideoSeeking = duration => {
+    const onVideoSeeking =  React.useCallback(duration => {
         // channelLog.info("Video seeking: ", duration);
-    }
+    },[]);
 
-    const onVideoSeeked = (from, to) => {
+    const onVideoSeeked =  React.useCallback((from, to) => {
         // channelLog.info(`Video seeked from ${from} to ${to}`);
-    }
+    },[])
 
-    const onVideoError = (error) => {
+    const onVideoError = React.useCallback((error) => {
         channelLog.error(`error occurred: ${error.message}`);
         if(url === '') return;
         // refreshPlayer()
-    }
+    },[])
 
-    const onVideoEnd = () => {
+    const onVideoEnd = React.useCallback(() => {
         // channelLog.info("Video ended");
-    }
-    const onVideoCanPlay = () => {
+    },[])
+    const onVideoCanPlay = React.useCallback(() => {
         channelLog.info('can play');
         const playbackRate = getPlaybackRateStore();
         setPlayer(player => {
             player.playbackRate(playbackRate);
             return player
         })
-    }
+    },[player])
 
     const refreshHLSPlayer = () => {
         setPlayer(player => {
@@ -119,7 +130,7 @@ const HLSPlayer = (props) => {
     }
 
     let refreshTimer = null;
-    const onVideoEvent = eventName => {
+    const onVideoEvent = React.useCallback(eventName => {
         channelLog.info(`event occurred: ${eventName}`)
         if(eventName === 'abort' && refreshPlayer !== null){
             refreshTimer = setInterval(() => {
@@ -149,9 +160,8 @@ const HLSPlayer = (props) => {
                 setPlaybackRateStore(currentPlaybackRate);
                 return player;
             })
-
         }
-    }
+    }, [])
     return (
         <div>
             <VideoPlayer

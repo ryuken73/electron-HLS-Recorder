@@ -4,8 +4,11 @@ import Box from '@material-ui/core/Box'
 import Zoom from '@material-ui/core/Zoom';
 import Slide from '@material-ui/core/Slide';
 import BorderedList from './template/BorderedList';
+import {BasicLink} from './template/basicComponents';
 import {SmallButton, SmallPaddingIconButton, SmallPaddingButton}  from './template/smallComponents';
 import CloseIcon from '@material-ui/icons/Close';
+
+const {remote} = require('electron');
 
 function ClipContainer(props) {
     const {clipFullName, currentClip, clipName, playClip, removeFromList, previewDisable} = props;
@@ -23,6 +26,9 @@ function ClipContainer(props) {
             removeFromList(clipFullName);
         },300)
     }
+    const onClickClipName = () => {
+        remote.shell.showItemInFolder(clipFullName);
+    }
     const backgroundColor = willRemoved ? 'darkcyan' : onPlaying ? "snow" : "#232738";
 
     const clipPreview = {
@@ -31,7 +37,12 @@ function ClipContainer(props) {
                 <SmallPaddingIconButton onClick={deleteClip} padding="1px" size="small">
                     <CloseIcon fontSize={"small"}></CloseIcon>
                 </SmallPaddingIconButton>
-                <Box fontSize="10px" fontFamily="Roboto, Helvetica, Arial, sans-serif">{clipName}</Box>
+                <Box fontSize="10px" fontFamily="Roboto, Helvetica, Arial, sans-serif">
+                    {previewDisable ? clipName : 
+                    <BasicLink href="#" onClick={onClickClipName}>
+                        {clipName}
+                    </BasicLink>
+                </Box>
             </Box>         
         ),
         content: (

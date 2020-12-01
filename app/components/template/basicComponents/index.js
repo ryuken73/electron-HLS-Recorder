@@ -4,7 +4,10 @@ import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
+import Link from '@material-ui/core/Link';
 import deepPurple from '@material-ui/core/colors/deepPurple';
+import teal from '@material-ui/core/colors/teal';
+import blueGrey from '@material-ui/core/colors/blueGrey';
 
 const defaultBgColor = deepPurple[800];
 const defaultFontColor = 'white';
@@ -38,7 +41,14 @@ const BasicSelect = styled(Select)`
     }
 `
 
+const BasicLink = styled(Link)`
+    &.MuiTypography-colorPrimary {
+        color: ${props => deepPurple[props] || blueGrey[100]};
+    }
+`
+
 export {
     BasicButton,
-    BasicSelect
+    BasicSelect,
+    BasicLink
 }
