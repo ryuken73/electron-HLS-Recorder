@@ -8,7 +8,8 @@ import HLSPlayer from './HLSPlayer';
 import ChannelContainer from './ChannelContainer';
 import PreviewContainer from './PreviewContainer';
 import utils from '../utils';
-import {BasicButton} from './template/basicComponents'
+import {BasicButton} from './template/basicComponents';
+import SelectComponent from './template/SelectComponent';
 const {getAbsolutePath} = require('../lib/electronUtil')
 const {m3u8ToFileArray} = require('../lib/tsFileUtil');
 const {convertMP4} = require('../lib/RecordHLS_ffmpeg');
@@ -21,19 +22,6 @@ const {maxClips=3000} = defaults;
 const {maxPreviewClips=17} = defaults;
 const {deleteTSFiles=false} = defaults;
 const {deleteEvenDurationIncorrect=false} = defaults;
-
-
-// const channelPrefix = 'channel';
-// const start=1;
-// const stop=4;
-// const generateChannelNames = (start, stop) => {
-//   const results = [];
-//   for(let i=start ; i <= stop ; i++){
-//     results.push(`${channelPrefix}${i}`)
-//   }
-//   return results;
-// }
-// const channelNames = generateChannelNames(start, stop)
 
 const theme = createMuiTheme({
   typography: {
@@ -74,22 +62,18 @@ function App() {
   }
 
   const setPlaybackRateStore = (playbackRate) => {
-    // console.log('$$$$$$$$$$$ set', playbackRate)
     store.set('playbackRate', playbackRate);
   }
 
   const getPlaybackRateStore = () => {
     const playbackRate = store.get('playbackRate', 1);
-    // console.log('$$$$$$$$$$$ get', playbackRate)
     return playbackRate
   }
 
   const removeClip = React.useCallback( async clipFullName => {
-    console.log('########', clipFullName);
     try {
       await utils.file.delete(clipFullName);
     } catch(err) {
-      // alert(err);
       console.error(err)
     } finally {
       setClip(oldClips => {
@@ -108,7 +92,6 @@ function App() {
       setClip(newClips);
       if(newClips.length > oldClips.length || newClips.length === maxClips){
         // new clip added
-        console.log('new clip added!!')
         const newClip = newClips.find(clip => {
           return oldClips.every(oldClip => oldClip.clipId !== clip.clipId);
         })
@@ -157,9 +140,6 @@ function App() {
   const { BrowserWindow } = remote;
   const url = require('url');
   const path = require('path');
-  console.log(`^^^dirname:${__dirname}`)
-  console.log(`^^^2channels`, channels)
-  console.log(`^^^clips`, clips)
 
   const onClickButton = () => {
     setOpenInProgress(true);
@@ -216,15 +196,24 @@ function App() {
           getPlaybackRateStore={getPlaybackRateStore}
         ></PreviewContainer>
       </Box>
-      <BasicButton 
-        bgcolor={"#191d2e"} 
-        onClick={onClickButton}
-        color="secondary" 
-        variant={"contained"} 
-        ml={"0px"}
-        disabled={openInProgress}
-      >open new window
-      </BasicButton>
+      <Box display="flex">
+        <Box width="50%" mr="5px">
+          <BasicButton 
+            bgcolor={"#191d2e"} 
+            onClick={onClickButton}
+            color="secondary" 
+            variant={"contained"} 
+            ml={"0px"}
+            width={"100%"}
+            disabled={openInProgress}
+          >open new window
+          </BasicButton>
+        </Box>
+        <Box width="50%">
+          <SelectComponent>
+          </SelectComponent>
+        </Box>
+      </Box>
     </ThemeProvider>
   );
 }
