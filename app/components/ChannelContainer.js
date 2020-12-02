@@ -206,6 +206,7 @@ function ChannelContainer(props) {
                         refreshPlayer={refreshPlayer}
                         overlayContent={titleElement}
                         enableOverlay={true}
+                        restorePlaybackRate={false}
                     ></HLSPlayer>}
                 </BorderedBox>
                 <BorderedBox bgcolor="#2d2f3b" display="flex" alignContent="center" flexGrow="1" width="1">

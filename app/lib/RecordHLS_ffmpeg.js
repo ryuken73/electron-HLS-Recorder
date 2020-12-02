@@ -38,9 +38,10 @@ const successiveEvent = checkFunction => {
     }
 }
 
-const INITIAL_TIMEMARKER = '00:00:00.00';
-const checkFunction = sameAsBefore(INITIAL_TIMEMARKER);
-const checkSuccessiveEvent = successiveEvent(checkFunction)
+// below is sington. move in the class
+// const INITIAL_TIMEMARKER = '00:00:00.00';
+// const checkFunction = sameAsBefore(INITIAL_TIMEMARKER);
+// const checkSuccessiveEvent = successiveEvent(checkFunction)
 
 class RecoderHLS extends EventEmitter {
     constructor(options){
@@ -72,8 +73,11 @@ class RecoderHLS extends EventEmitter {
         this._isRecording = false;
         this._bytesRecorded = 0;
         this._durationRecorded = '00:00:00.00';
+        const INITIAL_TIMEMARKER = this._durationRecorded;
         this._startTime = null;
         this._rStream = null;
+        const checkFunction = sameAsBefore(INITIAL_TIMEMARKER);
+        this.checkSuccessiveEvent = successiveEvent(checkFunction)
         log.info(`[ffmpeg recorder][${this.name}]recoder initialized...`)
     }
 
@@ -173,7 +177,7 @@ class RecoderHLS extends EventEmitter {
         this.duration = event.timemark;
         log.info(`[ffmpeg recorder][${this.name}]duration: ${this.duration}`);
         const CRITICAL_SUCCESSIVE_OCCUR_COUNT = 5;
-        const durationNotChanged = checkSuccessiveEvent(this.duration, CRITICAL_SUCCESSIVE_OCCUR_COUNT);
+        const durationNotChanged = this.checkSuccessiveEvent(this.duration, CRITICAL_SUCCESSIVE_OCCUR_COUNT);
         log.info(`[ffmpeg recorder][${this.name}]value of durationNotChanged: ${durationNotChanged}, duration=${this.duration}`);
         if(durationNotChanged){
             log.error(`[ffmpeg recorder][${this.name}]duration not changed last ${CRITICAL_SUCCESSIVE_OCCUR_COUNT} times`)

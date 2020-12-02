@@ -6,13 +6,10 @@ const Store = require('electron-store');
 const store = new Store({watch: true});
 
 const HLSPlayer = (props) => {
-    // const [player, setPlayer] = React.useState({});
     const {
         player, 
         setPlayer, 
         refreshPlayer=null, 
-        // setPlaybackRateStore=() => {},
-        // getPlaybackRateStore=() => 1,
         enableOverlay=true,
         overlayContent='Default Overlay Content'
     } = props;
@@ -26,9 +23,9 @@ const HLSPlayer = (props) => {
         bigPlayButtonCentered=false, 
         url,
         type='application/x-mpegURL',
-        reMountPlayer
+        reMountPlayer,
+        restorePlaybackRate=true
     } = props;
-
 
     const srcObject = {
         src: url,
@@ -44,7 +41,7 @@ const HLSPlayer = (props) => {
     }
     const channelLog = createLogger(channelName);
 
-    channelLog.info(`[${channelName}] rerender HLSPlayer:${channelName}`);
+    channelLog.info(`[${channelName}] rerender HLSPlayer:${channelName}, restorePlaybackRate=${restorePlaybackRate}`);
 
     const setPlaybackRateStore = (playbackRate) => {
         store.set('playbackRate', playbackRate);
@@ -58,8 +55,10 @@ const HLSPlayer = (props) => {
     const onPlayerReady = player => {
         channelLog.info("Player is ready");
         setPlayer(player);
-        const playbackRate = getPlaybackRateStore();
-        player.playbackRate(playbackRate);
+        if(restorePlaybackRate){
+            const playbackRate = getPlaybackRateStore();
+            player.playbackRate(playbackRate);
+        }
         player.muted(true);
         /*
         setInterval(() => {
@@ -109,11 +108,13 @@ const HLSPlayer = (props) => {
     },[])
     const onVideoCanPlay = React.useCallback(() => {
         channelLog.info('can play');
-        const playbackRate = getPlaybackRateStore();
-        setPlayer(player => {
-            player.playbackRate(playbackRate);
-            return player
-        })
+        if(restorePlaybackRate){
+            const playbackRate = getPlaybackRateStore();
+            setPlayer(player => {
+                player.playbackRate(playbackRate);
+                return player
+            })
+        }
     },[player])
 
     const refreshHLSPlayer = () => {
