@@ -189,6 +189,7 @@ const HLSPlayer = (props) => {
                 liveui={true}
                 enableOverlay={true}
                 overlayContent={overlayContent}
+                inactivityTimeout={0}
             />
         </div>
     );

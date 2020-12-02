@@ -58,6 +58,7 @@ class VideoPlayer extends Component {
 
     generate_player_options(props){
         const playerOptions = {};
+        playerOptions.inactivityTimeout = props.inactivityTimeout;
         playerOptions.controls = props.controls;
         playerOptions.autoplay = props.autoplay;
         playerOptions.preload = props.preload;
