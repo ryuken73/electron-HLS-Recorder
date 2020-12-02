@@ -35,6 +35,7 @@ const HLSPlayer = (props) => {
 
     const createLogger = channelName => {
         return {
+            debug: (msg) => {log.debug(`[${channelName}][player]${msg}`)},
             info: (msg) => {log.info(`[${channelName}][player]${msg}`)},
             error: (msg) => {log.error(`[${channelName}][player]${msg}`)},
         }
@@ -132,23 +133,23 @@ const HLSPlayer = (props) => {
 
     let refreshTimer = null;
     const onVideoEvent = React.useCallback(eventName => {
-        channelLog.info(`event occurred: ${eventName}`)
+        channelLog.debug(`event occurred: ${eventName}`)
         if(eventName === 'abort' && refreshPlayer !== null){
             refreshTimer = setInterval(() => {
-                channelLog.info('refresh timer started')
+                channelLog.info('refresh player because of long buffering')
                 refreshHLSPlayer();
             },2000)
             return
         } else if(eventName === 'abort' && refreshPlayer === null) {
-            channelLog.info('abort but not start refresh timer because refreshPlayer parameter is null');
+            channelLog.debug('abort but not start refresh timer because refreshPlayer parameter is null');
             return
         }
         if(eventName === 'playing' || eventName === 'loadstart' || eventName === 'waiting'){
             if(refreshTimer === null) {
-                channelLog.info('playing, loadstart or waiting event emitted. but do not clearTimeout(refreshTimer) because refreshTimer is null. exit')
+                channelLog.debug('playing, loadstart or waiting event emitted. but do not clearTimeout(refreshTimer) because refreshTimer is null. exit')
                 return;
             }
-            channelLog.info('clear refresh timer.')
+            channelLog.debug('clear refresh timer.')
             clearTimeout(refreshTimer);
             refreshTimer = null;
             return

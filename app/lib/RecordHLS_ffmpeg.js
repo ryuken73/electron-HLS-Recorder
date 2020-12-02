@@ -135,6 +135,8 @@ class RecoderHLS extends EventEmitter {
             // this.initialize();
             // not manually initialize
             // send error message to ChannelControl
+            log.error(`[ffmpeg recorder][${this.name}]ended abnormally: startime =${this.startTime}:duration=${this.duration}`);
+            this.emit('end', this.target, this.startTime, this.duration)
             this.emit('error', error);
             return;
         }
@@ -200,7 +202,7 @@ class RecoderHLS extends EventEmitter {
         .on('start', this.startHandler)
         .on('progress', this.progressHandler)
         .on('stderr', stderrLine => {
-            log.info(`[ffmpeg stderr][${this.name}]${stderrLine}`);
+            log.debug(`[ffmpeg stderr][${this.name}]${stderrLine}`);
         })
         .on('error', error => {
             log.error(`[ffmpeg stderr][${this.name}]ffmpeg error: `, error) ;
@@ -208,7 +210,7 @@ class RecoderHLS extends EventEmitter {
         })
         .on('end', (stdout, stderr) => {
             log.info(`[ffmpeg recorder][${this.name}]ffmpeg end!`)
-            log.info(`[ffmpeg stdout][${this.name}]`,stdout)
+            // log.info(`[ffmpeg stdout][${this.name}]`,stdout)
             log.info(`[ffmpeg stderr][${this.name}]`,stderr)
             this.onWriteStreamClosed()
         })

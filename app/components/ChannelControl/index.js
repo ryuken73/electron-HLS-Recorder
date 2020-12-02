@@ -87,6 +87,7 @@ function ChannleControl(props) {
 
     // when deleted in AppMain, status must be synchronized;
     const setClipStore = React.useCallback( clips => {
+        channelLog.info(`setClipStore ${clips.length}`);
         store.set('clips', clips);
     }, [])
 
@@ -246,7 +247,7 @@ function ChannleControl(props) {
                 const startTime = utils.date.getString(new Date(startTimestamp),{})
                 const endTime = utils.date.getString(new Date(endTimestamp),{})
                 const url = currentUrl;
-                const title = store.get(`title.${channelNumber}`);
+                const title = getTitleFromUrl(url);
                 const hlsDirectory = workingDirectory;
                 const durationSafeString = duration.replace(/:/g,';'); 
                 const mp4Name = path.join(saveDirectory, `${channelName}_${startTime}_[${durationSafeString}].mp4`);

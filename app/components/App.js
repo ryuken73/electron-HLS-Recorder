@@ -8,6 +8,8 @@ const path = require('path');
 
 log.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
 log.transports.file.maxSize = 10485760;
+log.transports.file.level = 'info';
+log.transports.console.level = 'info';
 log.transports.file.archiveLog = file => {
     file = file.toString();
     const info = path.parse(file);

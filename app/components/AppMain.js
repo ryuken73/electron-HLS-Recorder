@@ -102,10 +102,16 @@ function App() {
   React.useEffect(() => {
     const unsubscribe = store.onDidChange('clips', async (newClips, oldClips) => {
       appLog.info(`store changed![clips]`)
-      // setClip(newClips);
+      if(newClips.length === oldClips.length){
+        const changedClip = newClips.find(newClip => {
+          return !oldClips.includes(newClip)
+        })
+        appLog.info(`clip changed: changed clipname=${changedClip.mp4Name}`);
+      }
+      setClip(newClips);
       if(newClips.length > oldClips.length || newClips.length === maxClips){
-        appLog.info(`new clip encoded!`)
         // new clip added
+        appLog.info(`new hls stream saved: number of new hls stream = ${newClips.length - oldClips.length}`);
         const newClip = newClips.find(clip => {
           return oldClips.every(oldClip => oldClip.clipId !== clip.clipId);
         })
@@ -134,7 +140,7 @@ function App() {
             appLog.warn(`converted mp4's duration differ from origial hls: original=${mp4Name} mp4 converted=${mp4NameNew}`);
             await fs.promises.rename(mp4Name, mp4NameNew);
           }
-          appLog.info(`merged ts file successfully converted to mp4: ${mp4Name}`);
+          appLog.info(`new hls stream successfully converted to mp4: ${mp4Name}`);
           const doneClip = {...newClip, duration: durationNew, mp4Name: mp4NameNew, mp4Converted: true};
           const currentClips = store.get('clips');
           const doneClips = currentClips.map(clip => {
@@ -144,7 +150,7 @@ function App() {
             return clip
           })
           appLog.info(`save new Clip to list: ${mp4Name}`)
-          setClip(doneClips)
+          // setClip(doneClips)
           store.set('clips', doneClips);
         } catch (error) {
           appLog.error(error)
@@ -152,6 +158,7 @@ function App() {
       }
     })
     return () => {
+      appLog.info(`unsubscribe watch clip's change`)
       unsubscribe();
     }
   },[])
