@@ -33,13 +33,14 @@ const successiveEvent = checkFunction => {
         if(occurred === limit){
             return true;
         }
+        log.info(`check successiveEvent : ${value} - ${occurred}`);
         return false;   
     }
 }
 
 const INITIAL_TIMEMARKER = '00:00:00.00';
-const checkSame = sameAsBefore(INITIAL_TIMEMARKER);
-const checkSuccessiveEvent = successiveEvent(checkSame)
+const checkFunction = sameAsBefore(INITIAL_TIMEMARKER);
+const checkSuccessiveEvent = successiveEvent(checkFunction)
 
 class RecoderHLS extends EventEmitter {
     constructor(options){
@@ -171,10 +172,11 @@ class RecoderHLS extends EventEmitter {
         // this.bytesRecorded = this.wStream.bytesWritten;
         this.duration = event.timemark;
         log.info(`[ffmpeg recorder][${this.name}]duration: ${this.duration}`);
-        const CRITICAL_OCCURR_LIMIT = 5;
-        const durationNotChanged = checkSuccessiveEvent(this.duration, CRITICAL_OCCURR_LIMIT);
+        const CRITICAL_SUCCESSIVE_OCCUR_COUNT = 5;
+        const durationNotChanged = checkSuccessiveEvent(this.duration, CRITICAL_SUCCESSIVE_OCCUR_COUNT);
+        log.info(`[ffmpeg recorder][${this.name}]value of durationNotChanged: ${durationNotChanged}, duration=${this.duration}`);
         if(durationNotChanged){
-            log.error(`[ffmpeg recorder][${this.name}]duration not changed last ${CRITICAL_OCCURR_LIMIT} times`)
+            log.error(`[ffmpeg recorder][${this.name}]duration not changed last ${CRITICAL_SUCCESSIVE_OCCUR_COUNT} times`)
             log.error(`[ffmpeg recorder][${this.name}]kill ffmpeg`)
             this.command.kill();
         }

@@ -5,7 +5,33 @@ import ChannelControl from './ChannelControl';
 import SectionWithFullHeight from './template/SectionWithFullHeight';
 import {SmallPaddingIconButton}  from './template/smallComponents';
 import RefreshIcon from '@material-ui/icons/Refresh';
-const {defaultCCTVs} = require('../config/cctvs.json');
+
+const electronUtil = require('../lib/electronUtil')
+const defaultJsonFile = electronUtil.getAbsolutePath('config/default/cctvs.json', true);
+const customJsonFile = electronUtil.getAbsolutePath('config/cctvs.json', true);
+const defaultJson = electronUtil.readJSONFile(defaultJsonFile);
+const customJson = electronUtil.readJSONFile(customJsonFile);
+// const cctvs = electronUtil.getFromJsonFile({
+//     defaultJsonFile,
+//     customJsonFile,
+//     asarUnpack: true,
+//     selectFunction: (defaultFileContent, customFileContent) => {
+//         return customFileContent.cctvs.length === 0 ? 
+//                defaultFileContent.cctvs : 
+//                customFileContent.cctvs;
+//     }
+// })
+const distinctByKey = (arrayObject, key) => {
+    const resultsUniq = [];
+    arrayObject.forEach(objectElement => {
+        const isUnique = resultsUniq.every(resultElement => resultElement[key] !== objectElement[key]);
+        if(isUnique) resultsUniq.push(objectElement);
+    })
+    return resultsUniq;
+}
+const mergedCCTVs = distinctByKey([...defaultJson.cctvs, ...customJson.cctvs], 'title');
+const cctvs = mergedCCTVs;
+console.log('%%%', cctvs)
 
 import HLSPlayer from './HLSPlayer';
 import utils from '../utils';
@@ -18,6 +44,7 @@ const {baseDirectory} = defaults;
 const getInitialValues = (channelLogger, channelName, channelNumber) => {
     const Store = require('electron-store');
     const store = new Store();    
+    console.log('%%%', cctvs)
     // store.delete('cctvs')
     // let cctvs = store.get(`cctvs`, null);
     // if(cctvs === null){
@@ -25,12 +52,17 @@ const getInitialValues = (channelLogger, channelName, channelNumber) => {
     //     cctvs = defaultCCTVs;
     //     // store.set('cctvs', defaultCCTVs);
     // }
-    const cctvs = defaultCCTVs;
     const defaultUrl =  cctvs[channelNumber] ? cctvs[channelNumber].url : '';
     const defaultTitle = cctvs[channelNumber] ? cctvs[channelNumber].title : '';
     const defaultInterval = 3600000;
-    const streamUrl = store.get(`src.${channelNumber}`, defaultUrl);
-    const title = store.get(`title.${channelNumber}`, defaultTitle);
+    const streamUrlInStore = store.get(`src.${channelNumber}`, defaultUrl);
+    const titleInStore = store.get(`title.${channelNumber}`, defaultTitle);
+    const isInfoInConfig = cctvs.some(cctv => {
+        return cctv.url === streamUrlInStore && cctv.title === titleInStore
+    })
+    console.log('%%% isInfoInConfig:', isInfoInConfig)
+    const streamUrl = isInfoInConfig ? streamUrlInStore : defaultUrl;
+    const title = isInfoInConfig ? titleInStore : defaultTitle;
     const initialInterval = store.get(`interval.${channelNumber}`, defaultInterval);
     const defaultDirectory = path.join(baseDirectory, channelName);
     const initialDirectory = store.get(`directory.${channelNumber}`, defaultDirectory);

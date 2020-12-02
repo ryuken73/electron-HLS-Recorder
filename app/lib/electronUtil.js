@@ -32,7 +32,40 @@ const getAbsolutePath = (file='app.html', asarUnpack=false) => {
 
 }
 
+const readJSONFile = jsonFile => {
+    try {
+        const obj = JSON.parse(fs.readFileSync(jsonFile));
+        return obj;
+    } catch(err) {
+        throw new Error(err);
+    }
+}
+
+const getFromJsonFile = (options) => {
+    const {
+        defaultJsonFile,
+        customJsonFile,
+        asarUnpack=true,
+        selectFunction = (defaultArray, customArray) => {
+            //todo : need process when defalus is not array but object
+            return customArray.length === 0 ? defaultArray : customArray;
+        }
+    } = options;
+    let json = {};
+    try {
+        const defaultJson= getAbsolutePath(defaultJsonFile, asarUnpack);
+        const customJson= getAbsolutePath(customJsonFile, asarUnpack);
+        const defaultValue = readJSONFile(defaultJson);
+        const customValue = readJSONFile(customJson);
+        json = selectFunction(defaultValue, customValue);
+    } catch (error) {
+        console.error(error)
+    }
+    return json;
+}
 
 module.exports = {
-    getAbsolutePath
+    getAbsolutePath,
+    readJSONFile,
+    getFromJsonFile
 }

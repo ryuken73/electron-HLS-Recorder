@@ -73,7 +73,8 @@
     ],
     "asarUnpack": [
       "bin/ffmpeg.exe",
-      "config/cctvs.json"
+      "config/cctvs.json",
+      "config/default/cctvs.json"
     ],
     "dmg": {
       "contents": [

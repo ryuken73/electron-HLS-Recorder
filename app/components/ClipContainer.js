@@ -39,9 +39,9 @@ function ClipContainer(props) {
                 </SmallPaddingIconButton>
                 <Box fontSize="10px" fontFamily="Roboto, Helvetica, Arial, sans-serif">
                     {previewDisable ? clipName : 
-                    <BasicLink href="#" onClick={onClickClipName}>
+                    (<BasicLink href="#" onClick={onClickClipName}>
                         {clipName}
-                    </BasicLink>
+                    </BasicLink>)}
                 </Box>
             </Box>         
         ),
