@@ -16,13 +16,18 @@ function PreviewContainer(props) {
     const [currentUrl, setCurrentUrl] = React.useState('');
     const [player, setPlayer] = React.useState(null);
     const [type, setType] = React.useState('video/mp4');
+    const [titleElement, setTitleElement] = React.useState('Default Overlay Content')
 
-    const playClip = (clipFullName) => {
+    const playClip = (clipFullName, clipTitle) => {
         console.log('playClip', clipFullName)
-        setCurrentUrl(clipFullName)
+        setCurrentUrl(clipFullName);
         if(path.extname(clipFullName) === 'mp4'){
             setType('video/mp4');
         }
+        const titleElement = document.createElement('div');
+        titleElement.innerHTML = clipTitle;
+        titleElement.style = "color:black;font-weight:bold";
+        setTitleElement(titleElement);
     }
 
     return (
@@ -36,8 +41,8 @@ function PreviewContainer(props) {
                     width={330}
                     player={player}
                     setPlayer={setPlayer}
-                    // setPlaybackRateStore={setPlaybackRateStore}
-                    // getPlaybackRateStore={getPlaybackRateStore}
+                    overlayContent={titleElement}
+                    enableOverlay={true}
                 ></HLSPlayer>
             </Box>
             <BorderedBox bgcolor="#2d2f3b" height="100%" ml="0px" mr="0px" overflow="auto">
@@ -45,6 +50,7 @@ function PreviewContainer(props) {
                     <ClipContainer 
                         key={clip.mp4Name} 
                         clipFullName={clip.mp4Name} 
+                        clipTitle={clip.title}
                         removeFromList={removeClip} 
                         currentClip={currentUrl} 
                         clipName={path.basename(clip.mp4Name)} 

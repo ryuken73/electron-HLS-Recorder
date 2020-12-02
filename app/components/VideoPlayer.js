@@ -41,7 +41,8 @@ class VideoPlayer extends Component {
                         overlays:[{
                             content: overlayContent,
                             start:'playing',
-                            end:'pause'
+                            // end:'pause'
+                            end:'dispose'
                         }]
                     }
                 )
