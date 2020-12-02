@@ -14,7 +14,6 @@ log.transports.file.archiveLog = file => {
     file = file.toString();
     const info = path.parse(file);
     const dayString = utils.date.getString(new Date(),{});
-    console.log('^^^', dayString)
     try {
       fs.renameSync(file, path.join(info.dir, info.name + dayString + '.' + info.ext));
     } catch (e) {
@@ -23,9 +22,6 @@ log.transports.file.archiveLog = file => {
   }
 
 const {remote} = require('electron');
-// const Store = require('electron-store');
-// const store = new Store();
-// store.delete('clips')
 
 const parseQuery = queryString => {
     const queryArray = queryString.replace(/^\?/,'').split('&');
