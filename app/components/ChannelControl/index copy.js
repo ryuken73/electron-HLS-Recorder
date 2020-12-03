@@ -37,8 +37,6 @@ const initialDuration = '00:00:00.00';
 
 function ChannleControl(props) {
     console.log('!!!!!!!!!!!!!', props)
-    const {savedClips} = props;
-    const {setClipStore, insertClip, updateClipStore, deleteClip, deleteClipStore} = props.AppMainAction;
     const {channelName, channelNumber, cctvs} = props;
     const {currentUrl="d:/temp/cctv/stream.m3u8", setCurrentUrl, setCurrentUrlStore} = props;
     const {currentTitle="", setCurrentTitle, setCurrentTitleStore} = props;
@@ -82,25 +80,24 @@ function ChannleControl(props) {
     }
     const channelLog = createLogger(channelName);
 
-    // const defaultClips = [];
-    // const initialClips = store.get(`clips`, defaultClips);
-    // const [clips, setClip] = React.useState(initialClips);
+    const defaultClips = [];
+    const initialClips = store.get(`clips`, defaultClips);
+    const [clips, setClip] = React.useState(initialClips);
     // clilps
     // [{channelName, channelNumber, startTime, endTime, url, title, hlsDirectory, mp4File, duration}]
 
     // when deleted in AppMain, status must be synchronized;
+    const setClipStore = React.useCallback( clips => {
+        channelLog.info(`setClipStore ${clips.length}`);
+        store.set('clips', clips);
+    }, [clips])
 
-    // const setClipStore = React.useCallback( clips => {
-    //     channelLog.info(`setClipStore ${clips.length}`);
-    //     store.set('clips', clips);
-    // }, [clips])
-
-    // React.useEffect(() => {
-    //     store.onDidChange('clips', (clips, prevClips) => {
-    //         console.log('store onDidChange triggered. setClip', clips, prevClips) 
-    //         setClip(clips);
-    //     })
-    // },[])
+    React.useEffect(() => {
+        store.onDidChange('clips', (clips, prevClips) => {
+            console.log('store onDidChange triggered. setClip', clips, prevClips) 
+            setClip(clips);
+        })
+    },[])
 
     let localm3u8 = path.join(saveDirectory, `${channelName}_stream.m3u8`);
     const hlsSegmentsRegExp = new RegExp(`${channelName}_stream\\d.*.ts`);
@@ -296,10 +293,9 @@ function ChannleControl(props) {
                 //     setClipStore(newClips);
                 //     return newClips;
                 // });
-                // const prevClips = store.get('clips');
-                // const newClips = [clipData, ...prevClips].slice(0,maxClips)
-                // setClipStore(newClips);
-                insertClip(clipData)
+                const prevClips = store.get('clips');
+                const newClips = [clipData, ...prevClips].slice(0,maxClips)
+                setClipStore(newClips);
                 
                 initialRecorder();
                 // await utils.file.delete(localm3u8);

@@ -21,6 +21,20 @@ const number = {
     }
 }
 
+const string = {
+    toObject(string, itemSep, keySep){
+        if(typeof(string) !== 'string') return {};
+        const itemArray = string.replace(/^\?/,'').split(itemSep);
+        return itemArray.reduce((parsedObj, item) => {
+            const key = item.split(keySep)[0];
+            const value = item.split(keySep)[1];
+            // console.log('**',key,value)
+            parsedObj[key] = value;
+            return parsedObj
+        },{})
+    }
+}
+
 const clone = {
     replaceElement(array, index, newElement){
         return [
@@ -282,6 +296,7 @@ module.exports = {
     file,
     number,
     date,
+    string
 }
 
 // const trottled = fp.throttle(100, console.log);

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Box from '@material-ui/core/Box';
 import BorderedBox from './template/BorderedBox';
-import ChannelControl from './ChannelControl';
+// import ChannelControl from './ChannelControl';
+import ChannelControlContainer from '../containers/ChannelControlContainer';
 import SectionWithFullHeight from './template/SectionWithFullHeight';
 import {SmallPaddingIconButton}  from './template/smallComponents';
 import RefreshIcon from '@material-ui/icons/Refresh';
@@ -84,8 +85,8 @@ const getInitialValues = (channelLogger, channelName, channelNumber) => {
 
 
 function ChannelContainer(props) {
-    const {channelNumber, channelName, clips, setClip} = props;
-    const {setClipStore} = props;
+    const {channelNumber, channelName} = props;
+    // const {clips, setClip, setClipStore} = props;
     const createLogger = channelName => {
         return {
             info: (msg) => {
@@ -211,7 +212,7 @@ function ChannelContainer(props) {
                 </BorderedBox>
                 <BorderedBox bgcolor="#2d2f3b" display="flex" alignContent="center" flexGrow="1" width="1">
                     {mountChannelControl &&
-                    <ChannelControl 
+                    <ChannelControlContainer 
                         cctvs={cctvs}
                         channelName={channelName}
                         channelNumber={channelNumber}
@@ -230,7 +231,7 @@ function ChannelContainer(props) {
                         setMountChannelControl={setMountChannelControl}
                         setMountPlayer={setMountPlayer}
                         resetPlayer={resetPlayer}
-                    ></ChannelControl>}
+                    ></ChannelControlContainer>}
                 </BorderedBox>
             </Box>
         </SectionWithFullHeight>     

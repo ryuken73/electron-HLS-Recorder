@@ -16,7 +16,8 @@ function PreviewContainer(props) {
     const [currentUrl, setCurrentUrl] = React.useState('');
     const [player, setPlayer] = React.useState(null);
     const [type, setType] = React.useState('video/mp4');
-    const [titleElement, setTitleElement] = React.useState('Default Overlay Content')
+    const [titleElement, setTitleElement] = React.useState('Default Overlay Content');
+    console.log('re-render PreviewContainer', clips)
 
     const playClip = (clipFullName, clipTitle) => {
         console.log('playClip', clipFullName)
@@ -49,6 +50,7 @@ function PreviewContainer(props) {
                 {clips.map(clip => 
                     <ClipContainer 
                         key={clip.mp4Name} 
+                        clipId={clip.clipId}
                         clipFullName={clip.mp4Name} 
                         clipTitle={clip.title}
                         removeFromList={removeClip} 

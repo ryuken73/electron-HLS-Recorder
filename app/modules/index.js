@@ -1,1 +1,1 @@
-export { default as imageList } from './imageList_sample';
+export { default as appMain } from './appMain';

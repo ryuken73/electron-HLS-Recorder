@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const log = require('electron-log');
 
 const getAbsolutePath = (file='app.html', asarUnpack=false) => {
     try {
@@ -64,8 +65,33 @@ const getFromJsonFile = (options) => {
     return json;
 }
 
+const initElectronLog = (options) => {
+    const {
+        consoleFormat='[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}',
+        fileMaxSize=10485760,
+        fileLogLevel='info',
+        consoleLogLevel='info'
+    } = options;
+    log.transports.console.format = consoleFormat;
+    log.transports.file.maxSize = fileMaxSize;
+    log.transports.file.level = fileLogLevel;
+    log.transports.console.level = consoleLogLevel;
+    log.transports.file.archiveLog = file => {
+        file = file.toString();
+        const info = path.parse(file);
+        const dayString = utils.date.getString(new Date(),{});
+        try {
+            fs.renameSync(file, path.join(info.dir, info.name + dayString + '.' + info.ext));
+        } catch (e) {
+            console.warn('Could not rotate log', e);
+        }
+    }
+
+}
+
 module.exports = {
     getAbsolutePath,
     readJSONFile,
-    getFromJsonFile
+    getFromJsonFile,
+    initElectronLog
 }

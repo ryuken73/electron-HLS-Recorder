@@ -21,8 +21,8 @@ const {remote} = require('electron');
 import defaults from '../config/defaults';
 const {maxClips=3000} = defaults;
 const {maxPreviewClips=17} = defaults;
-// const {deleteTSFiles=false} = defaults;
-// const {deleteEvenDurationChanged=false} = defaults;
+const {deleteTSFiles=false} = defaults;
+const {deleteEvenDurationChanged=false} = defaults;
 
 const theme = createMuiTheme({
   typography: {
@@ -48,33 +48,21 @@ const appLog = (() => {
 const Store = require('electron-store');
 const store = new Store({watch: true});
 
-function App(props) {
+function App() {
   appLog.info('re-rerendered!')
-  const {savedClips} = props;
-  console.log(props)
-  const {setClipStore, insertClip, updateClipStore, deleteClip, deleteClipStore} = props.AppMainAction;
-  let initialClips;
-  React.useEffect(() => {
-    initialClips = savedClips;
-    const oldVersionType = initialClips.length > 0 && initialClips.some(clip => typeof(clip) === 'string');
-    if(oldVersionType) {
-      appLog.info('^^^app has old version clips in store. resetting clips value to []....');
-      setClipStore({savedClips:[]});
-    }
-  },[])
-  // const defaultClips = [];
+  const defaultClips = [];
   const defaultInterval = {title:'1 Hour', milliseconds:3600000};
-
-  // const clipsFromStore = store.get(`clips`, defaultClips);
-  // const oldVersionType = clipsFromStore.length > 0 && clipsFromStore.some(clip => typeof(clip) === 'string');
-  // if(oldVersionType) {
-  //   appLog.info('^^^app has old version clips in store. resetting clips value to []....');
-  //   initialClips = defaultClips;
-  //   store.set('clips', defaultClips);
-  // }
+  const clipsFromStore = store.get(`clips`, defaultClips);
+  let initialClips = clipsFromStore;
+  const oldVersionType = clipsFromStore.length > 0 && clipsFromStore.some(clip => typeof(clip) === 'string');
+  if(oldVersionType) {
+    appLog.info('^^^app has old version clips in store. resetting clips value to []....');
+    initialClips = defaultClips;
+    store.set('clips', defaultClips);
+  }
   const initialPlayerCount = store.get(`playerCount`, 4);
   const [currentPlayerCount, setCurrentPlayerCount] = React.useState(initialPlayerCount);
-  // const [clips, setClip] = React.useState(initialClips);
+  const [clips, setClip] = React.useState(initialClips);
   const [channels, setUsedChannel] = React.useState([]);
   const [openInProgress, setOpenInProgress] = React.useState(false);
 
@@ -85,6 +73,95 @@ function App(props) {
     }
     return results;
   }
+
+  // const setPlaybackRateStore = React.useEffect((playbackRate) => {
+  //   store.set('playbackRate', playbackRate);
+  // },[]);
+
+  // const getPlaybackRateStore = React.useEffect(() => {
+  //   const playbackRate = store.get('playbackRate', 1);
+  //   return playbackRate
+  // },[]);
+
+  const removeClip = React.useCallback( async clipFullName => {
+    try {
+      await utils.file.delete(clipFullName);
+    } catch(err) {
+      console.error(err)
+    } finally {
+      setClip(oldClips => {
+        appLog.info(`delete clip [${clipFullName}]`);
+        const newClips = oldClips.filter(clip => clip.mp4Name !== clipFullName);
+        store.set('clips', newClips);
+        return newClips;
+      })
+    }
+
+  }, [clips])
+
+  React.useEffect(() => {
+    const unsubscribe = store.onDidChange('clips', async (newClips, oldClips) => {
+      appLog.info(`store changed![clips]`)
+      if(newClips.length === oldClips.length){
+        const changedClip = newClips.find(newClip => {
+          return !oldClips.includes(newClip)
+        })
+        appLog.info(`clip changed: changed clipname=${changedClip.mp4Name}`);
+      }
+      setClip(newClips);
+      if(newClips.length > oldClips.length || newClips.length === maxClips){
+        // new clip added
+        appLog.info(`new hls stream saved: number of new hls stream = ${newClips.length - oldClips.length}`);
+        const newClip = newClips.find(clip => {
+          return oldClips.every(oldClip => oldClip.clipId !== clip.clipId);
+        })
+        appLog.info(`new hls stream saved: ${newClip.hlsDirectory}`);
+        if(newClip.mp4Converted == true){
+          appLog.error(`new hls stream is already converted. just return : ${newClip.hlsDirectory}`)
+          return;
+        }
+        const {hlsm3u8, hlsDirectory, channelName, mp4Name, saveDirectory,startTime, duration} = newClip;
+        const tsFilesArray = await m3u8ToFileArray(newClip.hlsm3u8);
+        const oneTSFile = path.join(hlsDirectory, `${channelName}.ts`);
+        const result = await utils.file.concatFiles(tsFilesArray, oneTSFile);
+        appLog.info(`new hls stream merged to one ts file: ${oneTSFile}`);
+        try {
+          const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
+          const durationNew = await convertMP4(oneTSFile, mp4Name, ffmpegPath);
+          if(durationNew === duration){
+            appLog.info(`########## ts file's duration equals with converted mp4's duration ##########`);
+            deleteTSFiles && rimraf(hlsDirectory, err => console.error(err));
+          } else {
+            deleteEvenDurationChanged && rimraf(hlsDirectory, err => console.error(err));
+          }
+          const durationSafeString = durationNew.replace(/:/g,';');  
+          const mp4NameNew = path.join(saveDirectory, `${channelName}_${startTime}_[${durationSafeString}].mp4`);
+          if(mp4Name !== mp4NameNew){
+            appLog.warn(`converted mp4's duration differ from origial hls: original=${mp4Name} mp4 converted=${mp4NameNew}`);
+            await fs.promises.rename(mp4Name, mp4NameNew);
+          }
+          appLog.info(`new hls stream successfully converted to mp4: ${mp4Name}`);
+          const doneClip = {...newClip, duration: durationNew, mp4Name: mp4NameNew, mp4Converted: true};
+          const currentClips = store.get('clips');
+          const doneClips = currentClips.map(clip => {
+            if(clip.clipId === doneClip.clipId){
+              return doneClip
+            }
+            return clip
+          })
+          appLog.info(`save new Clip to list: ${mp4Name}`)
+          // setClip(doneClips)
+          store.set('clips', doneClips);
+        } catch (error) {
+          appLog.error(error)
+        }
+      }
+    })
+    return () => {
+      appLog.info(`unsubscribe watch clip's change`)
+      unsubscribe();
+    }
+  },[])
 
   const { BrowserWindow } = remote;
   const url = require('url');
@@ -153,8 +230,8 @@ function App(props) {
     <ThemeProvider theme={theme}>
       <Box display="flex" height="100%">
         <PreviewContainer 
-          clips={savedClips.slice(0, maxPreviewClips)} 
-          removeClip={deleteClip}
+          clips={clips.slice(0, maxPreviewClips)} 
+          removeClip={removeClip}
           // setPlaybackRateStore={setPlaybackRateStore}
           // getPlaybackRateStore={getPlaybackRateStore}
         ></PreviewContainer>

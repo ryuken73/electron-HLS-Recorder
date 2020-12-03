@@ -11,25 +11,14 @@ import ActionAll from './ActionAll';
 import utils from '../utils';
 const {remote} = require('electron');
 
-const parseQuery = queryString => {
-  const queryArray = queryString.replace(/^\?/,'').split('&');
-  return queryArray.reduce((parsed, queryParam) => {
-    const key = queryParam.split('=')[0];
-    const value = queryParam.split('=')[1];
-    parsed[key] = value;
-    return parsed
-  },{})
-}
-const query = parseQuery(location.search);
-console.log('^^^^^',query);
-const channelPrefix = 'channel';
-const {channels='1:2:3:4'} = query;
-const channelNames = decodeURIComponent(channels).split(':').map(number => `${channelPrefix}${number}`);
-const moreThenOneWhindow = channelNames.length > 1;
-const showActionAll = moreThenOneWhindow;
+const queryString = location.search.replace(/^\?/,'');
+const queryObject = utils.string.toObject(queryString, /*itemSep*/ '&', /*keySep*/ '=');
 
-// const Store = require('electron-store');
-// const store = new Store();
+const channelPrefix = 'channel';
+const {channels='1:2:3:4'} = queryObject;
+const channelNames = decodeURIComponent(channels).split(':').map(number => `${channelPrefix}${number}`);
+const moreThanOneChannel = channelNames.length > 1;
+const showActionAll = moreThanOneChannel;
 
 const theme = createMuiTheme({
   typography: {

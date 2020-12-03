@@ -9,10 +9,10 @@ import {SmallMarginTextField, SmallButton, SmallPaddingSelect}  from './template
 
 
 function ActionAll(props) {
-    const {urlTyped, recorderStatus} = props;
-    const {onClickSetManualUrl, onChange} = props;
-    const inRecording = false;
-    // const inRecording = recorderStatus !== 'stopped';
+    const {inTransition, scheduledFunction, recorderStatus} = props;
+    const {startRecordAll, stopRecordAll, onClickStartScheduleAll, onChange} = props;
+    const inRecording = recorderStatus !== 'stopped';
+
     const currentItem = "1 Hour";
     const multiple = false;
     const onChangeSelect = () => {};
@@ -39,8 +39,8 @@ function ActionAll(props) {
                         mr={"2px"}
                         minwidth={"124px"}
                         bgcolor={"#3a436e"}
-                        onClick={onClickSetManualUrl}
-                        disabled={inRecording}
+                        onClick={inRecording ? stopRecordAll : startRecordAll}
+                        disabled={inTransition}
                         fontSize={"10px"}
                         height={"30px"}
                         >Start Record All</SmallButton>
@@ -55,7 +55,7 @@ function ActionAll(props) {
                         mr={"0px"}
                         minwidth={"135px"}
                         bgcolor={"#3a436e"}
-                        onClick={onClickSetManualUrl}
+                        onClick={onClickStartScheduleAll}
                         disabled={inRecording}
                         fontSize={"10px"}
                         height={"30px"}
