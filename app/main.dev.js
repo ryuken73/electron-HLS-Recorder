@@ -16,6 +16,35 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import path from 'path';
 // const path = require('path')
+import { forwardToRenderer, triggerAlias, replayActionMain } from 'electron-redux';
+import thunk from 'redux-thunk';
+import { createLogger } from 'redux-logger';
+import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
+import * as modules from './modules';
+
+const logger = createLogger({
+  level: 'info',
+  collapsed: true
+});
+
+const middlewares = [thunk, logger];
+
+  // get reducers
+const reducers = combineReducers({
+  ...modules
+});
+
+const composeEnhancers = compose;
+
+const store = createStore(reducers, composeEnhancers(
+  applyMiddleware(
+    triggerAlias,
+    ...middlewares,
+    forwardToRenderer
+  )
+));
+
+replayActionMain(store);
 
 export default class AppUpdater {
   constructor() {

@@ -6294,6 +6294,14 @@ electron-rebuild@^1.8.2:
     spawn-rx "^3.0.0"
     yargs "^13.2.4"
 
+electron-redux@^1.5.4:
+  version "1.5.4"
+  resolved "http://10.10.16.81:4873/electron-redux/-/electron-redux-1.5.4.tgz#27eb3df052880f73a2393ff1aad6dff529091b62"
+  integrity sha512-7fM7OLVR34prk/ZlIv3yRbB4XCZPPQJ9ZfYLPmWPvKIONe2qm1e0on+cMLGgwzREapQrzCmc1VAxs8WNbWgncg==
+  dependencies:
+    debug "^4.1.1"
+    redux "^4.0.1"
+
 electron-store@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/electron-store/-/electron-store-6.0.1.tgz#2178b9dc37aeb749d99cf9d1d1bc090890b922dc"

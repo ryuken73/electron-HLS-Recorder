@@ -1,4 +1,5 @@
 import {createAction, handleActions} from 'redux-actions';
+const fs = require('fs');
 const path = require('path');
 const utils = require('../utils');
 const rimraf = require('rimraf');
@@ -77,7 +78,9 @@ export const deleteClip = (clipFullName, clipId) => async (dispatch, getState) =
     } finally {
         const {savedClips} = getState().appMain;
         const deletedClip = savedClips.find(clip => clip.clipId === clipId);
-        dispatch(deleteClipStore({deletedClip}));
+        if(!deletedClip === undefined){
+            dispatch(deleteClipStore({deletedClip}));
+        }
     }
 }
 

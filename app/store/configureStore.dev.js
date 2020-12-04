@@ -5,6 +5,7 @@ import { connectRouter } from 'connected-react-router';
 import { createLogger } from 'redux-logger';
 import { routerMiddleware } from 'connected-react-router';
 import * as modules from '../modules';
+import { forwardToMain, replayActionRenderer } from 'electron-redux';
 
 const history = createHashHistory();
 
@@ -31,8 +32,13 @@ const configureStore = (initialState) => {
   const composeEnhancers = devtools || compose;
 
   const store = createStore(reducers, initialState, composeEnhancers(
-    applyMiddleware(...middlewares)
+    applyMiddleware(
+      forwardToMain,
+      ...middlewares
+    )
   ));
+
+  replayActionRenderer(store);
 
   // if (module.hot) {
   //   module.hot.accept(
