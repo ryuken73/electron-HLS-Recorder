@@ -11,12 +11,18 @@ import IntervalSelection from './IntervalSelection';
 
 import HLSRecorder from '../../lib/RecordHLS_ffmpeg';
 import {getAbsolutePath} from '../../lib/electronUtil';
+import {HLStoMP4} from '../../lib/hlsToMp4';
 import path from 'path';
 import defaults from '../../config/defaults';
 import utils from '../../utils';
 import log from 'electron-log';
 
+const rimraf = require('rimraf');
+// const {HLStoMP4} = require('../../lib/hlsToMp4')
+console.log('~~~~~~',HLStoMP4)
+
 import { v4 as uuidv4 } from 'uuid';
+import { convertMP4 } from '../../modules/appMain';
 
 const {maxClips=20} = defaults;
 
@@ -32,13 +38,12 @@ const Store = require('electron-store');
 const store = new Store({watch: true});
 
 const { dialog } = require('electron').remote;
-
 const initialDuration = '00:00:00.00';
 
 function ChannleControl(props) {
     console.log('!!!!!!!!!!!!!', props)
     const {savedClips} = props;
-    const {setClipStore, insertClip, updateClipStore, deleteClip, deleteClipStore} = props.AppMainAction;
+    const {insertClip, updateClip} = props.AppMainAction;
     const {channelName, channelNumber, cctvs} = props;
     const {currentUrl="d:/temp/cctv/stream.m3u8", setCurrentUrl, setCurrentUrlStore} = props;
     const {currentTitle="", setCurrentTitle, setCurrentTitleStore} = props;
@@ -246,62 +251,73 @@ function ChannleControl(props) {
                 },4000);
             })
             recorder.once('end', async (clipName, startTimestamp, duration) => {
-                channelLog.info(`recorder emitted end (listener1): ${clipName}`)
-                const endTimestamp = Date.now();
-                const startTime = utils.date.getString(new Date(startTimestamp),{})
-                const endTime = utils.date.getString(new Date(endTimestamp),{})
-                const url = currentUrl;
-                const title = getTitleFromUrl(url);
-                const hlsDirectory = workingDirectory;
-                const durationSafeString = duration.replace(/:/g,';'); 
-                const mp4Name = path.join(saveDirectory, `${channelName}_${startTime}_[${durationSafeString}].mp4`);
-                const clipId = `${channelName}_${startTime}_${endTime}`
-                const hlsm3u8 = localm3u8;
-                channelLog.info(channelNumber)
-                channelLog.info(channelName)
-                channelLog.info(startTime)
-                channelLog.info(endTime)
-                channelLog.info(startTimestamp)
-                channelLog.info(endTimestamp)
-                channelLog.info(url)
-                channelLog.info(title)
-                channelLog.info(hlsDirectory)
-                channelLog.info(mp4Name)
-                channelLog.info(duration)
-                channelLog.info(clipId)
-                channelLog.info(hlsm3u8)
-
-                const clipData = {
-                    clipId,
-                    channelNumber,
-                    channelName,
-                    startTime,
-                    endTime,
-                    startTimestamp,
-                    endTimestamp,
-                    url,
-                    title,
-                    hlsDirectory,
-                    mp4Name,
-                    duration,
-                    hlsm3u8,
-                    saveDirectory,
-                    mp4Converted:false
+                try {
+                    channelLog.info(`recorder emitted end (listener1): ${clipName}`)
+                    const endTimestamp = Date.now();
+                    const startTime = utils.date.getString(new Date(startTimestamp),{})
+                    const endTime = utils.date.getString(new Date(endTimestamp),{})
+                    const url = currentUrl;
+                    const title = getTitleFromUrl(url);
+                    const hlsDirectory = workingDirectory;
+                    const durationSafeString = duration.replace(/:/g,';'); 
+                    const mp4Name = path.join(saveDirectory, `${channelName}_${startTime}_[${durationSafeString}].mp4`);
+                    const clipId = `${channelName}_${startTime}_${endTime}`
+                    const hlsm3u8 = localm3u8;
+                    channelLog.info(channelNumber)
+                    channelLog.info(channelName)
+                    channelLog.info(startTime)
+                    channelLog.info(endTime)
+                    channelLog.info(startTimestamp)
+                    channelLog.info(endTimestamp)
+                    channelLog.info(url)
+                    channelLog.info(title)
+                    channelLog.info(hlsDirectory)
+                    channelLog.info(mp4Name)
+                    channelLog.info(duration)
+                    channelLog.info(clipId)
+                    channelLog.info(hlsm3u8)
+    
+                    const clipData = {
+                        clipId,
+                        channelNumber,
+                        channelName,
+                        startTime,
+                        endTime,
+                        startTimestamp,
+                        endTimestamp,
+                        url,
+                        title,
+                        hlsDirectory,
+                        mp4Name,
+                        duration,
+                        hlsm3u8,
+                        saveDirectory,
+                        mp4Converted:false
+                    }
+                    console.log(clipData);
+    
+                    // setClip(prevClips => {
+                    //     console.log('about to add clip to store prevClips ', prevClips)
+                    //     const newClips = [clipData, ...prevClips].slice(0,maxClips)
+                    //     setClipStore(newClips);
+                    //     return newClips;
+                    // });
+                    // const prevClips = store.get('clips');
+                    // const newClips = [clipData, ...prevClips].slice(0,maxClips)
+                    // setClipStore(newClips);
+                    insertClip({clip: clipData});
+                    initialRecorder(); 
+                    const converted = await HLStoMP4(clipData);
+                    channelLog.info(converted)
+                    updateClip({clip: converted});                   
+                    if(converted === false) return;
+                    rimraf(hlsDirectory, err => {
+                        if(err) channelLog.error(err);
+                    });
+                } catch (error) {
+                    if(error){channelLog.error(error)}
                 }
-                console.log(clipData);
 
-                // setClip(prevClips => {
-                //     console.log('about to add clip to store prevClips ', prevClips)
-                //     const newClips = [clipData, ...prevClips].slice(0,maxClips)
-                //     setClipStore(newClips);
-                //     return newClips;
-                // });
-                // const prevClips = store.get('clips');
-                // const newClips = [clipData, ...prevClips].slice(0,maxClips)
-                // setClipStore(newClips);
-                insertClip(clipData)
-                
-                initialRecorder();
                 // await utils.file.delete(localm3u8);
                 // await utils.file.deleteFiles(saveDirectory, hlsSegmentsRegExp);
             })

@@ -52,7 +52,7 @@ function App(props) {
   appLog.info('re-rerendered!')
   const {savedClips} = props;
   console.log(props)
-  const {setClipStore, insertClip, updateClipStore, deleteClip, deleteClipStore} = props.AppMainAction;
+  const {setClipStore, deleteClip} = props.AppMainAction;
   let initialClips;
   React.useEffect(() => {
     initialClips = savedClips;

@@ -19,6 +19,18 @@ const configureStore = (initialState) => {
   // Router Middleware
   const router = routerMiddleware(history);
   
+  // electron-store middleware
+  const Store = require('electron-store');
+  const electronStore = new Store();
+  const storeMiddleware = store => next => action => {
+    console.log('$$$storeMiddleware start!');
+    const result = next(action);
+    console.log('$$$storeMiddleware end!', store.getState());
+    const state = store.getState();
+    const {savedClips} = state.appMain;
+    electronStore.set('clips', savedClips)
+    return result;
+  }
   // get reducers
   const reducers = combineReducers({
     router: connectRouter(history),
@@ -26,7 +38,7 @@ const configureStore = (initialState) => {
   });
 
 
-  const middlewares = [thunk, logger, router];
+  const middlewares = [thunk, logger, router, storeMiddleware];
   
   const devtools = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
   const composeEnhancers = devtools || compose;

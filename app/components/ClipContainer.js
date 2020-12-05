@@ -11,7 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 const {remote} = require('electron');
 
 function ClipContainer(props) {
-    const {clipFullName, clipId, clipTitle, currentClip, clipName, playClip, removeFromList, previewDisable} = props;
+    const {clip, clipFullName, clipId, clipTitle, currentClip, clipName, playClip, removeFromList, previewDisable} = props;
     console.log(`rerender ClipContainer`, clipFullName, previewDisable)
     const [checkin, setCheckin] = React.useState(true);
     const [willRemoved, setWillRemoved] = React.useState(false);
@@ -23,7 +23,7 @@ function ClipContainer(props) {
         // setWillRemoved(true);
         setCheckin(false)
         setTimeout(() => {
-            removeFromList(clipFullName, clipId);
+            removeFromList({clip});
         },300)
     }
     const onClickClipName = () => {

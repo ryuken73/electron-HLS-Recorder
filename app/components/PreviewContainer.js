@@ -50,6 +50,7 @@ function PreviewContainer(props) {
                 {clips.map(clip => 
                     <ClipContainer 
                         key={clip.mp4Name} 
+                        clip={clip}
                         clipId={clip.clipId}
                         clipFullName={clip.mp4Name} 
                         clipTitle={clip.title}

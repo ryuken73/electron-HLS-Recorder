@@ -268,7 +268,6 @@ const convertMP4 = (inFile, outFile, ffmpegPath) => {
                 const duration = regExp.exec(stderr)[1];
                 resolve(duration)
             })
-
         command.run();
     })
 }
