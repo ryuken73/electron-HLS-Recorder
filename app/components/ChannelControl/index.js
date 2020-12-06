@@ -202,7 +202,7 @@ function ChannleControl(props) {
                 });
                 setPlaybackMode(true);
                 setInTransition(false);
-            },4000);
+            },1000);
         })
         recorder.once('end', async (clipName, startTimestamp, duration) => {
             try {
@@ -262,8 +262,8 @@ function ChannleControl(props) {
                     channelLog.info(`delete working directory success: ${hlsDirectory}`);
                 });
             } catch (error) {
-                if(error){c
-                    hannelLog.error(error)
+                if(error){
+                    channelLog.error(error)
                 }
             }
         })

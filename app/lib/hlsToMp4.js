@@ -25,6 +25,7 @@ const HLStoMP4 = async clipData => {
         startTime, 
         duration
     } = clipData;
+    appLog.info(`start merging ts files to one ts file: ${hlsDirectory}`);
     const tsFilesArray = await m3u8ToFileArray(hlsm3u8);
     const oneTSFile = path.join(hlsDirectory, `${channelName}.ts`);
     const result = await utils.file.concatFiles(tsFilesArray, oneTSFile);

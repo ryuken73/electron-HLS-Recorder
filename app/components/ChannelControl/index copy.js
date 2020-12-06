@@ -240,7 +240,7 @@ function ChannleControl(props) {
                     });
                     setPlaybackMode(true);
                     setInTransition(false);
-                },4000);
+                },300);
             })
             recorder.once('end', async (clipName, startTimestamp, duration) => {
                 channelLog.info(`recorder emitted end (listener1): ${clipName}`)
