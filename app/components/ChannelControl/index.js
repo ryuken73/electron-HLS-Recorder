@@ -256,6 +256,7 @@ function ChannleControl(props) {
                 rimraf(hlsDirectory, err => {
                     if(err) {
                         channelLog.error(err);
+                        channelLog.error(`delete working directory failed: ${hlsDirectory}`);
                         return
                     } 
                     channelLog.info(`delete working directory success: ${hlsDirectory}`);
