@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const log = require('electron-log');
+const utils = require('../utils');
 
 const getAbsolutePath = (file='app.html', asarUnpack=false) => {
     try {
