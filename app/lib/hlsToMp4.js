@@ -25,12 +25,13 @@ const HLStoMP4 = async clipData => {
         startTime, 
         duration
     } = clipData;
-    appLog.info(`start merging ts files to one ts file: ${hlsDirectory}`);
-    const tsFilesArray = await m3u8ToFileArray(hlsm3u8);
-    const oneTSFile = path.join(hlsDirectory, `${channelName}.ts`);
-    const result = await utils.file.concatFiles(tsFilesArray, oneTSFile);
-    appLog.info(`new hls stream merged to one ts file: ${oneTSFile}`);
+
     try {
+        appLog.info(`start merging ts files to one ts file: ${hlsDirectory}`);
+        const tsFilesArray = await m3u8ToFileArray(hlsm3u8);
+        const oneTSFile = path.join(hlsDirectory, `${channelName}.ts`);
+        const result = await utils.file.concatFiles(tsFilesArray, oneTSFile);
+        appLog.info(`new hls stream merged to one ts file: ${oneTSFile}`);
         const ffmpegPath = getAbsolutePath('bin/ffmpeg.exe', true);
         const durationNew = await convertMP4(oneTSFile, mp4Name, ffmpegPath);
         const durationSafeString = durationNew.replace(/:/g,';');  
