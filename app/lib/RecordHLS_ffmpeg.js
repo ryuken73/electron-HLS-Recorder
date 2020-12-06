@@ -22,7 +22,7 @@ const sameAsBefore = initialValue => {
     }
 }
 
-const successiveEvent = checkFunction => {
+const successiveEvent = (checkFunction,logger=console) => {
     let occurred = 0;
     return (value, limit) => {
         if(checkFunction(value)){
@@ -33,15 +33,10 @@ const successiveEvent = checkFunction => {
         if(occurred === limit){
             return true;
         }
-        log.info(`check successiveEvent : ${value} - ${occurred}`);
+        logger.info(`check successiveEvent : ${value} - ${occurred}`);
         return false;   
     }
 }
-
-// below is sington. move in the class
-// const INITIAL_TIMEMARKER = '00:00:00.00';
-// const checkFunction = sameAsBefore(INITIAL_TIMEMARKER);
-// const checkSuccessiveEvent = successiveEvent(checkFunction)
 
 class RecoderHLS extends EventEmitter {
     constructor(options){
@@ -55,7 +50,6 @@ class RecoderHLS extends EventEmitter {
             ffmpegBinary='./ffmpeg.exe',
             renameDoneFile=false
         } = options;
-        log.debug(ffmpegBinary)
         this._name = name;
         this._src = src;
         this._target = target;
@@ -65,6 +59,17 @@ class RecoderHLS extends EventEmitter {
         this._ffmpegBinary = ffmpegBinary;
         this._renameDoneFile = renameDoneFile;
         ffmpeg.setFfmpegPath(this._ffmpegBinary);
+        this.log = (() => {
+            return {
+                debug : msg => log.debug(`[${this._name}][RecordHLS_ffmpeg]${msg}`),
+                info  : msg => log.info(`[${this._name}][RecordHLS_ffmpeg]${msg}`),
+                warn  : msg => log.warn(`[${this._name}][RecordHLS_ffmpeg]${msg}`),
+                error : msg => log.error(`[${this._name}][RecordHLS_ffmpeg]${msg}`)
+              }
+        })()
+        this.INITIAL_TIMEMARKER =  '00:00:00.00';
+        const checkFunction = sameAsBefore(this.INITIAL_TIMEMARKER);
+        this.checkSuccessiveEvent = successiveEvent(checkFunction, this.log);
         this.initialize();
     }
 
@@ -72,13 +77,10 @@ class RecoderHLS extends EventEmitter {
         this._isPreparing = false;
         this._isRecording = false;
         this._bytesRecorded = 0;
-        this._durationRecorded = '00:00:00.00';
-        const INITIAL_TIMEMARKER = this._durationRecorded;
+        this._durationRecorded = this.INITIAL_TIMEMARKER;
         this._startTime = null;
         this._rStream = null;
-        const checkFunction = sameAsBefore(INITIAL_TIMEMARKER);
-        this.checkSuccessiveEvent = successiveEvent(checkFunction)
-        log.info(`[ffmpeg recorder][${this.name}]recoder initialized...`)
+        this.log.info(`recoder initialized...`)
     }
 
     get name() { return this._name }
@@ -97,11 +99,9 @@ class RecoderHLS extends EventEmitter {
     get command() { return this._command }
     get elapsed() { 
         const elapsedMS = Date.now() - this.startTime;
-        // console.log(this.startTime, elapsedMS)
         return elapsedMS > 0 ? elapsedMS : 0;
     }
     get isBusy() { 
-        // console.log(this.isRecording, this.isPreparing)
         return this.isRecording || this.isPreparing 
     }  
     set src(url) { 
@@ -130,12 +130,12 @@ class RecoderHLS extends EventEmitter {
     };
 
     onWriteStreamClosed = (error) => {
-        log.info(`[ffmpeg recorder][${this.name}]write stream closed : ${this.target}`);
+        this.log.info(`write stream closed : ${this.target}`);
         if(error){
             // this.initialize();
-            // not manually initialize
+            // do not manually initialize
             // send error message to ChannelControl
-            log.error(`[ffmpeg recorder][${this.name}]ended abnormally: startime =${this.startTime}:duration=${this.duration}`);
+            this.log.error(`ended abnormally: startime =${this.startTime}:duration=${this.duration}`);
             this.emit('end', this.target, this.startTime, this.duration)
             this.emit('error', error);
             return;
@@ -153,22 +153,22 @@ class RecoderHLS extends EventEmitter {
                     return;
                     // throw new Error(err)
                 }
-                log.info(`[ffmpeg recorder][${this.name}]change filename : ${this.target} to ${newFullPath}`)
+                this.log.info(`change filename : ${this.target} to ${newFullPath}`)
                 this.emit('end', this.target, this.startTime, this.duration)
                 this.initialize();
             });
         } else {
-            log.info(`[ffmpeg recorder][${this.name}]ended ${this.startTime}:${this.duration}`)
+            this.log.info(`ended ${this.startTime}:${this.duration}`)
             this.emit('end', this.target, this.startTime, this.duration)
             this.initialize();
         }
 
     }
     onReadStreamClosed = () => {
-        log.info(`[ffmpeg recorder][${this.name}]read stream closed : ${this.src}`);
+        this.log.info(`read stream closed : ${this.src}`);
     }
     startHandler = cmd => {
-        log.info(`[ffmpeg recorder][${this.name}]started: ${cmd}`);
+        this.log.info(`started: ${cmd}`);
         this.isPreparing = false;
         this.isRecording = true;
         this.startTime = Date.now();
@@ -177,24 +177,24 @@ class RecoderHLS extends EventEmitter {
     progressHandler = event => {
         // this.bytesRecorded = this.wStream.bytesWritten;
         this.duration = event.timemark;
-        log.info(`[ffmpeg recorder][${this.name}]duration: ${this.duration}`);
+        this.log.info(`duration: ${this.duration}`);
         const CRITICAL_SUCCESSIVE_OCCUR_COUNT = 5;
         const durationNotChanged = this.checkSuccessiveEvent(this.duration, CRITICAL_SUCCESSIVE_OCCUR_COUNT);
-        log.info(`[ffmpeg recorder][${this.name}]value of durationNotChanged: ${durationNotChanged}, duration=${this.duration}`);
+        this.log.info(`value of durationNotChanged: ${durationNotChanged}, duration=${this.duration}`);
         if(durationNotChanged){
-            log.error(`[ffmpeg recorder][${this.name}]duration not changed last ${CRITICAL_SUCCESSIVE_OCCUR_COUNT} times`)
-            log.error(`[ffmpeg recorder][${this.name}]kill ffmpeg`)
+            this.log.error(`duration not changed last ${CRITICAL_SUCCESSIVE_OCCUR_COUNT} times`)
+            this.log.error(`kill ffmpeg`)
             this.command.kill();
         }
     }
 
     start = () => {
         if(this.isBusy) {
-            log.warn('already started!. stop first');
+            this.log.warn('already started!. stop first');
             throw new Error('already started!. stop first')
         }
         this.isPreparing = true;
-        log.info(`[ffmpeg recorder][${this.name}]start encoding..`, this.src);
+        this.log.info(`start encoding.... ${this.src}`);
         // this.command = ffmpeg(this._src).inputOptions(hlsInputOptions).output(this.target).outputOptions(mp4Options);
         // this.enablePlayback && this.command.output(this._localm3u8).outputOptions(hlsOptions);
         this.command = ffmpeg(this._src).inputOptions(hlsInputOptions).output(this._localm3u8).outputOptions(hlsOptions);
@@ -202,23 +202,22 @@ class RecoderHLS extends EventEmitter {
         .on('start', this.startHandler)
         .on('progress', this.progressHandler)
         .on('stderr', stderrLine => {
-            log.debug(`[ffmpeg stderr][${this.name}]${stderrLine}`);
+            this.log.debug(`[ffmpeg stderr][${this.name}]${stderrLine}`);
         })
         .on('error', error => {
-            log.error(`[ffmpeg stderr][${this.name}]ffmpeg error: `, error) ;
+            this.log.error(`[ffmpeg stderr][${this.name}]ffmpeg error: ${error.message}`) ;
             this.onWriteStreamClosed(error);
         })
         .on('end', (stdout, stderr) => {
-            log.info(`[ffmpeg recorder][${this.name}]ffmpeg end!`)
-            // log.info(`[ffmpeg stdout][${this.name}]`,stdout)
-            log.info(`[ffmpeg stderr][${this.name}]`,stderr)
+            this.log.info(`ffmpeg end!`)
+            // this.log.info(`[ffmpeg stdout][${this.name}]`,stdout)
             this.onWriteStreamClosed()
         })
         .run();
     }
     stop = () => {
         if(!this.isRecording){
-            log.warn(`[ffmpeg recorder][${this.name}]start recording first!. there may be premature ending of ffmpeg.`)
+            this.log.warn(`start recording first!. there may be premature ending of ffmpeg.`)
             this.emit('end', this.target, this.startTime, this.duration)
             this.initialize();
             // throw new Error('start recording first!.')  
@@ -245,12 +244,11 @@ const createHLSRecoder = options => {
         ffmpegBinary= 'd:/temp/cctv/ffmpeg.exe',
         renameDoneFile= true
     } = options;
-    log.warn(`[ffmpeg recorder][${this.name}]create HLS Recorder!`);
+    log.info(`create HLS Recorder!`);
     return new RecoderHLS(options);
 }
 
 const convertMP4 = (inFile, outFile, ffmpegPath) => {
-    console.log(ffmpegPath)
     ffmpeg.setFfmpegPath(ffmpegPath);
     return new Promise((resolve, reject) => {
         const command = 
