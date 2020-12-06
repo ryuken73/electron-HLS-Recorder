@@ -251,14 +251,19 @@ function ChannleControl(props) {
                 insertClip({clip: clipData});
                 initialRecorder(); 
                 const converted = await HLStoMP4(clipData);
-                channelLog.info(converted)
                 updateClip({clip: converted});                   
                 if(converted === false) return;
                 rimraf(hlsDirectory, err => {
-                    if(err) channelLog.error(err);
+                    if(err) {
+                        channelLog.error(err);
+                        return
+                    } 
+                    channelLog.info(`delete working directory success: ${hlsDirectory}`);
                 });
             } catch (error) {
-                if(error){channelLog.error(error)}
+                if(error){c
+                    hannelLog.error(error)
+                }
             }
         })
         recorder.start();

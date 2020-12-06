@@ -202,10 +202,10 @@ class RecoderHLS extends EventEmitter {
         .on('start', this.startHandler)
         .on('progress', this.progressHandler)
         .on('stderr', stderrLine => {
-            this.log.debug(`[ffmpeg stderr][${this.name}]${stderrLine}`);
+            this.log.debug(`${stderrLine}`);
         })
         .on('error', error => {
-            this.log.error(`[ffmpeg stderr][${this.name}]ffmpeg error: ${error.message}`) ;
+            this.log.error(`ffmpeg error: ${error.message}`) ;
             this.onWriteStreamClosed(error);
         })
         .on('end', (stdout, stderr) => {
