@@ -39,8 +39,10 @@ const { dialog } = require('electron').remote;
 const initialDuration = '00:00:00.00';
 
 function ChannleControl(props) {
-    const {savedClips} = props;
+    const {savedClips, channelStatuses, channelNames} = props;
+    console.log(`!!!!!!!!!!!!!!!!!!!`, savedClips, channelNames, channelStatuses)
     const {insertClip, updateClip} = props.AppMainAction;
+    const {setRecorderStatus:setRecorderStatusRedux} = props.AppRecorderAction;
     const {channelName, channelNumber, cctvs} = props;
     const {currentUrl="d:/temp/cctv/stream.m3u8", setCurrentUrl, setCurrentUrlStore} = props;
     const {currentTitle="", setCurrentTitle, setCurrentTitleStore} = props;
@@ -57,8 +59,15 @@ function ChannleControl(props) {
     const [inTransition, setInTransition] = React.useState(false);
     const [scheduledFunction, setScheduledFunction] = React.useState(null);
     const [scheduleStatus, setScheduleStatus] = React.useState('stopped');
-    const [recorderStatus, setRecorderStatus] = React.useState('stopped');
+    // const [recorderStatus, setRecorderStatus] = React.useState('stopped');
     const [autoStartSchedule, setAutoStartSchedule] = React.useState(false);
+    
+    const {recorderStatus} = channelStatuses.find(channelStatus => channelStatus.channelName === channelName);
+    const setRecorderStatus = (channelName => {
+        return recorderStatus => {
+            return setRecorderStatusRedux({channelName, recorderStatus})
+        }
+    })(channelName);
 
     const resetControl = ({restartSchedule=false}) => {
         channelLog.info(`resetControl() execute: restartSchedule = ${restartSchedule}`)

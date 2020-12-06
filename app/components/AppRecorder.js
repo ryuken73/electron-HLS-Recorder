@@ -32,8 +32,11 @@ const theme = createMuiTheme({
   },
 });
 
-function App() {
+function App(props) {
   const { BrowserWindow } = remote;
+  const {initChannels} = props.AppRecorderAction;
+  initChannels({channelNames});
+
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex">

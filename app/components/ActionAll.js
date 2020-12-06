@@ -16,7 +16,7 @@ function ActionAll(props) {
     const currentItem = "1 Hour";
     const multiple = false;
     const onChangeSelect = () => {};
-    const selectColor = "#3a436e";
+    const selectColor = "darkslategrey";
     const disabled = false;
     const menuItems = [];
     const smallComponent = true;
@@ -38,7 +38,7 @@ function ActionAll(props) {
                         mb={"2px"}
                         mr={"2px"}
                         minwidth={"124px"}
-                        bgcolor={"#3a436e"}
+                        bgcolor={selectColor}
                         onClick={inRecording ? stopRecordAll : startRecordAll}
                         disabled={inTransition}
                         fontSize={"10px"}
@@ -54,7 +54,7 @@ function ActionAll(props) {
                         mb={"2px"}
                         mr={"0px"}
                         minwidth={"135px"}
-                        bgcolor={"#3a436e"}
+                        bgcolor={selectColor}
                         onClick={onClickStartScheduleAll}
                         disabled={inRecording}
                         fontSize={"10px"}
