@@ -25,7 +25,7 @@ const configureStore = (initialState) => {
   const storeMiddleware = store => next => action => {
     console.log('$$$storeMiddleware start!');
     const result = next(action);
-    console.log('$$$storeMiddleware end!', store.getState());
+    // console.log('$$$storeMiddleware end!', store.getState());
     const state = store.getState();
     const {savedClips} = state.appMain;
     electronStore.set('clips', savedClips)
