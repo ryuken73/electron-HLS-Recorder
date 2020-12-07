@@ -16,8 +16,8 @@ const queryObject = utils.string.toObject(queryString, /*itemSep*/ '&', /*keySep
 
 const channelPrefix = 'channel';
 const {channels='1:2:3:4'} = queryObject;
-const channelNames = decodeURIComponent(channels).split(':').map(number => `${channelPrefix}${number}`);
-const moreThanOneChannel = channelNames.length > 1;
+let initialChannelNames = decodeURIComponent(channels).split(':').map(number => `${channelPrefix}${number}`);
+const moreThanOneChannel = initialChannelNames.length > 1;
 const showActionAll = moreThanOneChannel;
 
 const theme = createMuiTheme({
@@ -35,7 +35,11 @@ const theme = createMuiTheme({
 function App(props) {
   const { BrowserWindow } = remote;
   const {initChannels} = props.AppRecorderAction;
-  initChannels({channelNames});
+  const {channelNames} = props;
+  React.useEffect(() => {
+    initChannels({channelNames:initialChannelNames});
+  },[])
+
 
   return (
     <ThemeProvider theme={theme}>

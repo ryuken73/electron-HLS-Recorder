@@ -63,6 +63,7 @@ function ChannleControl(props) {
     const [autoStartSchedule, setAutoStartSchedule] = React.useState(false);
     
     const {recorderStatus} = channelStatuses.find(channelStatus => channelStatus.channelName === channelName);
+
     const setRecorderStatus = (channelName => {
         return recorderStatus => {
             return setRecorderStatusRedux({channelName, recorderStatus})
