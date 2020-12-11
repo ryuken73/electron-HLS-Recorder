@@ -86,7 +86,6 @@ const getInitialValues = (channelLogger, channelName, channelNumber) => {
 
 function ChannelContainer(props) {
     const {channelNumber, channelName} = props;
-    console.log('~~~~~', channelNumber, channelName)
     // const {clips, setClip, setClipStore} = props;
     const createLogger = channelName => {
         return {
