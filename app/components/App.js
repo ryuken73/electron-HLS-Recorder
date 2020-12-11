@@ -1,8 +1,7 @@
 import React from 'react';
 // import AppMain from './AppMain';
 import AppMainContainer from '../containers/AppMainContainer';
-// import AppRecorder from './AppRecorder';
-import AppRecorderContainer from '../containers/AppRecorderContainer';
+import AppRecorder from './AppRecorder';
 const fs = require('fs');
 const utils = require('../utils');
 const electronUtil = require('../lib/electronUtil');
@@ -20,7 +19,7 @@ export default function App() {
     return (
         <React.Fragment>
             {isMainWindow && <AppMainContainer></AppMainContainer>}
-            {isChildWindow && <AppRecorderContainer></AppRecorderContainer>}
+            {isChildWindow && <AppRecorder></AppRecorder>}
         </React.Fragment>
     )
 }
